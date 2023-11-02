@@ -29,6 +29,8 @@ Sing-box官方客户端SFA/SFI/SFW统一配置文件（支持gitlab私人订阅�
 --------------------------------------------------------------------------------------
 
 ### 相关说明及注意点请查看[甬哥博客说明](https://ygkkk.blogspot.com/2023/10/sing-box-yg.html)
+
+### 一键脚本：
 ```
 bash <(curl -Ls https://gitlab.com/rwkgyg/sing-box-yg/raw/main/sb.sh)
 ```
