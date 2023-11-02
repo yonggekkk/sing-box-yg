@@ -1,4 +1,4 @@
-### Sing-box精装桶小白一键脚本【Vless-reality、Vmess-ws(tls)、Hysteria2、Tuic5】
+### Sing-box精装桶小白一键脚本【Vless-reality-vision、Vmess-ws(tls)、Hysteria2、Tuic5】
 ### 支持纯IPV6与ARM架构的VPS
 ### 小白用户回车三次即可输出配置信息
 --------------------------------------------------------------
