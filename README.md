@@ -9,7 +9,7 @@
 
 三、多端口跳跃（Hysteria2、Tuic5都支持转发多端口，实现端口跳跃与端口复用）
 
-四、三通道域名分流（本地VPS、warp-wg出站、warp-socks5这三个通道六条线路，支持完整域名方式与geosite方式）
+四、域名分流（本地VPS、warp-wg出站、warp-socks5这三个通道六条线路，支持完整域名方式与geosite方式）
 
 五、Sing-box双核心随意切换（正式版与测试版）
 
