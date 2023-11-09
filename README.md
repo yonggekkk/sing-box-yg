@@ -37,7 +37,7 @@
 2、加入每天1:00重启一次Sing-box服务（argo临时隧道不受影响），可使用```crontab -e```命令查看自定义修改
 
 23.11.8功能更新：
-1、优化安装Argo临时隧道成功率，VPS重启自动重置生成Argo域名。如果Argo有效，SSH前台自动显示Argo域名与UUID(方便直接手搓13个端口的Argo节点)
+1、优化安装Argo临时隧道成功率，VPS重启自动重置生成Argo域名。如果Argo有效，SSH前台自动显示Argo域名与UUID，方便直接手搓13个端口的Argo节点
 
 23.11.9功能更新：
 1、加入TG推送配置输出：推送显示当前可用节点的分享链接，必定推送clash-meta、sing-box官方客户端(sfa/sfi/sfw)统一配置文件
