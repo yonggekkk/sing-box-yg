@@ -14,7 +14,7 @@
 
 4：多端口跳跃：Hysteria-2、Tuic-v5支持多个单端口与多段范围端口随意组合，实现多端口跳跃与多端口复用
 
-5：集成warp-wg出站：默认白送你两个warp的出站IP（wireguad-ipv4与wireguad-ipv6），可用于分流
+5：集成warp-wg出站：默认白送你两个warp的出站IP（wireguad-ipv4与wireguad-ipv6），可用于自定义分流
 
 6：域名分流：最多可组建本地VPS、warp-wg出站、warp-socks5三个通道共六条线路(三组IPV4与IPV6)，支持完整域名方式与geosite方式进行分流
 
