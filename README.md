@@ -1,5 +1,4 @@
 
-### 右上角点个star，感谢支持！
 ### Sing-box精装桶一键四协议共存脚本
 ### 支持协议：Vless-reality-vision、Vmess-ws(tls)+Argo、Hysteria-2、Tuic-v5
 ### 支持 纯IPV6 与 ARM架构 的VPS
