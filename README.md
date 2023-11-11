@@ -1,7 +1,8 @@
 
 ### Sing-box精装桶一键四协议共存脚本
-### 支持协议：Vless-reality-vision、Vmess-ws(tls)+Argo、Hysteria-2、Tuic-v5
 ### 支持 纯IPV6 与 ARM架构 的VPS
+### 支持协议：Vless-reality-vision、Vmess-ws(tls)、Hysteria-2、Tuic-v5
+### 其中：Vmess-ws可衍生出Vmess-ws(tls)独立的Argo节点，通过TLS开启与关闭，支持13个端口随便换
 ### 🚀小白用户，回车三次即可完成安装。
 --------------------------------------------------------------
 ### 主要功能及特点：
