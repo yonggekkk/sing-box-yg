@@ -58,8 +58,10 @@ bash <(wget -qO- https://gitlab.com/rwkgyg/sing-box-yg/raw/main/sb.sh 2> /dev/nu
 ```
 
 -----------------------------------
+### 脚本主要功能全开后的预览图（注：相关参数随意填写）
 
-![b3bc74375f887d11e0d1bf10f2c7771](https://github.com/yonggekkk/sing-box-yg/assets/121604513/9ec9d9d4-80c3-488a-ac65-8fd591558770)
+![2e3e6e3636ad34aabbe60dd9cf6f57f](https://github.com/yonggekkk/sing-box-yg/assets/121604513/4a06866d-874e-4870-a6e1-2a39e5fee1bb)
+
 
 ---------------------------------------
 
