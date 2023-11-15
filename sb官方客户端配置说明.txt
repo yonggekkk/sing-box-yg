@@ -129,8 +129,7 @@ sing-box官方SFA/SFI/SFW客户端配置简要说明
                 "path": "/?ed=2048",                                   path路径：/?ed=2048
                 "type": "ws"
             },
-            "type": "vmess",
-            //"security": "auto",
+            "type": "vless",
             "uuid": "658ff7f4-0448-4368-a104-c3108517f56a"             自定义的uuid
         },
 
