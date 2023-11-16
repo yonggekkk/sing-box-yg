@@ -65,4 +65,4 @@ bash <(wget -qO- https://gitlab.com/rwkgyg/sing-box-yg/raw/main/sb.sh 2> /dev/nu
 
 ---------------------------------------
 
-### 鸣谢：[Sing-box官方](https://github.com/SagerNet/sing-box)、Github所有sing-box项目、Chatgpt
+### 鸣谢：本项目代码来源：基于[Sing-box官方](https://github.com/SagerNet/sing-box)、参考于Github所有sing-box项目、一切靠Chatgpt整合
