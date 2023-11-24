@@ -1,4 +1,4 @@
-## Sing-box第二期视频教程即将发布23.11.24    14:30更新中…………
+
 ----------------------------------
 ### Sing-box精装桶一键四协议共存脚本
 ### 支持协议：Vless-reality-vision、Vmess-ws(tls)、Hysteria-2、Tuic-v5
