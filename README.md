@@ -1,12 +1,12 @@
 
 ### Sing-box精装桶一键四协议共存脚本
-### 支持协议：Vless-reality-vision、Vmess-ws(tls)、Hysteria-2、Tuic-v5
-### 支持纯IPV6、纯IPV4、双栈VPS，支持主流amd与arm架构，推荐新手小白使用ubuntu系统
 ### 脚本特色：多功能前台显示、高自由度交互体验
+### 支持协议：Vless-reality-vision、Vmess-ws(tls)、Hysteria-2、Tuic-v5
+### 支持纯IPV6、纯IPV4、双栈VPS，支持amd与arm架构，推荐新手小白使用ubuntu系统
 ### 简单模式：无需域名证书，回车三次即可快速完成四协议安装，复制、扫描你要的节点配置
 --------------------------------------------------------------
 ### 主要功能及特点：
-1：Vmess-ws(tls)节点的特殊性 (详见第二期视频教程中的独家彩蛋图)：Vmess-ws自动衍生出独立的Vmess-ws(tls) Argo节点，TLS与非TLS模式下自动随机生成优选端口
+1：Vmess-ws(tls)节点的特殊性 (详见第二期视频教程的独家彩蛋图)：TLS与非TLS模式下自动随机生成优选端口，Vmess-ws自动衍生出独立的Vmess-ws(tls) Argo节点
  
 2：双证书切换：reality协议可更换"偷来的证书"，其他协议自签证书与acme域名证书可相互切换，实现各协议独立开启或关闭sni证书验证、TLS
 
