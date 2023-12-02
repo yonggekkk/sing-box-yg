@@ -1,7 +1,7 @@
 
 ### Sing-box精装桶小白专享一键四协议共存脚本
 ### 脚本特色：多功能前台显示、高自由度交互体验，全平台全客户端无脑通吃
-### 支持协议：Vless-reality-vision、Vmess-ws(tls)/Argo、Hysteria-2、Tuic-v5
+### 支持目前人气最高的四大协议：Vless-reality-vision、Vmess-ws(tls)/Argo、Hysteria-2、Tuic-v5
 ### 支持纯IPV6、纯IPV4、双栈VPS，支持amd与arm架构，推荐新手小白使用ubuntu系统
 ### 小白简单模式：无需域名证书，回车三次就安装完成，复制、扫描你要的节点配置
 --------------------------------------------------------------
