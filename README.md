@@ -14,19 +14,21 @@
 
 4：多端口跳跃：Hysteria-2、Tuic-v5可设置多个单端口与多段范围端口随意组合 (注意：两个协议不要重复端口)，实现多端口跳跃与多端口复用
 
-5：集成warp-wg出站：默认白送你两个warp的出站IP (wireguad-ipv4与wireguad-ipv6)，可用于自定义域名分流 (解锁某某某福利哦)
+5：warp-wg出站：默认白送你两个warp的出站IP (wireguad-ipv4与wireguad-ipv6)，可设置分流
 
-6：域名分流：最多可组建本地VPS、warp-wg出站、warp-socks5三个通道共六条线路 (三组IPV4与IPV6)，支持完整域名方式与geosite方式进行分流
+6：warp账户变更【🌟将与sing-box 1.8.0正式版一同更新发布】：从别处提取的三大参数，可对warp-wg出站的warp账户类型进行变更 (warp teams团队账户、warp+账户、warp普通账户)
 
-7：双核心切换：Sing-box正式版与测试版可快速切换
+7：域名分流：最多可组建本地VPS、warp-wg出站、warp-socks5三个通道共六条线路 (三组IPV4与IPV6)，支持完整域名方式与geosite方式进行分流
 
-8：脚本与内核在线更新提示
+8：双核心切换：Sing-box正式版与测试版可快速切换
 
-9：SSH快捷菜单展示关键节点信息：本地IP显示、IP优选级情况、reality域名、UUID、Argo是否运行及域名、主端口与多端口明细、分流明细
+9：脚本与内核在线更新提示
 
-10：实时更新配置显示信息：全协议分享链接、二维码、v2rayn配置、clash-meta、sing-box官方客户端(sfa/sfi/sfw)统一配置文件
+10：SSH快捷菜单展示关键节点信息：本地IP显示、IP优选级情况、reality域名、UUID、Argo是否运行及域名、主端口与多端口明细、分流明细
 
-11：TG推送配置信息：设置TG的token与用户ID，支持全协议分享链接、clash-meta、sing-box官方客户端(sfa/sfi/sfw)统一配置文件推送到TG机器人上，方便移动端复制粘贴配置
+11：实时更新配置显示信息：全协议分享链接、二维码、v2rayn配置、clash-meta、sing-box官方客户端(sfa/sfi/sfw)统一配置文件
+
+12：TG推送配置信息：设置TG的token与用户ID，支持全协议分享链接、clash-meta、sing-box官方客户端(sfa/sfi/sfw)统一配置文件推送到TG机器人上，方便移动端复制粘贴配置
 
 ------------------------------------------------------------------------------------
 
