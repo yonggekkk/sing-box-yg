@@ -14,7 +14,7 @@
 
 4：多端口跳跃：Hysteria-2、Tuic-v5可设置多个单端口与多段范围端口随意组合 (注意：两个协议不要重复端口)，实现多端口跳跃与多端口复用
 
-5：warp-wg出站：默认白送你两个warp的出站IP (wireguad-ipv4与wireguad-ipv6)，可设置分流
+5：warp-wg出站：默认白送你两个warp的出站IP (wireguad-ipv4与wireguad-ipv6)，可设置分流，解锁某些东西哦！
 
 6：warp账户变更【🌟将与sing-box 1.8.0正式版一同更新发布】：从别处提取的三大参数，可对warp-wg出站的warp账户类型进行变更 (warp teams团队账户、warp+账户、warp普通账户)
 
