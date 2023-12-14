@@ -51,12 +51,13 @@ bash <(wget -qO- https://gitlab.com/rwkgyg/sing-box-yg/raw/main/sb.sh 2> /dev/nu
 
 ![2e3e6e3636ad34aabbe60dd9cf6f57f](https://github.com/yonggekkk/sing-box-yg/assets/121604513/4a06866d-874e-4870-a6e1-2a39e5fee1bb)
 
-
----------------------------------------
-
-#### 鸣谢：
-#### Sing-box-yg脚本使用[Sing-box官方内核](https://github.com/SagerNet/sing-box)、参考于[Github所有sing-box项目](https://github.com/search?q=SING+BOX&type=repositories)、利用[Chatgpt](https://chat.openai.com/auth/login)整合
-
 -----------------------------------------------------
 ### 感谢你右上角的star🌟
 [![Stargazers over time](https://starchart.cc/yonggekkk/sing-box-yg.svg)](https://starchart.cc/yonggekkk/sing-box-yg)
+
+---------------------------------------
+#### 声明：
+
+#### 该项目使用base64加密，可自行解密，介意者请勿使用
+
+#### 所有代码来源于Github社区与ChatGPT的整合；如您需要开源代码，请提Issues留下您的联系邮箱
