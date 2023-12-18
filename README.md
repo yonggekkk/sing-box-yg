@@ -59,6 +59,6 @@ bash <(wget -qO- https://gitlab.com/rwkgyg/sing-box-yg/raw/main/sb.sh 2> /dev/nu
 ---------------------------------------
 #### 声明：
 
-#### 该项目使用base64加密，可自行解密，介意者请勿使用
+#### 该项目使用base64加密，可自行解密，介意者请勿使用，[加密原因在此](https://ygkkk.blogspot.com/2022/06/github.html)
 
 #### 所有代码来源于Github社区与ChatGPT的整合；如您需要开源代码，请提Issues留下您的联系邮箱
