@@ -16,9 +16,9 @@
 
 5：warp-wg出站：默认白送你两个warp的出站IP (wireguad-ipv4与wireguad-ipv6)，可设置分流，解锁某些东西哦！
 
-6：warp账户变更【🌟将与第三期视频同步更新上线】：从别处提取的三大参数，可对warp-wg出站的warp账户类型进行变更 (warp teams团队账户、warp+账户、warp普通账户)
+6：warp-wg出站账户变更【🌟将与第三期视频同步更新上线】：从别处提取的三大参数，可对warp-wg出站的warp账户类型进行变更 (warp teams团队账户、warp+账户、warp普通账户)
 
-7：warp-wg对端IP优选【🌟将与第三期视频同步更新上线】：优化warp-wg出站分流速度，支持一键回车自动优选即可
+7：warp-wg出站对端IP优选【🌟将与第三期视频同步更新上线】：优化warp-wg出站分流速度，支持一键回车自动优选即可
 
 8：域名分流：最多可组建本地VPS、warp-wg出站、warp-socks5三个通道共六条线路 (三组IPV4与IPV6)，支持完整域名方式与geosite方式进行分流
 
