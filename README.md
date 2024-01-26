@@ -46,12 +46,7 @@
 
 --------------------------------------------------------------
 
-### 一键脚本【三脚本任意选，无区别】：
-
-```
-wget -N https://raw.githubusercontent.com/yonggekkk/sing-box_hysteria2_tuic_argo_reality/main/sb.sh && bash sb.sh
-```
-或者
+### 一键脚本：
 ```
 bash <(curl -Ls https://gitlab.com/rwkgyg/sing-box-yg/raw/main/sb.sh)
 ```
