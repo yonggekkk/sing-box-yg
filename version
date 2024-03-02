@@ -1,5 +1,5 @@
-24.3.1 v2.2更新内容：
+24.3.2 v2.2.1更新内容：
 注意：直接更新即可！！！
-1、修正固定隧道报错问题
-2、修正gitlab设置订阅统一为main
+1、增加Vmess的Path路径自定义
+2、修正相关BUG
 详见：https://ygkkk.blogspot.com/2023/10/sing-box-yg.html
