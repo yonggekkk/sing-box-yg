@@ -2,6 +2,6 @@
 注意：无需卸载重装，直接更新即可！！！
 1、优化vmess下所有节点（本地与argo）的CDN优选设置，支持自定义优选IP与优选域名，详见：https://youtu.be/Qfm8DbLeb6w
 2、多台VPS可共用Gitlab同一个项目名及令牌，可直接在脚本选项中创建另外的分支名称订阅链接
-3、Gitlab订阅支持中国区账户，操作与国际区相同
+3、Gitlab订阅支持中国区账户，支持中国区账户与国际区账户相互切换，操作与国际区相同
 4、修正相关BUG
 详见：https://ygkkk.blogspot.com/2023/10/sing-box-yg.html
