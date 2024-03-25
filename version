@@ -1,6 +1,7 @@
 24.3.23 v2.3更新内容：
 注意：无需卸载重装，直接更新即可！！！
-1、优化vmess下所有节点（本地与argo）的CDN优选设置，详见：https://youtu.be/Qfm8DbLeb6w
-2、Gitlab订阅支持中国区账户，操作与国际区相同
-3、修正相关BUG
+1、优化vmess下所有节点（本地与argo）的CDN优选设置，支持自定义优选，详见：https://youtu.be/Qfm8DbLeb6w
+2、多台VPS共用一个令牌及项目名，可创建多个分支订阅链接
+3、Gitlab订阅支持中国区账户，操作与国际区相同
+4、修正相关BUG
 详见：https://ygkkk.blogspot.com/2023/10/sing-box-yg.html
