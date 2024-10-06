@@ -1,5 +1,10 @@
 24.4.18 v2.3.2更新内容：
 注意：无需卸载重装，直接更新即可！！！
-1、优化vmess下所有节点（本地与argo）的CDN优选设置，支持自定义优选IP与优选域名，详见：https://youtu.be/Qfm8DbLeb6w
-2、修复argo临时隧道申请失败问题
+1、集成oblivion warp免费vpn功能，本地WARP+赛风VPN切换分流(30个国家IP)，视频教程：https://youtu.be/5Y6NPsYPws0
+2、加入四合一聚合节点订阅分享，gitlab订阅与TG通知重置配置即可支持显示
+3、相关文字修正与BUG修复
+4、脚本地址修改为github，代码已可见
+bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
+或者
+bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 详见：https://ygkkk.blogspot.com/2023/10/sing-box-yg.html
