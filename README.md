@@ -33,7 +33,7 @@
 -----------------------------------------------------
 ### 一键脚本：
 ```
-bash <(curl -Ls https://gitlab.com/rwkgyg/sing-box-yg/raw/main/sb.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 ```
 或者
 ```
