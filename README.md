@@ -1,5 +1,3 @@
-# 24.10初的十一黄金周，脚本将更新功能，回归Github……………………
-
 ### Sing-box-yg精装桶小白专享一键四协议共存脚本
 
 脚本特色：多功能前台显示、高自由度交互体验，全平台全客户端无脑通吃
@@ -44,7 +42,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.
 -----------------------------------
 ### Sing-box-yg脚本界面预览图（注：相关参数随意填写，仅供围观）
 
-待更新……
+![1d5425c093618313888fe41a55f493f](https://github.com/user-attachments/assets/2b4b04a6-2de4-499a-afa1-ed78bccc50a8)
 
 -----------------------------------------------------
 ### 感谢你右上角的star🌟
