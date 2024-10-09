@@ -2,7 +2,8 @@ v24.10.7更新内容：
 1、集成oblivion warp免费vpn功能，本地WARP+赛风VPN切换分流(30个国家IP)，视频教程：https://youtu.be/5Y6NPsYPws0
 2、加入四合一聚合节点订阅分享，gitlab订阅与TG通知重置配置即可支持显示
 3、相关文字修正与BUG修复
-4、脚本地址更换为github地址，如下：
+4、回归Github！原Gitlab脚本地址弃用！新脚本地址更换为github地址（https://github.com/yonggekkk/sing-box-yg）
+脚本地址如下：
 bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 或者
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
