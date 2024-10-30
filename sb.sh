@@ -738,7 +738,7 @@ vmadd_local=$server_ipcl
 vmadd_are_local=$server_ip
 else
 vmadd_local=$vm_name
-vmadd_are_local=$server_ip
+vmadd_are_local=$vm_name
 fi
 if [[ -f /etc/s-box/cfvmadd_local.txt ]]; then
 vmadd_local=$(cat /etc/s-box/cfvmadd_local.txt 2>/dev/null)
