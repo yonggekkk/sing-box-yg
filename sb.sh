@@ -4790,7 +4790,7 @@ echo
 echo -e "当前 Sing-box 已安装正式版内核：${bblue}${inscore}${plain}"
 echo -e "检测到最新 Sing-box 正式版内核：${yellow}${latcore}${plain} (可选择8进行更新)"
 echo
-echo -e "当前 Sing-box 最新测试版内核：${bblue}${precore}${plain} (可切换)"
+echo -e "当前 Sing-box 最新测试版内核：${bblue}${precore}${plain} (1.11.0版本暂不支持)"
 fi
 else
 if [ "${inscore}" = "${precore}" ]; then
