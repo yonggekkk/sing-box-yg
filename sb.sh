@@ -42,6 +42,7 @@ fi
 version=$(uname -r | cut -d "-" -f1)
 [[ -z $(systemd-detect-virt 2>/dev/null) ]] && vi=$(virt-what 2>/dev/null) || vi=$(systemd-detect-virt 2>/dev/null)
 case $(uname -m) in
+armv7l) cpu=armv7;;
 aarch64) cpu=arm64;;
 x86_64) cpu=amd64;;
 *) red "目前脚本不支持$(uname -m)架构" && exit;;
@@ -103,8 +104,8 @@ if [[ -z $vi ]]; then
 apt install iputils-ping iproute2 systemctl -y
 fi
 
-packages=("curl" "openssl" "iptables" "tar" "expect" "wget" "xxd" "python3" "qrencode" "git" "cron")
-inspackages=("curl" "openssl" "iptables" "tar" "expect" "wget" "xxd" "python3" "qrencode" "git" "cron")
+packages=("curl" "openssl" "iptables" "tar" "expect" "wget" "xxd" "python3" "qrencode" "git")
+inspackages=("curl" "openssl" "iptables" "tar" "expect" "wget" "xxd" "python3" "qrencode" "git")
 for i in "${!packages[@]}"; do
 package="${packages[$i]}"
 inspackage="${inspackages[$i]}"
