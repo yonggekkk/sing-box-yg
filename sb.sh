@@ -4404,7 +4404,7 @@ sed -i '224s/^\/\///' /etc/s-box/sb.json
 sed -i '231s/^\/\///' /etc/s-box/sb.json
 sed -i '232s/^\/\///' /etc/s-box/sb.json
 sed -i '233s/^\/\///' /etc/s-box/sb.json
-green "当前Sing-box内核版本为1.10系列，geosite分流模式可用"
+yellow "当前Sing-box内核版本为1.10系列，geosite分流模式可用"
 else
 sed -i '186s/^\([^\/]\)/\/\/\1/' /etc/s-box/sb.json
 sed -i '187s/^\([^\/]\)/\/\/\1/' /etc/s-box/sb.json
@@ -4424,7 +4424,7 @@ sed -i '224s/^\([^\/]\)/\/\/\1/' /etc/s-box/sb.json
 sed -i '231s/^\([^\/]\)/\/\/\1/' /etc/s-box/sb.json
 sed -i '232s/^\([^\/]\)/\/\/\1/' /etc/s-box/sb.json
 sed -i '233s/^\([^\/]\)/\/\/\1/' /etc/s-box/sb.json
-green "当前Sing-box内核不支持geosite分流模式，如要使用geosite分流模式，请切换1.10内核版本"
+red "当前Sing-box内核不支持geosite分流模式，如要使用geosite分流模式，请切换1.10内核版本"
 fi
 }
 
