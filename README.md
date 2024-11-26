@@ -33,11 +33,11 @@
 -----------------------------------------------------
 ### 一键脚本：
 ```
-bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 ```
 或者
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 ```
 -----------------------------------
 ### Sing-box-yg脚本界面预览图（注：相关参数随意填写，仅供围观）
