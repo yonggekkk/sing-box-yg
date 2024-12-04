@@ -999,8 +999,10 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
-      "inet4_address": "172.19.0.1/30",
-      "inet6_address": "fd00::1/126",
+	  "address": [
+      "172.19.0.1/30",
+	  "fd00::1/126"
+      ],
       "auto_route": true,
       "strict_route": true,
       "sniff": true,
@@ -1608,8 +1610,10 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
-      "inet4_address": "172.19.0.1/30",
-      "inet6_address": "fd00::1/126",
+	  "address": [
+      "172.19.0.1/30",
+	  "fd00::1/126"
+      ],
       "auto_route": true,
       "strict_route": true,
       "sniff": true,
@@ -2127,8 +2131,10 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
-      "inet4_address": "172.19.0.1/30",
-      "inet6_address": "fd00::1/126",
+	  "address": [
+      "172.19.0.1/30",
+	  "fd00::1/126"
+      ],
       "auto_route": true,
       "strict_route": true,
       "sniff": true,
@@ -2644,8 +2650,10 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
-      "inet4_address": "172.19.0.1/30",
-      "inet6_address": "fd00::1/126",
+	  "address": [
+      "172.19.0.1/30",
+	  "fd00::1/126"
+      ],
       "auto_route": true,
       "strict_route": true,
       "sniff": true,
