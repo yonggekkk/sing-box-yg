@@ -1272,8 +1272,22 @@ cat > /etc/s-box/sing_box_client.json <<EOF
     "final": "select",
     "rules": [
       {
-        "outbound": "dns-out",
-        "protocol": "dns"
+      "inbound": "tun-in",
+      "action": "sniff"
+      },
+      {
+      "port": 853,
+      "network": "tcp",
+      "action": "reject"
+      },
+      {
+      "protocol": "dns",
+      "action": "hijack-dns"
+      },
+      {
+      "port": 443,
+      "network": "udp",
+      "action": "reject"
       },
       {
         "clash_mode": "Direct",
@@ -1814,8 +1828,22 @@ cat > /etc/s-box/sing_box_client.json <<EOF
     "final": "select",
     "rules": [
       {
-        "outbound": "dns-out",
-        "protocol": "dns"
+      "inbound": "tun-in",
+      "action": "sniff"
+      },
+      {
+      "port": 853,
+      "network": "tcp",
+      "action": "reject"
+      },
+      {
+      "protocol": "dns",
+      "action": "hijack-dns"
+      },
+      {
+      "port": 443,
+      "network": "udp",
+      "action": "reject"
       },
       {
         "clash_mode": "Direct",
@@ -2324,8 +2352,22 @@ cat > /etc/s-box/sing_box_client.json <<EOF
     "final": "select",
     "rules": [
       {
-        "outbound": "dns-out",
-        "protocol": "dns"
+      "inbound": "tun-in",
+      "action": "sniff"
+      },
+      {
+      "port": 853,
+      "network": "tcp",
+      "action": "reject"
+      },
+      {
+      "protocol": "dns",
+      "action": "hijack-dns"
+      },
+      {
+      "port": 443,
+      "network": "udp",
+      "action": "reject"
       },
       {
         "clash_mode": "Direct",
@@ -2774,8 +2816,22 @@ cat > /etc/s-box/sing_box_client.json <<EOF
     "final": "select",
     "rules": [
       {
-        "outbound": "dns-out",
-        "protocol": "dns"
+      "inbound": "tun-in",
+      "action": "sniff"
+      },
+      {
+      "port": 853,
+      "network": "tcp",
+      "action": "reject"
+      },
+      {
+      "protocol": "dns",
+      "action": "hijack-dns"
+      },
+      {
+      "port": 443,
+      "network": "udp",
+      "action": "reject"
       },
       {
         "clash_mode": "Direct",
