@@ -949,10 +949,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "detour": "direct"
             },
             {
-                "address": "rcode://refused",
-                "tag": "block"
-            },
-            {
                 "tag": "dns_fakeip",
                 "address": "fakeip"
             }
@@ -1552,10 +1548,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "detour": "direct"
             },
             {
-                "address": "rcode://refused",
-                "tag": "block"
-            },
-            {
                 "tag": "dns_fakeip",
                 "address": "fakeip"
             }
@@ -2065,10 +2057,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "detour": "direct"
             },
             {
-                "address": "rcode://refused",
-                "tag": "block"
-            },
-            {
                 "tag": "dns_fakeip",
                 "address": "fakeip"
             }
@@ -2574,10 +2562,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "tag": "localdns",
                 "address": "h3://223.5.5.5/dns-query",
                 "detour": "direct"
-            },
-            {
-                "address": "rcode://refused",
-                "tag": "block"
             },
             {
                 "tag": "dns_fakeip",
