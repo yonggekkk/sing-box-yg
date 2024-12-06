@@ -995,6 +995,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
+           "tag": "tun-in",
 	  "address": [
       "172.19.0.1/30",
 	  "fd00::1/126"
@@ -1594,6 +1595,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
+           "tag": "tun-in",
 	  "address": [
       "172.19.0.1/30",
 	  "fd00::1/126"
@@ -2103,6 +2105,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
+     "tag": "tun-in",
 	  "address": [
       "172.19.0.1/30",
 	  "fd00::1/126"
@@ -2610,6 +2613,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
+     "tag": "tun-in",
 	  "address": [
       "172.19.0.1/30",
 	  "fd00::1/126"
