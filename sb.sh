@@ -1226,14 +1226,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "type": "direct"
     },
     {
-      "tag": "block",
-      "type": "block"
-    },
-    {
-      "tag": "dns-out",
-      "type": "dns"
-    },
-    {
       "tag": "auto",
       "type": "urltest",
       "outbounds": [
@@ -1781,14 +1773,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "type": "direct"
     },
     {
-      "tag": "block",
-      "type": "block"
-    },
-    {
-      "tag": "dns-out",
-      "type": "dns"
-    },
-    {
       "tag": "auto",
       "type": "urltest",
       "outbounds": [
@@ -2302,14 +2286,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "type": "direct"
     },
     {
-      "tag": "block",
-      "type": "block"
-    },
-    {
-      "tag": "dns-out",
-      "type": "dns"
-    },
-    {
       "tag": "auto",
       "type": "urltest",
       "outbounds": [
@@ -2763,14 +2739,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
     {
       "tag": "direct",
       "type": "direct"
-    },
-    {
-      "tag": "block",
-      "type": "block"
-    },
-    {
-      "tag": "dns-out",
-      "type": "dns"
     },
     {
       "tag": "auto",
