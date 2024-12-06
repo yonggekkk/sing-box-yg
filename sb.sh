@@ -1276,11 +1276,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "action": "sniff"
       },
       {
-      "port": 853,
-      "network": "tcp",
-      "action": "reject"
-      },
-      {
       "protocol": "dns",
       "action": "hijack-dns"
       },
@@ -1832,11 +1827,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "action": "sniff"
       },
       {
-      "port": 853,
-      "network": "tcp",
-      "action": "reject"
-      },
-      {
       "protocol": "dns",
       "action": "hijack-dns"
       },
@@ -2356,11 +2346,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "action": "sniff"
       },
       {
-      "port": 853,
-      "network": "tcp",
-      "action": "reject"
-      },
-      {
       "protocol": "dns",
       "action": "hijack-dns"
       },
@@ -2818,11 +2803,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       {
       "inbound": "tun-in",
       "action": "sniff"
-      },
-      {
-      "port": 853,
-      "network": "tcp",
-      "action": "reject"
       },
       {
       "protocol": "dns",
