@@ -46,7 +46,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 -----------------------------------------------------
 
-### 1、Serv00专用：
+### Serv00专用脚本：
 
 修改自Serv00|ct8老王sing-box安装脚本，支持一键三协议：vless-reality、vmess-ws(argo)、hysteria2。
 
