@@ -110,6 +110,10 @@ sleep 2
         argo_configure
 	echo
         download_and_run_singbox
+	cd
+	echo
+	servkeep
+        echo
         get_links
 }
 
@@ -465,27 +469,6 @@ get_argodomain() {
 get_links(){
 argodomain=$(get_argodomain)
 echo -e "\e[1;32mArgo域名:\e[1;35m${argodomain}\e[0m\n"
-green "安装进程保活"
-curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
-sed -i '' -e "18s|''|'$UUID'|" serv00keep.sh
-sed -i '' -e "21s|''|'$vless_port'|" serv00keep.sh
-sed -i '' -e "22s|''|'$vmess_port'|" serv00keep.sh
-sed -i '' -e "23s|''|'$hy2_port'|" serv00keep.sh
-sed -i '' -e "24s|''|'$IP'|" serv00keep.sh
-sed -i '' -e "25s|''|'$reym'|" serv00keep.sh
-if [ ! -f boot.log ]; then
-sed -i '' -e "19s|''|'${ARGO_DOMAIN}'|" serv00keep.sh
-sed -i '' -e "20s|''|'${ARGO_AUTH}'|" serv00keep.sh
-fi
-if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
-if [ -f boot.log ] || grep -q "trycloudflare.com" boot.log 2>/dev/null; then
-check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
-else
-check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
-fi
-(crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash ${WORKDIR}/serv00keep.sh; fi") | crontab -
-fi
-green "主进程+Argo进程保活安装完毕，默认每2分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
 ISP=$(curl -sL --max-time 5 https://speed.cloudflare.com/meta | awk -F\" '{print $26}' | sed -e 's/ /_/g' || echo "0")
 get_name() { if [ "$HOSTNAME" = "s1.ct8.pl" ]; then SERVER="CT8"; else SERVER=$(echo "$HOSTNAME" | cut -d '.' -f 1); fi; echo "$SERVER"; }
 NAME="$ISP-$(get_name)"
@@ -1065,6 +1048,29 @@ red "未安装sing-box" && exit
 fi
 }
 
+servkeep() {
+green "安装进程保活"
+curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
+sed -i '' -e "18s|''|'$UUID'|" serv00keep.sh
+sed -i '' -e "21s|''|'$vless_port'|" serv00keep.sh
+sed -i '' -e "22s|''|'$vmess_port'|" serv00keep.sh
+sed -i '' -e "23s|''|'$hy2_port'|" serv00keep.sh
+sed -i '' -e "24s|''|'$IP'|" serv00keep.sh
+sed -i '' -e "25s|''|'$reym'|" serv00keep.sh
+if [ ! -f boot.log ]; then
+sed -i '' -e "19s|''|'${ARGO_DOMAIN}'|" serv00keep.sh
+sed -i '' -e "20s|''|'${ARGO_AUTH}'|" serv00keep.sh
+fi
+if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
+if [ -f boot.log ] || grep -q "trycloudflare.com" boot.log 2>/dev/null; then
+check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
+else
+check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
+fi
+(crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash ${WORKDIR}/serv00keep.sh; fi") | crontab -
+fi
+green "主进程+Argo进程保活安装完毕，默认每2分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
+}
 #主菜单
 menu() {
    clear
