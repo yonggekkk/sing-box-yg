@@ -122,11 +122,10 @@ uninstall_singbox() {
     case "$choice" in
        [Yy])
           ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk '{print $2}' | xargs -r kill -9 2>/dev/null
-          rm -rf $WORKDIR serv00.sh
+          rm -rf $WORKDIR serv00.sh serv00keep.sh
 	  crontab -l | grep -v "serv00keep" >rmcron
           crontab rmcron >/dev/null 2>&1
           rm rmcron
-	  
           clear
           green "已完全卸载"
           ;;
