@@ -112,6 +112,7 @@ sleep 2
 	cd
 	echo
 	servkeep
+        cd $WORKDIR
         echo
         get_links
 }
