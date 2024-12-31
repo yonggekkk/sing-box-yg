@@ -78,7 +78,7 @@ EOF
 
 # Download Dependency Files
 download_and_run_singbox() {
-if [ ! -s sb.txt ]; then
+if [ ! -s sb.txt ] && [ ! -s ag.txt ]; then
   ARCH=$(uname -m) && DOWNLOAD_DIR="." && mkdir -p "$DOWNLOAD_DIR" && FILE_INFO=()
   if [ "$ARCH" == "arm" ] || [ "$ARCH" == "arm64" ] || [ "$ARCH" == "aarch64" ]; then
       FILE_INFO=("https://github.com/eooce/test/releases/download/arm64/sb web" "https://github.com/eooce/test/releases/download/arm64/bot13 bot")
