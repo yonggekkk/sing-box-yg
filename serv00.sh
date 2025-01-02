@@ -428,9 +428,7 @@ else
 fi
 fi
 sleep 2
-if pgrep -x "$sbb" > /dev/null; then
-green "主进程已启动成功"
-else
+if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
 red "主进程未启动，根据以下情况一一排查"
 yellow "1、网页端权限是否开启"
 yellow "2、端口是否设置错误(2个TCP、1个UDP)"
