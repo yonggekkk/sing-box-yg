@@ -22,7 +22,7 @@ reading "请输入上面三个IP中的任意一个 (建议默认回车自动选�
 if [[ -z "$IP" ]]; then
 IP=$(grep -m 1 "可用" ip.txt | awk -F ':' '{print $1}')
 if [ -z "$IP" ]; then
-IP=$(head -n 1 ip.txt | awk -F ':' '{print $1}')
+IP=$(okip)
 fi
 fi
 green "你选择的IP为: $IP"
@@ -1068,6 +1068,28 @@ fi
 fi
 green "主进程+Argo进程保活安装完毕，默认每2分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
 }
+
+okip(){
+    IP_LIST=($(devil vhost list | awk '/^[0-9]+/ {print $1}'))
+    API_URL="https://status.eooce.com/api"
+    IP=""
+    THIRD_IP=${IP_LIST[2]}
+    RESPONSE=$(curl -s --max-time 2 "${API_URL}/${THIRD_IP}")
+    if [[ $(echo "$RESPONSE" | jq -r '.status') == "Available" ]]; then
+        IP=$THIRD_IP
+    else
+        FIRST_IP=${IP_LIST[0]}
+        RESPONSE=$(curl -s --max-time 2 "${API_URL}/${FIRST_IP}")
+        
+        if [[ $(echo "$RESPONSE" | jq -r '.status') == "Available" ]]; then
+            IP=$FIRST_IP
+        else
+            IP=${IP_LIST[1]}
+        fi
+    fi
+    echo "$IP"
+    }
+
 #主菜单
 menu() {
    clear
