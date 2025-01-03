@@ -23,6 +23,9 @@ if [[ -z "$IP" ]]; then
 IP=$(grep -m 1 "可用" ip.txt | awk -F ':' '{print $1}')
 if [ -z "$IP" ]; then
 IP=$(okip)
+if [ -z "$IP" ]; then
+IP=$(head -n 1 ip.txt | awk -F ':' '{print $1}')
+fi
 fi
 fi
 green "你选择的IP为: $IP"
