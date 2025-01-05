@@ -1,4 +1,4 @@
-### Sing-box-yg精装桶小白专享一键四协议共存脚本
+### 一、Sing-box-yg精装桶小白专享一键四协议共存脚本（VPS专用）
 
 脚本特色：多功能前台显示、高自由度交互体验，全平台全客户端无脑通吃
 
@@ -46,7 +46,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 -----------------------------------------------------
 
-### Serv00专用脚本：
+### 二、Serv00一键三协议共存脚本（Serv00专用）：
 
 修改自Serv00|ct8老王sing-box安装脚本，支持一键三协议：vless-reality、vmess-ws(argo)、hysteria2。
 
@@ -61,7 +61,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 脚本界面预览图：
 
 ![1a215abda2dd54d1042e8d3e61979b1](https://github.com/user-attachments/assets/cc28a80b-7cee-41b8-98c1-1d64cb0b1013)
-
 
 Serv00多账号进程保活脚本仅支持第三方VPS服务器，修改kp.sh文件的参数即可定时自动保活单个或多个Serv00账号的节点
 
