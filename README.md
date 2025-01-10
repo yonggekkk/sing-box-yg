@@ -48,13 +48,13 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 ### 二、Serv00一键三协议共存脚本（Serv00专用）：
 
-修改自Serv00|ct8老王sing-box安装脚本，支持一键三协议：vless-reality、vmess-ws(argo)、hysteria2。
+修改自Serv00老王sing-box安装脚本，支持一键三协议：vless-reality、vmess-ws(argo)、hysteria2。
 
 主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
 
 详细设置视频教程，请点击[Serv00最全面的代理脚本](https://youtu.be/2VF9D6z2z7w)
 
-Serv00专用一键脚本 (默认自动安装进程保活)，快捷方式：```bash serv00.sh```
+1、Serv00本地专用一键脚本，快捷方式：```bash serv00.sh```
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
@@ -62,13 +62,19 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 
 ![1a215abda2dd54d1042e8d3e61979b1](https://github.com/user-attachments/assets/cc28a80b-7cee-41b8-98c1-1d64cb0b1013)
 
-Serv00多账号进程保活脚本仅支持第三方VPS服务器，修改kp.sh文件的参数即可定时自动保活单个或多个Serv00账号的节点
+---------------------------------------------------------
 
-Serv00保活自动下载脚本如下，VPS专用，不可用在serv00上，默认nano编辑形式，你也可以手动放在root目录
+2、Serv00多账号自动部署脚本，创建私有库，修改serv00.yml文件的参数，运行github action，自动部署且保活单个或多个Serv00账号的节点
+
+---------------------------------------------------------
+
+3、Serv00多账号自动部署脚本，修改kp.sh文件的参数，可在多个平台上自动远程自动部署且保活单个或多个Serv00账号的节点
+
+VPS、软路由专用，不可用在serv00本地上，默认nano编辑形式，你也可以手动放在其他目录，做好cron定时运行
 ```
-curl -sSL https://raw.githubusercontent.com/yonggekkk/Cloudflare_vless_trojan/main/kp.sh -o kp.sh && chmod +x kp.sh && nano kp.sh
+curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o kp.sh && chmod +x kp.sh && nano kp.sh
 ```
-最后运行```bash kp.sh```即可 
+运行```bash kp.sh```可测试有效性 
 
 -----------------------------------------------------
 
