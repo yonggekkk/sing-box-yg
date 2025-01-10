@@ -1148,13 +1148,19 @@ if [[ -e $WORKDIR/list.txt ]]; then
 green "已安装sing-box"
 ps aux | grep '[c]onfig' > /dev/null && green "主进程运行正常" || yellow "主进程启动中…………2分钟后可再次进入脚本查看"
 if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep [l]ocalhost > /dev/null; then
-green "当前Argo临时域名：$(grep -oE 'https://[[:alnum:]+\.-]+\.trycloudflare\.com' $WORKDIR/boot.log 2>/dev/null | sed 's@https://@@')"
+argosl=$(grep -oE 'https://[[:alnum:]+\.-]+\.trycloudflare\.com' $WORKDIR/boot.log 2>/dev/null | sed 's@https://@@')
+checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
+[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
+green "当前Argo临时域名：$argosl  $check"
 fi
 if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep [l]ocalhost > /dev/null; then
 yellow "当前Argo临时域名暂时不存在，后台会继续生成有效的临时域名，稍后可再次进入脚本查看"
 fi
 if ps aux | grep [t]oken > /dev/null; then
-green "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)"
+argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
+checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
+[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
+green "当前Argo固定域名：$argogd  $check"
 fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep [t]oken > /dev/null; then
 yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，请检查相关参数是否输入有误，建议卸载重装"
