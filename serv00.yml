@@ -1,0 +1,107 @@
+name: Keep Servers Alive
+
+on:
+  schedule:
+   - cron: '*/10 * * * *' # 每10分钟执行一次
+  workflow_dispatch: 
+
+jobs:
+  keep_servers_alive:
+    runs-on: ubuntu-latest
+    env:
+    # serv00变量添加规则：
+    # RES：n表示每次不重置部署，y表示每次重置部署。SSH_USER表示用户名。SSH_PASS表示密码。REALITY表示reality域名(用户名.serv00.net)。SUUID表示uuid。TCP1_PORT表示vless的tcp端口。TCP2_PORT表示vmess的tcp端口。UDP_PORT表示hy2的udp端口。HOST表示登录服务器域名。ARGO_DOMAIN表示argo固定域名，临时域名留空。ARGO_AUTH表示argo固定域名token，临时域名留空
+    # 每行一个{serv00服务器}，末尾用,间隔
+      ACCOUNTS: >
+        [
+  {"RES":"n表示每次不重置部署，y表示每次重置部署", "SSH_USER":"用户名", "SSH_PASS":"密码", "REALITY":"reality域名", "SUUID":"uuid", "TCP1_PORT":"vless的tcp端口", "TCP2_PORT":"vmess的tcp端口", "UDP_PORT":"hy2的udp端口", "HOST":"登录域名", "ARGO_DOMAIN":"argo固定域名，临时域名留空", "ARGO_AUTH":"argo固定域名token，临时域名留空"},
+  {"RES":"n", "SSH_USER":"ygkkk1", "SSH_PASS":"ygkkk123", "REALITY":"www.wto.org", "SUUID":"a0ae1415-3390-4f92-ab83-d942db07ae94", "TCP1_PORT":"15661", "TCP2_PORT":"15662", "UDP_PORT":"15663", "HOST":"s1.serv00.com", "ARGO_DOMAIN":"", "ARGO_AUTH":""},
+  {"RES":"y", "SSH_USER":"ygkkk2", "SSH_PASS":"ygkkk456", "REALITY":"time.is", "SUUID":"2f68aba2-b460-43ca-b9c3-1ac843bd2c70", "TCP1_PORT":"55254", "TCP2_PORT":"55255", "UDP_PORT":"55256", "HOST":"s16.serv00.com", "ARGO_DOMAIN":"abcd.ygkkk.eu.org", "ARGO_AUTH":"eyJhIjoiOTM3YzFjYWI88552NTFiYTM4ZTY0ZDQzMWRhOTgyNzkiLCJ0IjoiYjI1MDc5MDktMWQzMS00MWNmLWI1N2QtYTkxNGIxOTAzOTExIiwicyI6Ik9XTmxNR1F6WkRRdE56a3dNaTAwWlRaakxXRmlNelF0TkRBd1pUQTRNVEJqTUdVeCJ9"} 
+        ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass curl jq
+
+      - name: Process each account
+        run: |
+          run_remote_command() {
+          local RES=$1
+          local SSH_USER=$2
+          local SSH_PASS=$3
+          local REALITY=${4}
+          local SUUID=$5
+          local TCP1_PORT=$6
+          local TCP2_PORT=$7
+          local UDP_PORT=$8
+          local HOST=$9
+          local ARGO_DOMAIN=${10}
+          local ARGO_AUTH=${11}
+          if [ -z "${ARGO_DOMAIN}" ]; then
+          echo "Argo域名为空，申请Argo临时域名"
+          else
+          echo "Argo已设置固定域名：${ARGO_DOMAIN}"
+          fi
+          remote_command="export reym=$REALITY UUID=$SUUID vless_port=$TCP1_PORT vmess_port=$TCP2_PORT hy2_port=$UDP_PORT reset=$RES ARGO_DOMAIN=${ARGO_DOMAIN} ARGO_AUTH=${ARGO_AUTH} && bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh)"
+          echo "Executing remote command on $HOST as $SSH_USER with command: $remote_command"
+          sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" "$remote_command"
+           }
+                 echo "*****************************************************"
+                 echo "*****************************************************"
+                 echo "甬哥Github项目  ：github.com/yonggekkk"
+                 echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
+                 echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
+                 echo "自动远程部署并保活Serv00三合一协议脚本【Github】"
+                 echo "版本：V25.1.11"
+                 echo "*****************************************************"
+                 echo "*****************************************************"
+              count=0  
+           for account in $(echo "${ACCOUNTS}" | jq -c '.[]'); do
+              count=$((count+1))
+              RES=$(echo $account | jq -r '.RES')
+              SSH_USER=$(echo $account | jq -r '.SSH_USER')
+              SSH_PASS=$(echo $account | jq -r '.SSH_PASS')
+              REALITY=$(echo $account | jq -r '.REALITY')
+              SUUID=$(echo $account | jq -r '.SUUID')
+              TCP1_PORT=$(echo $account | jq -r '.TCP1_PORT')
+              TCP2_PORT=$(echo $account | jq -r '.TCP2_PORT')
+              UDP_PORT=$(echo $account | jq -r '.UDP_PORT')
+              HOST=$(echo $account | jq -r '.HOST')
+              ARGO_DOMAIN=$(echo $account | jq -r '.ARGO_DOMAIN')
+              ARGO_AUTH=$(echo $account | jq -r '.ARGO_AUTH') 
+          if sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" -q exit; then
+            echo "🎉恭喜！✅第【$count】台服务器连接成功！🚀服务器地址：$HOST ，账户名：$SSH_USER"   
+          if [ -z "${ARGO_DOMAIN}" ]; then
+           check_process="ps aux | grep '[c]onfig' > /dev/null && ps aux | grep [l]ocalhost:$TCP2_PORT > /dev/null"
+            else
+           check_process="ps aux | grep '[c]onfig' > /dev/null && ps aux | grep '[t]oken $ARGO_AUTH' > /dev/null"
+           fi
+          if ! sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" "$check_process" || [[ "$RES" =~ ^[Yy]$ ]]; then
+            echo "⚠️检测到主进程或者argo进程未启动，或者执行重置"
+             echo "⚠️现在开始修复或重置部署……请稍等"
+             output=$(run_remote_command "$RES" "$SSH_USER" "$SSH_PASS" "${REALITY}" "$SUUID" "$TCP1_PORT" "$TCP2_PORT" "$UDP_PORT" "$HOST" "${ARGO_DOMAIN}" "${ARGO_AUTH}")
+            echo "远程命令执行结果：$output"
+          else
+            echo "🎉恭喜！✅检测到所有进程正常运行中 "
+            echo "配置显示如下："
+          sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" \
+             "cat domains/\$(whoami).serv00.net/logs/list.txt; \
+              echo '===================================================='; \
+              echo 'Clash-meta订阅配置文件:'; \
+              cat domains/\$(whoami).serv00.net/logs/clash_meta.yaml; \
+              echo '===================================================='; \
+              echo 'Sing-box订阅配置文件:'; \
+              cat domains/\$(whoami).serv00.net/logs/sing_box.json; \
+              echo '===================================================='" 
+            fi
+           else
+            echo "===================================================="
+            echo "💥杯具！❌第【$count】台服务器连接失败！🚀服务器地址：$HOST ，账户名：$SSH_USER"
+            echo "⚠️可能账号名、密码、服务器名称输入错误，或者当前服务器在维护中"  
+            echo "===================================================="
+           fi
+            done
