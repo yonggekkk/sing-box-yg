@@ -14,9 +14,9 @@ jobs:
     # 每行一个{serv00服务器}，末尾用,间隔
       ACCOUNTS: >
         [
-  {"RES":"n表示每次不重置部署，y表示每次重置部署", "SSH_USER":"用户名", "SSH_PASS":"密码", "REALITY":"reality域名", "SUUID":"uuid", "TCP1_PORT":"vless的tcp端口", "TCP2_PORT":"vmess的tcp端口", "UDP_PORT":"hy2的udp端口", "HOST":"登录域名", "ARGO_DOMAIN":"argo固定域名，临时域名留空", "ARGO_AUTH":"argo固定域名token，临时域名留空"},
-  {"RES":"n", "SSH_USER":"ygkkk1", "SSH_PASS":"ygkkk123", "REALITY":"www.wto.org", "SUUID":"a0ae1415-3390-4f92-ab83-d942db07ae94", "TCP1_PORT":"15661", "TCP2_PORT":"15662", "UDP_PORT":"15663", "HOST":"s1.serv00.com", "ARGO_DOMAIN":"", "ARGO_AUTH":""},
-  {"RES":"y", "SSH_USER":"ygkkk2", "SSH_PASS":"ygkkk456", "REALITY":"time.is", "SUUID":"2f68aba2-b460-43ca-b9c3-1ac843bd2c70", "TCP1_PORT":"55254", "TCP2_PORT":"55255", "UDP_PORT":"55256", "HOST":"s16.serv00.com", "ARGO_DOMAIN":"abcd.ygkkk.eu.org", "ARGO_AUTH":"eyJhIjoiOTM3YzFjYWI88552NTFiYTM4ZTY0ZDQzMWRhOTgyNzkiLCJ0IjoiYjI1MDc5MDktMWQzMS00MWNmLWI1N2QtYTkxNGIxOTAzOTExIiwicyI6Ik9XTmxNR1F6WkRRdE56a3dNaTAwWlRaakxXRmlNelF0TkRBd1pUQTRNVEJqTUdVeCJ9"} 
+        {"RES":"n表示每次不重置部署，y表示每次重置部署", "SSH_USER":"用户名", "SSH_PASS":"密码", "REALITY":"reality域名", "SUUID":"uuid", "TCP1_PORT":"vless的tcp端口", "TCP2_PORT":"vmess的tcp端口", "UDP_PORT":"hy2的udp端口", "HOST":"登录域名", "ARGO_DOMAIN":"argo固定域名，临时域名留空", "ARGO_AUTH":"argo固定域名token，临时域名留空"},
+        {"RES":"n", "SSH_USER":"ygkkk1", "SSH_PASS":"ygkkk123", "REALITY":"www.wto.org", "SUUID":"a0ae1415-3390-4f92-ab83-d942db07ae94", "TCP1_PORT":"15661", "TCP2_PORT":"15662", "UDP_PORT":"15663", "HOST":"s1.serv00.com", "ARGO_DOMAIN":"", "ARGO_AUTH":""},
+        {"RES":"y", "SSH_USER":"ygkkk2", "SSH_PASS":"ygkkk456", "REALITY":"time.is", "SUUID":"2f68aba2-b460-43ca-b9c3-1ac843bd2c70", "TCP1_PORT":"55254", "TCP2_PORT":"55255", "UDP_PORT":"55256", "HOST":"s16.serv00.com", "ARGO_DOMAIN":"abcd.ygkkk.eu.org", "ARGO_AUTH":"eyJhIjoiOTM3YzFjYWI88552NTFiYTM4ZTY0ZDQzMWRhOTgyNzkiLCJ0IjoiYjI1MDc5MDktMWQzMS00MWNmLWI1N2QtYTkxNGIxOTAzOTExIiwicyI6Ik9XTmxNR1F6WkRRdE56a3dNaTAwWlRaakxXRmlNelF0TkRBd1pUQTRNVEJqTUdVeCJ9"} 
         ]
     steps:
       - name: Checkout Repository
