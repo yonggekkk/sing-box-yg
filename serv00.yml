@@ -2,7 +2,7 @@ name: Keep Servers Alive
 
 on:
   schedule:
-   - cron: '*/10 * * * *' # 每10分钟执行一次
+   - cron: '*/10 * * * *' # 每10分钟执行一次（私库每月500分钟运行时长，每天16分钟）
   workflow_dispatch: 
 
 jobs:
