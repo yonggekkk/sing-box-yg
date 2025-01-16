@@ -35,6 +35,7 @@ opkg install sshpass curl jq
 else
     if [ -f /etc/debian_version ]; then
         package_manager="apt-get install -y"
+        apt-get update >/dev/null 2>&1
     elif [ -f /etc/redhat-release ]; then
         package_manager="yum install -y"
     elif [ -f /etc/fedora-release ]; then
