@@ -87,6 +87,8 @@ curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o 
 ```
 运行```bash kp.sh```可测试有效性 
 
+### 注意：serv00.yml与kp.sh都为"强制保活脚本"，就算Serv00清空你服务器上所有文件，只要让你连接成功，就会自动安装脚本保活，保持不死状态
+
 -----------------------------------------------------
 
 ### 感谢你右上角的star🌟
