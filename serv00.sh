@@ -421,7 +421,7 @@ if [ -e "$(basename ${FILE_MAP[bot]})" ]; then
     nohup ./"$agg" $args >/dev/null 2>&1 &
     sleep 10
 if pgrep -x "$agg" > /dev/null; then
-    green "$agg Arog进程已启动"
+    green "$agg Argo进程已启动"
 else
     red "$agg Argo进程未启动, 重启中..."
     pkill -x "$agg"
