@@ -125,7 +125,7 @@ uninstall_singbox() {
     case "$choice" in
        [Yy])
           bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-          rm -rf $WORKDIR serv00.sh serv00keep.sh
+          rm -rf domains serv00.sh serv00keep.sh
 	  crontab -l | grep -v "serv00keep" >rmcron
           crontab rmcron >/dev/null 2>&1
           rm rmcron
@@ -412,11 +412,13 @@ if [ -e "$(basename ${FILE_MAP[bot]})" ]; then
    agg=$(cat ag.txt)
     rm -rf boot.log
     if [[ $ARGO_AUTH =~ ^[A-Z0-9a-z=]{120,250}$ ]]; then
-      args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}"
+      #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}"
+      args="tunnel --no-autoupdate run --token ${ARGO_AUTH}"
     elif [[ $ARGO_AUTH =~ TunnelSecret ]]; then
       args="tunnel --edge-ip-version auto --config tunnel.yml run"
     else
-     args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
+     #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
+     args="tunnel --url http://localhost:$vmess_port --no-autoupdate --logfile boot.log --loglevel info"
     fi
     nohup ./"$agg" $args >/dev/null 2>&1 &
     sleep 10
