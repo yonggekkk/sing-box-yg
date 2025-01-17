@@ -34,7 +34,7 @@
 
 ### 截止目前，推荐使用sing-box官方V1.10.0系列正式版本
 
-### 一键脚本，快捷方式：```sb```
+### VPS专用一键脚本，快捷方式：```sb```
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 ```
@@ -69,6 +69,8 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
+### Sing-box-serv00脚本界面预览图（注：仅供围观）
+![e8e20bb88b3812e88631d8d64d39f02](https://github.com/user-attachments/assets/0e375140-e5cd-46f0-8819-594c655618ba)
 
 
 ### 2、Serv00多账号自动部署脚本：serv00.yml（github专用）
