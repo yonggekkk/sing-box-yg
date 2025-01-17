@@ -93,7 +93,7 @@ curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o 
 
 1、serv00.yml与kp.sh都为"强制保活脚本"，就算Serv00清空你服务器上所有文件，只要让你连接成功，就会自动安装脚本保活，保持不死状态
 
-2、github也可以不设置定时 ,在以下两行前加一个```#```字符即可屏蔽定时运行。当发现节点失效，进actions自己启动一次也可
+2、github也可以不设置定时，在以下两行前加一个```#```字符即可屏蔽定时运行。当发现节点失效，进actions自己启动一次也可
 
 ``` #  schedule: ```
 
