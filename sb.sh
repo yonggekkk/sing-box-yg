@@ -4644,6 +4644,7 @@ IE) showgj="爱尔兰" ;;
 IN) showgj="印度" ;;
 IT) showgj="意大利" ;;
 JP) showgj="日本" ;;
+LT) showgj="立陶宛" ;;
 LV) showgj="拉脱维亚" ;;
 NL) showgj="荷兰" ;;
 NO) showgj="挪威" ;;
@@ -4770,6 +4771,7 @@ echo '
 印度（IN）
 意大利 (IT)
 日本（JP）
+立陶宛（LT）
 拉脱维亚（LV）
 荷兰（NL）
 挪威 (NO)
