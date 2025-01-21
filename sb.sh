@@ -83,13 +83,13 @@ cd
 fi
 if [ -x "$(command -v apt-get)" ]; then
 apt update -y
-apt install jq iptables-persistent -y
+apt install jq cron socat iptables-persistent -y
 elif [ -x "$(command -v yum)" ]; then
 yum update -y && yum install epel-release -y
-yum install jq -y
+yum install jq socat -y
 elif [ -x "$(command -v dnf)" ]; then
 dnf update -y
-dnf install jq -y
+dnf install jq socat -y
 fi
 if [ -x "$(command -v yum)" ] || [ -x "$(command -v dnf)" ]; then
 if [ -x "$(command -v yum)" ]; then
