@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
     # serv00变量添加规则：
-    # RES：n表示每次不重置部署，y表示每次重置部署。SSH_USER表示用户名。SSH_PASS表示密码。REALITY表示reality域名(用户名.serv00.net)。SUUID表示uuid。TCP1_PORT表示vless的tcp端口。TCP2_PORT表示vmess的tcp端口。UDP_PORT表示hy2的udp端口。HOST表示登录服务器域名。ARGO_DOMAIN表示argo固定域名，临时域名留空。ARGO_AUTH表示argo固定域名token，临时域名留空
-    # 每行一个{serv00服务器}，末尾用,间隔
+    # RES(必填)：n表示每次不重置部署，y表示每次重置部署。SSH_USER(必填)表示用户名。SSH_PASS(必填)表示密码。REALITY表示reality域名(留空表示serv00官方域名：你用户名.serv00.net)。SUUID表示uuid(留空表示随机uuid)。TCP1_PORT表示vless的tcp端口(留空表示随机tcp端口)。TCP2_PORT表示vmess的tcp端口(留空表示随机tcp端口)。UDP_PORT表示hy2的udp端口(留空表示随机udp端口)。HOST(必填)表示登录服务器域名。ARGO_DOMAIN表示argo固定域名(留空表示临时域名)。ARGO_AUTH表示argo固定域名token(留空表示临时域名)。
+    # 必填变量：RES、SSH_USER、SSH_PASS、HOST
+    # 每行一个{serv00服务器}，单个服务也可，末尾用,间隔，最后一个服务器末尾无需用,间隔
       ACCOUNTS: >
         [
-        {"RES":"n表示每次不重置部署，y表示每次重置部署", "SSH_USER":"第一个账号用户名", "SSH_PASS":"密码", "REALITY":"reality域名", "SUUID":"uuid", "TCP1_PORT":"vless的tcp端口", "TCP2_PORT":"vmess的tcp端口", "UDP_PORT":"hy2的udp端口", "HOST":"登录域名", "ARGO_DOMAIN":"argo固定域名，临时域名留空", "ARGO_AUTH":"argo固定域名token，临时域名留空"},
         {"RES":"n", "SSH_USER":"第二个账号ygkkk1", "SSH_PASS":"ygkkk123", "REALITY":"www.wto.org", "SUUID":"a0ae1415-3390-4f92-ab83-d942db07ae94", "TCP1_PORT":"15661", "TCP2_PORT":"15662", "UDP_PORT":"15663", "HOST":"s1.serv00.com", "ARGO_DOMAIN":"", "ARGO_AUTH":""},
         {"RES":"y", "SSH_USER":"第三个账号ygkkk2", "SSH_PASS":"ygkkk456", "REALITY":"time.is", "SUUID":"2f68aba2-b460-43ca-b9c3-1ac843bd2c70", "TCP1_PORT":"55254", "TCP2_PORT":"55255", "UDP_PORT":"55256", "HOST":"s16.serv00.com", "ARGO_DOMAIN":"abcd.ygkkk.eu.org", "ARGO_AUTH":"eyJhIjoiOTM3YzFjYWI88552NTFiYTM4ZTY0ZDQzMWRhOTgyNzkiLCJ0IjoiYjI1MDc5MDktMWQzMS00MWNmLWI1N2QtYTkxNGIxOTAzOTExIiwicyI6Ik9XTmxNR1F6WkRRdE56a3dNaTAwWlRaakxXRmlNelF0TkRBd1pUQTRNVEJqTUdVeCJ9"} 
         ]
@@ -56,7 +56,7 @@ jobs:
                  echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
                  echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
                  echo "自动远程部署并保活Serv00三合一协议脚本【Github】"
-                 echo "版本：V25.1.11"
+                 echo "版本：V25.1.22"
                  echo "*****************************************************"
                  echo "*****************************************************"
               count=0  
