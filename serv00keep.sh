@@ -118,7 +118,6 @@ if [[ -z "$UUID" ]]; then
 UUID=$(uuidgen -r)
 fi
 if [[ -z "$vless_port" ]] || [[ -z "$vmess_port" ]] || [[ -z "$hy2_port" ]]; then
-check_port () {
 port_list=$(devil port list)
 tcp_ports=$(echo "$port_list" | grep -c "tcp")
 udp_ports=$(echo "$port_list" | grep -c "udp")
@@ -186,11 +185,9 @@ else
     echo "当前TCP端口: $tcp_port1 和 $tcp_port2"
     echo "当前UDP端口: $udp_port"
 fi
-
 export vless_port=$tcp_port1
 export vmess_port=$tcp_port2
 export hy2_port=$udp_port
-}
 fi
 }
 
