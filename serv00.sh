@@ -52,47 +52,88 @@ read_reym() {
 	green "你的reality域名为: $reym"
 }
 
-read_vless_port() {
-    while true; do
-        reading "请输入vless-reality端口 (面板开放的tcp端口): " vless_port
-        if [[ "$vless_port" =~ ^[0-9]+$ ]] && [ "$vless_port" -ge 1 ] && [ "$vless_port" -le 65535 ]; then
-            green "你的vless-reality端口为: $vless_port"
-            break
-        else
-            yellow "输入错误，请重新输入面板开放的TCP端口"
-        fi
-    done
-}
+check_port () {
+port_list=$(devil port list)
+tcp_ports=$(echo "$port_list" | grep -c "tcp")
+udp_ports=$(echo "$port_list" | grep -c "udp")
 
-read_hy2_port() {
-    while true; do
-        reading "请输入hysteria2端口 (面板开放的UDP端口): " hy2_port
-        if [[ "$hy2_port" =~ ^[0-9]+$ ]] && [ "$hy2_port" -ge 1 ] && [ "$hy2_port" -le 65535 ]; then
-            green "你的hysteria2端口为: $hy2_port"
-            break
-        else
-            yellow "输入错误，请重新输入面板开放的UDP端口"
-        fi
-    done
-}
+if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
+    red "端口数量不符合要求，正在调整..."
 
-read_vmess_port() {
-    while true; do
-        reading "请输入vmess-ws端口 (面板开放的tcp端口): " vmess_port
-        if [[ "$vmess_port" =~ ^[0-9]+$ ]] && [ "$vmess_port" -ge 1 ] && [ "$vmess_port" -le 65535 ]; then
-            green "你的vmess端口为: $vmess_port"
-            break
-        else
-            yellow "输入错误，请重新输入面板开放的tcp端口"
-        fi
-    done
+    if [[ $tcp_ports -gt 2 ]]; then
+        tcp_to_delete=$((tcp_ports - 2))
+        echo "$port_list" | awk '/tcp/ {print $1, $2}' | head -n $tcp_to_delete | while read port type; do
+            devil port del $type $port
+            green "已删除TCP端口: $port"
+        done
+    fi
+
+    if [[ $udp_ports -gt 1 ]]; then
+        udp_to_delete=$((udp_ports - 1))
+        echo "$port_list" | awk '/udp/ {print $1, $2}' | head -n $udp_to_delete | while read port type; do
+            devil port del $type $port
+            green "已删除UDP端口: $port"
+        done
+    fi
+
+    if [[ $tcp_ports -lt 2 ]]; then
+        tcp_ports_to_add=$((2 - tcp_ports))
+        tcp_ports_added=0
+        while [[ $tcp_ports_added -lt $tcp_ports_to_add ]]; do
+            tcp_port=$(shuf -i 10000-65535 -n 1) 
+            result=$(devil port add tcp $tcp_port 2>&1)
+            if [[ $result == *"succesfully"* ]]; then
+                green "已添加TCP端口: $tcp_port"
+                if [[ $tcp_ports_added -eq 0 ]]; then
+                    tcp_port1=$tcp_port
+                else
+                    tcp_port2=$tcp_port
+                fi
+                tcp_ports_added=$((tcp_ports_added + 1))
+            else
+                yellow "端口 $tcp_port 不可用，尝试其他端口..."
+            fi
+        done
+    fi
+
+    if [[ $udp_ports -lt 1 ]]; then
+        while true; do
+            udp_port=$(shuf -i 10000-65535 -n 1) 
+            result=$(devil port add udp $udp_port 2>&1)
+            if [[ $result == *"succesfully"* ]]; then
+                green "已添加UDP端口: $udp_port"
+                break
+            else
+                yellow "端口 $udp_port 不可用，尝试其他端口..."
+            fi
+        done
+    fi
+    green "端口已调整完成,将断开ssh连接,请重新连接shh重新执行脚本"
+    devil binexec on >/dev/null 2>&1
+    kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
+else
+    tcp_ports=$(echo "$port_list" | awk '/tcp/ {print $1}')
+    tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
+    tcp_port2=$(echo "$tcp_ports" | sed -n '2p')
+    udp_port=$(echo "$port_list" | awk '/udp/ {print $1}')
+
+    purple "当前TCP端口: $tcp_port1 和 $tcp_port2"
+    purple "当前UDP端口: $udp_port"
+fi
+
+export vless_port=$tcp_port1
+export vmess_port=$tcp_port2
+export hy2_port=$udp_port
+green "你的vless-reality端口为: $vless_port"
+green "你的vmess端口为: $vmess_port"
+green "你的hysteria2端口为: $hy2_port"
 }
 
 install_singbox() {
 if [[ -e $WORKDIR/list.txt ]]; then
 yellow "已安装sing-box，请先选择2卸载，再执行安装" && exit
 fi
-yellow "请确保在Serv00网页设置中已开放3个端口：2个tcp端口、1个udp端口"
+yellow "为确保节点可用性，不必在Serv00网页设置3个端口，脚本会随机生成"
 sleep 2
         cd $WORKDIR
 	echo
@@ -101,12 +142,8 @@ sleep 2
         read_reym
 	echo
 	read_uuid
- 	echo
-        read_vless_port
-	echo
-        read_vmess_port
-	echo
-        read_hy2_port
+        echo
+        check_port
 	echo
         sleep 2
         argo_configure
@@ -436,11 +473,10 @@ sleep 2
 if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
 red "主进程未启动，根据以下情况一一排查"
 yellow "1、网页端权限是否开启"
-yellow "2、端口是否设置错误(2个TCP、1个UDP)"
-yellow "3、尝试更换网页端3个端口并重装"
-yellow "4、选择5重置"
-yellow "5、当前Serv00服务器炸了？等会再试"
-red "6、以上都试了，哥直接躺平，交给进程保活，过会再来看"
+yellow "2、网页后台删除所有端口，让脚本自动生成随机可用端口"
+yellow "3、选择5重置"
+yellow "4、当前Serv00服务器炸了？等会再试"
+red "5、以上都试了，哥直接躺平，交给进程保活，过会再来看"
 sleep 6
 fi
 }
