@@ -117,6 +117,9 @@ uuidport(){
 if [[ -z "$UUID" ]]; then
 UUID=$(uuidgen -r)
 fi
+if [[ -z "$reym" ]]; then
+reym=$USERNAME.serv00.net
+fi
 if [[ -z "$vless_port" ]] || [[ -z "$vmess_port" ]] || [[ -z "$hy2_port" ]]; then
 port_list=$(devil port list)
 tcp_ports=$(echo "$port_list" | grep -c "tcp")
