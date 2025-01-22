@@ -125,7 +125,7 @@ export vless_port=$tcp_port1
 export vmess_port=$tcp_port2
 export hy2_port=$udp_port
 green "你的vless-reality端口为: $vless_port"
-green "你的vmess端口为: $vmess_port"
+green "你的vmess-ws端口为: $vmess_port"
 green "你的hysteria2端口为: $hy2_port"
 }
 
