@@ -85,7 +85,7 @@ jobs:
           if ! sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" "$check_process" || [[ "$RES" =~ ^[Yy]$ ]]; then
             echo "⚠️检测到主进程或者argo进程未启动，或者执行重置"
              echo "⚠️现在开始修复或重置部署……请稍等"
-             echo "⚠️如果提示Error: Process completed with exit code 255中断，说明设置随机端口完成，请把RES设置为n再执行即可"
+             echo "⚠️提示Error: Process completed with exit code 255中断并退出时，说明设置随机端口完成，请把RES设置为n再执行即可"
              output=$(run_remote_command "$RES" "$SSH_USER" "$SSH_PASS" "${REALITY}" "$SUUID" "$TCP1_PORT" "$TCP2_PORT" "$UDP_PORT" "$HOST" "${ARGO_DOMAIN}" "${ARGO_AUTH}")
             echo "远程命令执行结果：$output"
           else
