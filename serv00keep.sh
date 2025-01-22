@@ -182,6 +182,7 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
         done
     fi
     echo "端口已调整完成,将断开ssh连接"
+    sleep 3
     devil binexec on >/dev/null 2>&1
     kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
 else
