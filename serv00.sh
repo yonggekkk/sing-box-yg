@@ -134,7 +134,7 @@ install_singbox() {
 if [[ -e $WORKDIR/list.txt ]]; then
 yellow "已安装sing-box，请先选择2卸载，再执行安装" && exit
 fi
-yellow "为确保节点可用性，建议在Serv00网页不设置端口，脚本会随机生成"
+yellow "为确保节点可用性，建议在Serv00网页不设置端口，脚本会随机生成有效端口"
 sleep 2
         cd $WORKDIR
 	echo
