@@ -1,6 +1,7 @@
 #!/bin/bash
 # 定时设置：*/10 * * * * /bin/bash /root/kp.sh 每10分钟运行一次
 # serv00变量添加规则：
+# 推荐：为确保节点可用性，请删除在Serv00网页设置的3个端口，保持不设端口的状态，脚本会随机生成
 # RES(必填)：n表示每次不重置部署，y表示每次重置部署。SSH_USER(必填)表示用户名。SSH_PASS(必填)表示密码。REALITY表示reality域名(留空表示serv00官方域名：你用户名.serv00.net)。SUUID表示uuid(留空表示随机uuid)。TCP1_PORT表示vless的tcp端口(留空表示随机tcp端口)。TCP2_PORT表示vmess的tcp端口(留空表示随机tcp端口)。UDP_PORT表示hy2的udp端口(留空表示随机udp端口)。HOST(必填)表示登录服务器域名。ARGO_DOMAIN表示argo固定域名(留空表示临时域名)。ARGO_AUTH表示argo固定域名token(留空表示临时域名)。
 # 必填变量：RES、SSH_USER、SSH_PASS、HOST
 # 每行一个{serv00服务器}，单个服务也可，末尾用,间隔，最后一个服务器末尾无需用,间隔
