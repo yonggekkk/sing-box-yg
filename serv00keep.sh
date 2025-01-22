@@ -191,9 +191,9 @@ else
     tcp_port2=$(echo "$tcp_ports" | sed -n '2p')
     udp_port=$(echo "$port_list" | awk '/udp/ {print $1}')
 
-    echo "当前reality的TCP端口: $tcp_port1" 
-    echo "当前vmess的TCP端口(Argo)：$tcp_port2"
-    echo "当前hy2的UDP端口: $udp_port"
+    echo "你的vless-reality的TCP端口: $tcp_port1" 
+    echo "你的vmess的TCP端口(设置Argo固定域名端口)：$tcp_port2"
+    echo "你的hysteria2的UDP端口: $udp_port"
 fi
 export vless_port=$tcp_port1
 export vmess_port=$tcp_port2
