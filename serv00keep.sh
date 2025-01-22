@@ -486,8 +486,8 @@ sleep 2
 if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
 red "主进程未启动，根据以下情况一一排查"
 yellow "1、网页端权限是否开启"
-yellow "2、端口是否设置错误(2个TCP、1个UDP)"
-yellow "3、尝试更换网页端3个端口并重装"
+yellow "2、网页后台删除所有端口，让脚本自动生成随机可用端口"
+yellow "3、选择y运行一次重置"
 yellow "4、当前Serv00服务器炸了？等会再试"
 red "5、以上都试了，哥直接躺平，交给进程保活，过会再来看"
 fi
