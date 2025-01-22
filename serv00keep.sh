@@ -115,7 +115,12 @@ EOF
 
 uuidport(){
 if [[ -z "$UUID" ]]; then
+if [ ! -e UUID.txt ]; then
 UUID=$(uuidgen -r)
+echo "$UUID" > UUID.txt
+else
+UUID=$(<UUID.txt)
+fi
 fi
 if [[ -z "$reym" ]]; then
 reym=$USERNAME.serv00.net
