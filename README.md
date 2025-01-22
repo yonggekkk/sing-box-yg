@@ -57,6 +57,8 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 本项目分享订阅节点为本地化生成，不使用节点转换等第三方外链引用，无需担心节点订阅被外链作者查看
 
+目前SSH脚本与github/VPS脚本已同步更新，可以不用在网站面端设置端口，脚本随机生成可用端口，避免无效端口造成节点无法使用
+
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
 
 #### 视频教程：
