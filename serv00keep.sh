@@ -21,10 +21,13 @@ export IP=${IP:-''}
 export reym=${reym:-''}
 export reset=${reset:-''}
 
+USERNAME=$(whoami)
+HOSTNAME=$(hostname)
 if [[ "$reset" =~ ^[Yy]$ ]]; then
 crontab -l | grep -v "serv00keep" >rmcron
 crontab rmcron >/dev/null 2>&1
 rm rmcron
+rm -rf /usr/home/${USERNAME}/domains/${USERNAME}.serv00.net/public_html/*
 bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
 find ~ -type f -exec chmod 644 {} \; 2>/dev/null
 find ~ -type d -exec chmod 755 {} \; 2>/dev/null
@@ -34,8 +37,6 @@ find ~ -exec rm -rf {} \; 2>/dev/null
 echo "重置系统完成"
 fi
 sleep 2
-USERNAME=$(whoami)
-HOSTNAME=$(hostname)
 [[ "$HOSTNAME" == "s1.ct8.pl" ]] && export WORKDIR="domains/${USERNAME}.ct8.pl/logs" || export WORKDIR="domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 
@@ -966,7 +967,7 @@ proxies:
       Host: $argodomain 
 
 proxy-groups:
-- name: 负载均衡
+- name: Balance
   type: load-balance
   url: https://www.gstatic.com/generate_204
   interval: 300
@@ -978,7 +979,7 @@ proxy-groups:
     - vmess-tls-argo-$NAME
     - vmess-argo-$NAME
 
-- name: 自动选择
+- name: Auto
   type: url-test
   url: https://www.gstatic.com/generate_204
   interval: 300
@@ -990,11 +991,11 @@ proxy-groups:
     - vmess-tls-argo-$NAME
     - vmess-argo-$NAME
     
-- name: 🌍选择代理节点
+- name: Select
   type: select
   proxies:
-    - 负载均衡                                         
-    - 自动选择
+    - Balance                                         
+    - Auto
     - DIRECT
     - vless-reality-vision-$NAME                              
     - vmess-ws-$NAME
@@ -1004,14 +1005,19 @@ proxy-groups:
 rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
-  - MATCH,🌍选择代理节点
+  - MATCH,Select
   
 EOF
 
-sibsub=$(cat sing_box.json 2>/dev/null)
-clmsub=$(cat clash_meta.yaml 2>/dev/null)
-echo
 sleep 2
+FILE_PATH="/usr/home/${USERNAME}/domains/${USERNAME}.serv00.net/public_html"
+[ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
+echo "$baseurl" > ${FILE_PATH}/${USERNAME}_v2sub.txt
+cat clash_meta.yaml > ${FILE_PATH}/${USERNAME}_clashmeta.txt
+cat sing_box.json > ${FILE_PATH}/${USERNAME}_singbox.txt
+V2rayN_LINK="https://${USERNAME}.serv00.net/${USERNAME}_v2sub.txt"
+Clashmeta_LINK="https://${USERNAME}.serv00.net/${USERNAME}_clashmeta.txt"
+Singbox_LINK="https://${USERNAME}.serv00.net/${USERNAME}_singbox.txt"
 cat > list.txt <<EOF
 =================================================================================================
 
@@ -1060,25 +1066,27 @@ $hy2_link
 -------------------------------------------------------------------------------------------------
 
 
-四、以上五个节点的聚合通用分享链接如下：
+四、以上五个节点的聚合通用订阅分享链接如下：
+$V2rayN_LINK
+
+五个节点聚合通用分享码：
 $baseurl
 -------------------------------------------------------------------------------------------------
+
+
+五、查看Sing-box与Clash-meta的订阅配置文件，请进入主菜单选择4
+
+Clash-meta订阅分享链接：
+$Clashmeta_LINK
+
+Sing-box订阅分享链接：
+$Singbox_LINK
+-------------------------------------------------------------------------------------------------
+
+=================================================================================================
+
 EOF
 cat list.txt
-echo "-------------------------------------------------------------------------------------------------"
-sleep 2
-echo
-echo "五、查看Clash-meta订阅配置文件"
-cat clash_meta.yaml
-echo "-------------------------------------------------------------------------------------------------"
-sleep 2
-echo
-echo "六、查看Sing-box订阅配置文件"
-cat sing_box.json
-echo
-echo "-------------------------------------------------------------------------------------------------"
-echo "================================================================================================="
-echo
 sleep 2
 rm -rf sb.log core tunnel.yml tunnel.json fake_useragent_0.2.0.json
 }
