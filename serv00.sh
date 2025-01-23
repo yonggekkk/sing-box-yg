@@ -1202,7 +1202,7 @@ checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argo
 green "当前Argo固定域名：$argogd $check"
 fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep [t]oken > /dev/null; then
-yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，请检查相关参数是否输入有误，建议卸载重装"
+yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
 if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
