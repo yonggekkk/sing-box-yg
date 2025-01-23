@@ -505,7 +505,7 @@ get_argodomain() {
     local argodomain=""
     while [[ $retry -lt $max_retries ]]; do
     ((retry++)) 
-    argodomain=$(grep -oE 'https://[[:alnum:]+\.-]+\.trycloudflare\.com' boot.log 2>/dev/null | sed 's@https://@@')
+    argodomain=$(cat boot.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
       if [[ -n $argodomain ]]; then
         break
       fi
