@@ -88,12 +88,6 @@ echo "*****************************************************"
             echo "配置显示如下："
           sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" \
              "cat domains/\$(whoami).serv00.net/logs/list.txt; \
-              echo '===================================================='; \
-              echo 'Clash-meta订阅配置文件:'; \
-              cat domains/\$(whoami).serv00.net/logs/clash_meta.yaml; \
-              echo '===================================================='; \
-              echo 'Sing-box订阅配置文件:'; \
-              cat domains/\$(whoami).serv00.net/logs/sing_box.json; \
               echo '===================================================='" 
             fi
            else
