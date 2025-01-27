@@ -21,13 +21,12 @@ export IP=${IP:-''}
 export reym=${reym:-''}
 export reset=${reset:-''}
 
-USERNAME=$(whoami)
+USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
 if [[ "$reset" =~ ^[Yy]$ ]]; then
 crontab -l | grep -v "serv00keep" >rmcron
 crontab rmcron >/dev/null 2>&1
 rm rmcron
-rm -rf /usr/home/${USERNAME}/domains/${USERNAME}.serv00.net/public_html/*
 bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
 find ~ -type f -exec chmod 644 {} \; 2>/dev/null
 find ~ -type d -exec chmod 755 {} \; 2>/dev/null
@@ -37,7 +36,9 @@ find ~ -exec rm -rf {} \; 2>/dev/null
 echo "重置系统完成"
 fi
 sleep 2
-[[ "$HOSTNAME" == "s1.ct8.pl" ]] && export WORKDIR="domains/${USERNAME}.ct8.pl/logs" || export WORKDIR="domains/${USERNAME}.serv00.net/logs"
+devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
+FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
+WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 
 read_ip(){
@@ -1010,7 +1011,6 @@ rules:
 EOF
 
 sleep 2
-FILE_PATH="/usr/home/${USERNAME}/domains/${USERNAME}.serv00.net/public_html"
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 echo "$baseurl" > ${FILE_PATH}/${USERNAME}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${USERNAME}_clashmeta.txt
@@ -1098,5 +1098,6 @@ argo_configure
 uuidport
 download_and_run_singbox
 get_links
+cd
 }
 install_singbox
