@@ -530,8 +530,8 @@ fi
 if [ -z "$ARGO_DOMAIN" ] && ! ps aux | grep [u]rl > /dev/null; then
 ps aux | grep [u]rl | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 cfgo
-elif [ -n "$ARGO_DOMAIN" ] && ! ps aux | grep [r]un > /dev/null; then
-ps aux | grep [r]un | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+elif [ -n "$ARGO_DOMAIN" ] && ! ps aux | grep '[a]utoupdate run' > /dev/null; then
+ps aux | grep '[a]utoupdate run' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 cfgo
 else
 green "Arog进程已启动"
