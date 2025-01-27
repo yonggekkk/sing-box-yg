@@ -1106,7 +1106,7 @@ fi
 }
 
 servkeep() {
-green "开始安装Cron进程保活"
+#green "开始安装Cron进程保活"
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
 sed -i '' -e "14s|''|'$UUID'|" serv00keep.sh
 sed -i '' -e "17s|''|'$vless_port'|" serv00keep.sh
@@ -1118,16 +1118,16 @@ if [ ! -f "$WORKDIR/boot.log" ]; then
 sed -i '' -e "15s|''|'${ARGO_DOMAIN}'|" serv00keep.sh
 sed -i '' -e "16s|''|'${ARGO_AUTH}'|" serv00keep.sh
 fi
-if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
-if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
-check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
-else
-check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
-fi
-(crontab -l 2>/dev/null; echo "*/10 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
-fi
-green "安装完毕，默认每10分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
-echo
+#if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
+#if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
+#check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
+#else
+#check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
+#fi
+#(crontab -l 2>/dev/null; echo "*/10 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
+#fi
+#green "安装完毕，默认每10分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
+#echo
 green "开始安装网页进程保活"
 keep_path="$HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
@@ -1147,7 +1147,7 @@ npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
 rm $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
 devil www restart ${USERNAME}.${USERNAME}.serv00.net
 rm -rf $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/logs/*
-green "安装完毕，打开 http://${USERNAME}.${USERNAME}.serv00.net/up 即可保活" && sleep 2
+green "安装完毕，保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up ，打开一次，即可默认每3分钟自动保活" && sleep 2
 }
 
 okip(){
@@ -1243,19 +1243,20 @@ fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep [t]oken > /dev/null; then
 yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
-if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
-if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
-check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
-else
-check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
-fi
-(crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
-purple "发现Serv00开大招了，Cron保活被重置清空了"
-purple "目前Cron保活已修复成功。打开 http://${USERNAME}.${USERNAME}.serv00.net/up 也可实时保活"
-purple "主进程与Argo进程启动中…………1分钟后可再次进入脚本查看"
-else
-green "Cron保活运行正常。打开 http://${USERNAME}.${USERNAME}.serv00.net/up 也可实时保活"
-fi
+green "保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up ，打开一次，即可默认每3分钟自动保活"
+#if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
+#if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
+#check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
+#else
+#check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
+#fi
+#(crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
+#purple "发现Serv00开大招了，Cron保活被重置清空了"
+#purple "目前Cron保活已修复成功。打开 http://${USERNAME}.${USERNAME}.serv00.net/up 也可实时保活"
+#purple "主进程与Argo进程启动中…………1分钟后可再次进入脚本查看"
+#else
+#green "Cron保活运行正常。打开 http://${USERNAME}.${USERNAME}.serv00.net/up 也可实时保活"
+#fi
 else
 red "未安装sing-box，请选择 1 进行安装" 
 fi
