@@ -1,6 +1,4 @@
 #!/bin/bash
-
-# 定义颜色
 re="\033[0m"
 red="\033[1;91m"
 green="\e[1;32m"
@@ -11,9 +9,11 @@ green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
 reading() { read -p "$(red "$1")" "$2"; }
-USERNAME=$(whoami)
+USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
-[[ "$HOSTNAME" == "s1.ct8.pl" ]] && export WORKDIR="domains/${USERNAME}.ct8.pl/logs" || export WORKDIR="domains/${USERNAME}.serv00.net/logs"
+devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
+FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
+WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 
 read_ip() {
@@ -156,15 +156,15 @@ sleep 2
         cd $WORKDIR
         echo
         get_links
+	cd
 }
 
 uninstall_singbox() {
   reading "\n确定要卸载吗？【y/n】: " choice
     case "$choice" in
        [Yy])
-          bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
+	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
           rm -rf domains serv00.sh serv00keep.sh
-	  rm -rf /usr/home/${USERNAME}/domains/${USERNAME}.serv00.net/public_html/*
 	  crontab -l | grep -v "serv00keep" >rmcron
           crontab rmcron >/dev/null 2>&1
           rm rmcron
@@ -181,10 +181,10 @@ reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，
   case "$choice" in
     [Yy]) 
     bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
+    rm -rf domains serv00.sh serv00keep.sh
     crontab -l | grep -v "serv00keep" >rmcron
     crontab rmcron >/dev/null 2>&1
     rm rmcron
-    rm -rf /usr/home/${USERNAME}/domains/${USERNAME}.serv00.net/public_html/*
     find ~ -type f -exec chmod 644 {} \; 2>/dev/null
     find ~ -type d -exec chmod 755 {} \; 2>/dev/null
     find ~ -type f -exec rm -f {} \; 2>/dev/null
@@ -210,7 +210,7 @@ argo_configure() {
     if [[ "$argo_choice" == "g" || "$argo_choice" == "G" ]]; then
         reading "请输入argo固定隧道域名: " ARGO_DOMAIN
         green "你的argo固定隧道域名为: $ARGO_DOMAIN"
-        reading "请输入argo固定隧道密钥（Json或Token。当你粘贴Token时，必须以ey开头）: " ARGO_AUTH
+        reading "请输入argo固定隧道密钥（当你粘贴Token时，必须以ey开头）: " ARGO_AUTH
         green "你的argo固定隧道密钥为: $ARGO_AUTH"
     else
         green "使用Argo临时隧道"
@@ -423,8 +423,8 @@ fi
 }
 EOF
 
-if [ -e "$(basename ${FILE_MAP[web]})" ]; then
-   echo "$(basename ${FILE_MAP[web]})" > sb.txt
+if [ -e "$(basename "${FILE_MAP[web]}")" ]; then
+   echo "$(basename "${FILE_MAP[web]}")" > sb.txt
    sbb=$(cat sb.txt)
     nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
     sleep 5
@@ -447,8 +447,8 @@ done
 fi
 fi
 
-if [ -e "$(basename ${FILE_MAP[bot]})" ]; then
-   echo "$(basename ${FILE_MAP[bot]})" > ag.txt
+if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
+   echo "$(basename "${FILE_MAP[bot]}")" > ag.txt
    agg=$(cat ag.txt)
     rm -rf boot.log
     if [[ $ARGO_AUTH =~ ^[A-Z0-9a-z=]{120,250}$ ]]; then
@@ -998,7 +998,6 @@ rules:
 EOF
 
 sleep 2
-FILE_PATH="/usr/home/${USERNAME}/domains/${USERNAME}.serv00.net/public_html"
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 echo "$baseurl" > ${FILE_PATH}/${USERNAME}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${USERNAME}_clashmeta.txt
@@ -1107,7 +1106,7 @@ fi
 }
 
 servkeep() {
-green "安装进程保活"
+green "开始安装Cron进程保活"
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
 sed -i '' -e "14s|''|'$UUID'|" serv00keep.sh
 sed -i '' -e "17s|''|'$vless_port'|" serv00keep.sh
@@ -1125,9 +1124,29 @@ check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocal
 else
 check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
 fi
-(crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
+(crontab -l 2>/dev/null; echo "*/10 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
 fi
-green "主进程+Argo进程保活安装完毕，默认每2分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
+green "安装完毕，默认每10分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
+echo
+green "开始安装网页进程保活"
+keep_path="$HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs"
+[ -d "$keep_path" ] || mkdir -p "$keep_path"
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
+sed -i "26s/name/$USERNAME/" "$keep_path"
+devil www del ${USERNAME}.${USERNAME}.serv00.net > /dev/null 2>&1
+devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
+devil www add ${USERNAME}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
+ln -fs /usr/local/bin/node18 ~/bin/node > /dev/null 2>&1
+ln -fs /usr/local/bin/npm18 ~/bin/npm > /dev/null 2>&1
+mkdir -p ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=~/.npm-global/bin:~/bin:$PATH' >> $HOME/.bash_profile && source $HOME/.bash_profile
+rm -rf $HOME/.npmrc > /dev/null 2>&1
+cd "$keep_path"
+npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
+rm $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
+devil www restart ${USERNAME}.${USERNAME}.serv00.net
+green "安装完毕，打开 http://${USERNAME}.${USERNAME}.serv00.net/up 即可保活" && sleep 2
 }
 
 okip(){
@@ -1154,27 +1173,27 @@ okip(){
 #主菜单
 menu() {
    clear
-   echo "========================================================="
+   echo "============================================================"
    purple "修改自Serv00|ct8老王sing-box安装脚本"
    purple "转载请著名出自老王，请勿滥用"
    green "甬哥Github项目  ：github.com/yonggekkk"
    green "甬哥Blogger博客 ：ygkkk.blogspot.com"
    green "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
    green "一键三协议共存：vless-reality、Vmess-ws(Argo)、hysteria2"
-   green "当前脚本版本：V25.1.23  快捷方式：bash serv00.sh"
-   echo "========================================================="
+   green "当前脚本版本：V25.1.27  快捷方式：bash serv00.sh"
+   echo   "============================================================"
    green  "1. 安装sing-box"
-   echo   "---------------------------------------------------------"
+   echo   "------------------------------------------------------------"
    red    "2. 卸载sing-box"
-   echo   "---------------------------------------------------------"
+   echo   "------------------------------------------------------------"
    green  "3. 查看：各节点分享/sing-box与clash-meta订阅链接/CF节点proxyip"
-   echo   "---------------------------------------------------------"
+   echo   "------------------------------------------------------------"
    green  "4. 查看：sing-box与clash-meta配置文件"
-   echo   "---------------------------------------------------------"
+   echo   "------------------------------------------------------------"
    yellow "5. 重置并清理所有服务进程(系统初始化)"
-   echo   "---------------------------------------------------------"
+   echo   "------------------------------------------------------------"
    red    "0. 退出脚本"
-   echo   "========================================================="
+   echo   "============================================================"
 nb=$(echo "$HOSTNAME" | cut -d '.' -f 1 | tr -d 's')
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
 rm -rf $WORKDIR/ip.txt
@@ -1204,7 +1223,7 @@ cat $WORKDIR/ip.txt
 echo
 if [[ -e $WORKDIR/list.txt ]]; then
 green "已安装sing-box"
-ps aux | grep '[c]onfig' > /dev/null && green "主进程运行正常" || yellow "主进程启动中…………2分钟后可再次进入脚本查看"
+ps aux | grep '[c]onfig' > /dev/null && green "主进程运行正常" || yellow "主进程启动中…………1分钟后可再次进入脚本查看"
 if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep [l]ocalhost > /dev/null; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
@@ -1230,10 +1249,11 @@ else
 check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
 fi
 (crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
-purple "Serv00开大招了，把Cron保活重置清空了！但现已修复成功！"
-purple "主进程与Argo进程启动中…………2分钟后可再次进入脚本查看"
+purple "发现Serv00开大招了，Cron保活被重置清空了"
+purple "目前Cron保活已修复成功。打开 http://${USERNAME}.${USERNAME}.serv00.net/up 也可实时保活"
+purple "主进程与Argo进程启动中…………1分钟后可再次进入脚本查看"
 else
-green "Cron保活运行正常"
+green "Cron保活运行正常。打开 http://${USERNAME}.${USERNAME}.serv00.net/up 也可实时保活"
 fi
 else
 red "未安装sing-box，请选择 1 进行安装" 
