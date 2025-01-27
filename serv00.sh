@@ -1146,6 +1146,7 @@ cd "$keep_path"
 npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
 rm $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
 devil www restart ${USERNAME}.${USERNAME}.serv00.net
+rm -rf $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/logs/*
 green "安装完毕，打开 http://${USERNAME}.${USERNAME}.serv00.net/up 即可保活" && sleep 2
 }
 
