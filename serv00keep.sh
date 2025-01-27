@@ -44,7 +44,11 @@ WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 read_ip(){
 nb=$(echo "$HOSTNAME" | cut -d '.' -f 1 | tr -d 's')
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
-rm -rf ip.txt
+rm -rf ip.txt hy2ip.txt
+for ip in "${ym[@]}"; do
+dig @8.8.8.8 +time=2 +short $ip >> hy2ip.txt
+sleep 1  
+done
 for ym in "${ym[@]}"; do
 # 引用frankiejun API
 response=$(curl -s "https://ss.botai.us.kg/api/getip?host=$ym")
@@ -281,7 +285,9 @@ nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
 if [ "$nb" == "14" ]; then
 ytb='"jnn-pa.googleapis.com",'
 fi
-
+hy1p=$(sed -n '1p' hy2ip.txt)
+hy2p=$(sed -n '2p' hy2ip.txt)
+hy3p=$(sed -n '3p' hy2ip.txt)
   cat > config.json << EOF
 {
   "log": {
@@ -293,7 +299,49 @@ fi
     {
        "tag": "hysteria-in",
        "type": "hysteria2",
-       "listen": "$IP",
+       "listen": "$hy1p",
+       "listen_port": $hy2_port,
+       "users": [
+         {
+             "password": "$UUID"
+         }
+     ],
+     "masquerade": "https://www.bing.com",
+     "ignore_client_bandwidth":false,
+     "tls": {
+         "enabled": true,
+         "alpn": [
+             "h3"
+         ],
+         "certificate_path": "cert.pem",
+         "key_path": "private.key"
+        }
+    },
+        {
+       "tag": "hysteria-in",
+       "type": "hysteria2",
+       "listen": "$hy2p",
+       "listen_port": $hy2_port,
+       "users": [
+         {
+             "password": "$UUID"
+         }
+     ],
+     "masquerade": "https://www.bing.com",
+     "ignore_client_bandwidth":false,
+     "tls": {
+         "enabled": true,
+         "alpn": [
+             "h3"
+         ],
+         "certificate_path": "cert.pem",
+         "key_path": "private.key"
+        }
+    },
+        {
+       "tag": "hysteria-in",
+       "type": "hysteria2",
+       "listen": "$hy3p",
        "listen_port": $hy2_port,
        "users": [
          {
