@@ -1280,13 +1280,13 @@ fi
 if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep [u]rl > /dev/null; then
 yellow "当前Argo临时域名暂时不存在，后台会继续生成有效的临时域名，稍后可再次进入脚本查看"
 fi
-if ps aux | grep [t]oken > /dev/null; then
+if ps aux | grep [r]un > /dev/null; then
 argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能失效"
 green "当前Argo固定域名：$argogd $check"
 fi
-if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep [t]oken > /dev/null; then
+if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep [r]un > /dev/null; then
 yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
 green "保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up ，打开一次，即可默认每3分钟自动保活"
