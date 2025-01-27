@@ -1132,7 +1132,7 @@ green "开始安装网页进程保活"
 keep_path="$HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
-sed -i '' "26s/name/$USERNAME/" "$keep_path"
+sed "26s/name/$USERNAME/" "$keep_path" > "$keep_path.tmp" && mv "$keep_path.tmp" "$keep_path"
 devil www del ${USERNAME}.${USERNAME}.serv00.net > /dev/null 2>&1
 devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 devil www add ${USERNAME}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
