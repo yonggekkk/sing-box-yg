@@ -1271,13 +1271,13 @@ echo
 if [[ -e $WORKDIR/list.txt ]]; then
 green "已安装sing-box"
 ps aux | grep '[c]onfig' > /dev/null && green "主进程运行正常" || yellow "主进程启动中…………1分钟后可再次进入脚本查看"
-if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep [l]ocalhost > /dev/null; then
+if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep [u]rl > /dev/null; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
 green "当前Argo临时域名：$argosl  $check"
 fi
-if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep [l]ocalhost > /dev/null; then
+if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep [u]rl > /dev/null; then
 yellow "当前Argo临时域名暂时不存在，后台会继续生成有效的临时域名，稍后可再次进入脚本查看"
 fi
 if ps aux | grep [t]oken > /dev/null; then
