@@ -57,8 +57,6 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 本项目分享订阅节点为本地化生成，不使用节点转换等第三方外链引用，无需担心节点订阅被外链作者查看
 
-目前SSH脚本与github/VPS脚本已同步更新，可以不用在网站面端设置端口，脚本随机生成可用端口，避免无效端口造成节点无法使用
-
 最大特色：刷新订阅链接可自动更新因失效而重置后的Argo临时域名
 
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
@@ -69,10 +67,11 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 [Serv00免费节点最终教程：Serv00不必再登录SSH了，部署保活融为一体，独家支持Github、VPS、软路由多平台多账户通用部署，四大方案总有一款适合你](https://youtu.be/rYeX1iU_iZ0)
 
-### 1、Serv00本地专用一键脚本，快捷方式：```bash serv00.sh```
+### 1、Serv00本地专用一键脚本，支持端口随机生成，网页保活模式。快捷方式：```bash serv00.sh```
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
+
 ### Sing-box-serv00脚本界面预览图（注：仅供围观）
 ![e8e20bb88b3812e88631d8d64d39f02](https://github.com/user-attachments/assets/0e375140-e5cd-46f0-8819-594c655618ba)
 
