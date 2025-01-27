@@ -381,27 +381,6 @@ hy3p=$(sed -n '3p' hy2ip.txt)
          "key_path": "private.key"
         }
     },
-            {
-       "tag": "hysteria-in",
-       "type": "hysteria2",
-       "listen": "$IP",
-       "listen_port": $hy2_port,
-       "users": [
-         {
-             "password": "$UUID"
-         }
-     ],
-     "masquerade": "https://www.bing.com",
-     "ignore_client_bandwidth":false,
-     "tls": {
-         "enabled": true,
-         "alpn": [
-             "h3"
-         ],
-         "certificate_path": "cert.pem",
-         "key_path": "private.key"
-        }
-    },
     {
         "tag": "vless-reality-vesion",
         "type": "vless",
