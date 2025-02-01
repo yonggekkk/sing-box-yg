@@ -19,7 +19,7 @@ function runCustomCommand() {
 setInterval(runCustomCommand, 3 * 60 * 1000); // 3 分钟 = 3 * 60 * 1000 毫秒
 app.get("/up", function (req, res) {
     runCustomCommand();
-    res.type("html").send("<pre>Serv00网页保活启动：Serv00！UP！UP！UP！</pre>");
+    res.type("html").send("<pre>Serv00-name服务器网页保活启动：Serv00-name！UP！UP！UP！</pre>");
 });
 app.use((req, res, next) => {
     if (req.path === '/up') {
