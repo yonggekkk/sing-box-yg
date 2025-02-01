@@ -72,9 +72,8 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
 
-### Sing-box-serv00脚本界面预览图（注：仅供围观）
-![e8e20bb88b3812e88631d8d64d39f02](https://github.com/user-attachments/assets/0e375140-e5cd-46f0-8819-594c655618ba)
-
+### Sing-box-Serv00脚本界面预览图（注：仅供围观）
+![d8b0aa106446ec1cc4ee343fac087df](https://github.com/user-attachments/assets/d2275187-4499-4d4a-83a2-5b15fc042322)
 
 ### 2、Serv00多账号自动部署脚本：serv00.yml（github专用）
 
@@ -101,6 +100,8 @@ curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o 
 ``` #  schedule: ```
 
 ``` #   - cron: '0 */4 * * *' ```
+
+3、方案一与方案二、三不可混用，方案二与三可相互替换
 
 -----------------------------------------------------
 
