@@ -166,9 +166,9 @@ uninstall_singbox() {
        [Yy])
 	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
           rm -rf domains serv00.sh serv00keep.sh
-	  crontab -l | grep -v "serv00keep" >rmcron
-          crontab rmcron >/dev/null 2>&1
-          rm rmcron
+	  #crontab -l | grep -v "serv00keep" >rmcron
+          #crontab rmcron >/dev/null 2>&1
+          #rm rmcron
           clear
           green "已完全卸载"
           ;;
@@ -183,9 +183,9 @@ reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，
     [Yy]) 
     bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
     rm -rf domains serv00.sh serv00keep.sh
-    crontab -l | grep -v "serv00keep" >rmcron
-    crontab rmcron >/dev/null 2>&1
-    rm rmcron
+    #crontab -l | grep -v "serv00keep" >rmcron
+    #crontab rmcron >/dev/null 2>&1
+    #rm rmcron
     find ~ -type f -exec chmod 644 {} \; 2>/dev/null
     find ~ -type d -exec chmod 755 {} \; 2>/dev/null
     find ~ -type f -exec rm -f {} \; 2>/dev/null
@@ -1193,7 +1193,7 @@ npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
 rm $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
 devil www restart ${USERNAME}.${USERNAME}.serv00.net
 rm -rf $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/logs/*
-green "安装完毕，保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up ，打开一次，即可默认每3分钟自动保活" && sleep 2
+green "安装完毕，保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up" && sleep 2
 }
 
 okip(){
@@ -1279,7 +1279,7 @@ checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
 green "当前Argo临时域名：$argosl  $check"
 fi
 if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --u' > /dev/null; then
-yellow "当前Argo临时域名暂时不存在，后台会继续生成有效的临时域名，稍后可再次进入脚本查看"
+yellow "当前Argo临时域名暂时不存在，请刷新一下保活网页，稍后可再次进入脚本查看"
 fi
 if ps aux | grep '[t]unnel --n' > /dev/null; then
 argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
@@ -1290,7 +1290,7 @@ fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
 yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
-green "保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up ，打开一次，即可默认每3分钟自动保活"
+green "保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up"
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
