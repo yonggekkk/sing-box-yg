@@ -1174,14 +1174,14 @@ fi
 #green "安装完毕，默认每10分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
 #echo
 green "开始安装网页进程保活"
-keep_path="$HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs"
+keep_path="$HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "28s/name/$USERNAME/g" "$keep_path"/app.js
 sed -i '' "22s/name/$snb/g" "$keep_path"/app.js
-devil www del ${USERNAME}.${USERNAME}.serv00.net > /dev/null 2>&1
+devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
 devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
-devil www add ${USERNAME}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
+devil www add ${snb}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
 ln -fs /usr/local/bin/node18 ~/bin/node > /dev/null 2>&1
 ln -fs /usr/local/bin/npm18 ~/bin/npm > /dev/null 2>&1
 mkdir -p ~/.npm-global
@@ -1190,10 +1190,10 @@ echo 'export PATH=~/.npm-global/bin:~/bin:$PATH' >> $HOME/.bash_profile && sourc
 rm -rf $HOME/.npmrc > /dev/null 2>&1
 cd "$keep_path"
 npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
-rm $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
-devil www restart ${USERNAME}.${USERNAME}.serv00.net
-rm -rf $HOME/domains/${USERNAME}.${USERNAME}.serv00.net/logs/*
-green "安装完毕，保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up" && sleep 2
+rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
+devil www restart ${snb}.${USERNAME}.serv00.net
+rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
+green "安装完毕，保活网页：http://${snb}.${USERNAME}.serv00.net/up" && sleep 2
 }
 
 okip(){
