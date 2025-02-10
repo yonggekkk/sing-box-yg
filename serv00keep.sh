@@ -49,15 +49,11 @@ for ip in "${ym[@]}"; do
 dig @8.8.8.8 +time=2 +short $ip >> hy2ip.txt
 sleep 1  
 done
-for ym in "${ym[@]}"; do
-# 引用frankiejun API
-response=$(curl -s "https://ss.botai.us.kg/api/getip?host=$ym")
-if [[ -z "$response" ]]; then
-for ip in "${ym[@]}"; do
-dig @8.8.8.8 +time=2 +short $ip >> ip.txt
+for host in "${ym[@]}"; do
+response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.serv0.us.kg/api/getip?host=$host")
+if [[ -z "$response" || "$response" == *unknown* ]]; then
+dig @8.8.8.8 +time=2 +short $host >> ip.txt
 sleep 1  
-done
-break
 else
 echo "$response" | while IFS='|' read -r ip status; do
 if [[ $status == "Accessible" ]]; then
