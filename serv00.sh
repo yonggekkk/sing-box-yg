@@ -1290,7 +1290,7 @@ fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
 yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
-green "保活网页：http://${USERNAME}.${USERNAME}.serv00.net/up"
+green "保活网页：http://${snb}.${USERNAME}.serv00.net/up"
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
