@@ -1254,7 +1254,8 @@ response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.botai.us.kg/api
 if [[ -z "$response" || "$response" == *unknown* ]]; then
 for ip in "${ym[@]}"; do
 dig @8.8.8.8 +time=2 +short $ip >> $WORKDIR/ip.txt
-sleep 1  
+sleep 1 
+break
 done
 else
 echo "$response" | while IFS='|' read -r ip status; do
