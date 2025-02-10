@@ -1249,11 +1249,9 @@ for ip in "${ym[@]}"; do
 dig @8.8.8.8 +time=2 +short $ip >> $WORKDIR/hy2ip.txt
 sleep 1  
 done
-for ym in "${ym[@]}"; do
+#for ym in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.botai.us.kg/api/getip?host=$ym")
 if [[ -z "$response" || "$response" == *unknown* ]]; then
-nb=$(echo "$HOSTNAME" | cut -d '.' -f 1 | tr -d 's')
-ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
 for ip in "${ym[@]}"; do
 dig @8.8.8.8 +time=2 +short $ip >> $WORKDIR/ip.txt
 sleep 1 
@@ -1267,7 +1265,7 @@ echo "$ip: 被墙 (Argo与CDN回源节点、proxyip依旧有效)"  >> $WORKDIR/i
 fi	
 done
 fi
-done
+#done
 green "Serv00服务器名称：$snb"
 green "当前可选择的IP如下："
 cat $WORKDIR/ip.txt
