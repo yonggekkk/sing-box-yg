@@ -25,7 +25,7 @@ app.use((req, res, next) => {
     if (req.path === '/up') {
         return next();
     }
-    res.status(404).send('把浏览器地址改为：http://name.name.serv00.net/up 这样才能启动Serv00网页保活');
+    res.status(404).send('把浏览器地址改为：http://where.name.serv00.net/up 这样才能启动Serv00网页保活');
 });
 app.listen(3000, () => {
     console.log("服务器已启动，监听端口 3000");
