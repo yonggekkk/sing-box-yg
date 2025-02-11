@@ -1242,17 +1242,21 @@ if [[ -e $WORKDIR/config.json ]]; then
 }
 
 resservsb(){
+if [[ -e $WORKDIR/config.json ]]; then
 cd $WORKDIR
 ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 sbb=$(cat sb.txt)
 nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
 sleep 3
 if pgrep -x "$sbb" > /dev/null; then
-    green "$sbb 主进程重启成功"
+green "$sbb 主进程重启成功"
 else
-    red "$sbb 主进程重启失败"
+red "$sbb 主进程重启失败"
 fi
 cd
+else
+red "未安装脚本，请选择1进行安装" && exit
+fi
 }
 #主菜单
 menu() {
