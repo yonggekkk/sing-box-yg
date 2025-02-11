@@ -1248,9 +1248,9 @@ sbb=$(cat sb.txt)
 nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
 sleep 3
 if pgrep -x "$sbb" > /dev/null; then
-    green "$sbb 主进程已启动"
+    green "$sbb 主进程重启成功"
 else
-    red "$sbb 主进程启动失败"
+    red "$sbb 主进程重启失败"
 fi
 cd
 }
