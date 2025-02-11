@@ -65,7 +65,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 [Serv00免费节点最终教程：Serv00不必再登录SSH了，部署保活融为一体，独家支持Github、VPS、软路由多平台多账户通用部署，四大方案总有一款适合你](https://youtu.be/rYeX1iU_iZ0)
 
-### 方案一、Serv00本地专用一键脚本，快捷方式：```bash serv00.sh```
+### 方案一、serv00-sb-yg本地专用一键脚本，快捷方式：```sb```
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
