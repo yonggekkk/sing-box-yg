@@ -65,12 +65,12 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 [Serv00免费节点最终教程：Serv00不必再登录SSH了，部署保活融为一体，独家支持Github、VPS、软路由多平台多账户通用部署，四大方案总有一款适合你](https://youtu.be/rYeX1iU_iZ0)
 
-### 方案一、serv00-sb-yg本地专用一键脚本，快捷方式：```sb```
+### 方案一、Serv00-sb-yg本地专用一键脚本，快捷方式：```sb```
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
 
-### Sing-box-Serv00脚本界面预览图（注：仅供围观）
+### Serv00-sb-yg脚本界面预览图（注：仅供围观）
 ![d8b0aa106446ec1cc4ee343fac087df](https://github.com/user-attachments/assets/d2275187-4499-4d4a-83a2-5b15fc042322)
 
 ### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用）
