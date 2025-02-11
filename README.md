@@ -71,7 +71,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 ```
 
 ### Serv00-sb-yg脚本界面预览图（注：仅供围观）
-![d8b0aa106446ec1cc4ee343fac087df](https://github.com/user-attachments/assets/d2275187-4499-4d4a-83a2-5b15fc042322)
+![551527748262aad71f58327be9fafa3](https://github.com/user-attachments/assets/26dbda95-9dd3-4244-b9ac-fa5da040734e)
+
 
 ### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用）
 
