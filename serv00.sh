@@ -312,7 +312,7 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
 
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
 if [[ "$nb" =~ (14|15|16) ]]; then
-ytb='"jnn-pa.googleapis.com","gemini.google.com",'
+ytb='"jnn-pa.googleapis.com",'
 fi
 hy1p=$(sed -n '1p' hy2ip.txt)
 hy2p=$(sed -n '2p' hy2ip.txt)
@@ -460,12 +460,25 @@ hy3p=$(sed -n '3p' hy2ip.txt)
     }
   ],
    "route": {
+       "rule_set": [
+      {
+        "tag": "geosite-google-gemini",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google-gemini.srs",
+        "download_detour": "direct"
+      }
+    ],
     "rules": [
     {
      "domain": [
      $ytb
      "oh.my.god"
       ],
+     "outbound": "wg"
+     },
+     {
+     "rule_set":"geosite-google-gemini",
      "outbound": "wg"
     }
     ],
