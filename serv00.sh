@@ -1313,7 +1313,7 @@ sleep 1
 done
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.serv0.us.kg/api/getip?host=$host")
-if [[ -z "$response" || "$response" == *unknown* ]]; then
+if [[ -z "$response" || "$response" == *unknown* || "$response" == *not* || "$response" == *error* ]]; then
 dig @8.8.8.8 +time=2 +short $host >> $WORKDIR/ip.txt
 sleep 1 
 else
