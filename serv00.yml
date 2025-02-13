@@ -58,7 +58,7 @@ jobs:
                  echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
                  echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
                  echo "自动远程部署并保活Serv00三合一协议脚本【Github】"
-                 echo "版本：V25.1.22"
+                 echo "版本：V25.2.13"
                  echo "*****************************************************"
                  echo "*****************************************************"
               count=0  
