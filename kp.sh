@@ -87,7 +87,7 @@ echo "*****************************************************"
             echo "🎉恭喜！✅检测到所有进程正常运行中 "
             echo "配置显示如下："
           sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" \
-              "cat domains/\$(whoami | tr '[:upper:]' '[:lower:]').serv00.net/logs/list.txt; \
+              "cat domains/$(whoami | tr '[:upper:]' '[:lower:]').serv00.net/logs/list.txt; \
               echo '===================================================='" 
             fi
            else
