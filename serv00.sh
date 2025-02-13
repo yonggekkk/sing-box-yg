@@ -1069,8 +1069,13 @@ cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
 V2rayN_LINK="https://${USERNAME}.serv00.net/${UUID}_v2sub.txt"
 Clashmeta_LINK="https://${USERNAME}.serv00.net/${UUID}_clashmeta.txt"
 Singbox_LINK="https://${USERNAME}.serv00.net/${UUID}_singbox.txt"
+allip=$(cat hy2ip.txt)
 cat > list.txt <<EOF
 =================================================================================================
+
+当前客户端正在使用的IP：$IP ,如默认节点IP被墙，可在客户端地址更换以下其他IP
+$allip
+-------------------------------------------------------------------------------------------------
 
 一、Vless-reality分享链接如下：
 $vl_link
@@ -1088,7 +1093,7 @@ CF节点落地到CF网站的地区为：$IP所在地区
 CF节点的TLS必须开启
 CF节点落地到非CF网站的地区为：$IP所在地区
 
-注：如果serv00的IP被墙，proxyip依旧有效，但用于客户端地址与端口的非标端口反代IP将不可用
+注：如果Serv00的IP被墙，proxyip依旧有效，但用于客户端地址与端口的非标端口反代IP将不可用
 注：可能有大佬会扫Serv00的反代IP作为其共享IP库或者出售，请慎重将reality域名设置为CF域名
 -------------------------------------------------------------------------------------------------
 
