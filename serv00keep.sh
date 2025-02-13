@@ -1070,12 +1070,12 @@ EOF
 
 sleep 2
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
-echo "$baseurl" > ${FILE_PATH}/${USERNAME}_v2sub.txt
-cat clash_meta.yaml > ${FILE_PATH}/${USERNAME}_clashmeta.txt
-cat sing_box.json > ${FILE_PATH}/${USERNAME}_singbox.txt
-V2rayN_LINK="https://${USERNAME}.serv00.net/${USERNAME}_v2sub.txt"
-Clashmeta_LINK="https://${USERNAME}.serv00.net/${USERNAME}_clashmeta.txt"
-Singbox_LINK="https://${USERNAME}.serv00.net/${USERNAME}_singbox.txt"
+echo "$baseurl" > ${FILE_PATH}/${UUID}_v2sub.txt
+cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
+cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
+V2rayN_LINK="https://${USERNAME}.serv00.net/${UUID}_v2sub.txt"
+Clashmeta_LINK="https://${USERNAME}.serv00.net/${UUID}_clashmeta.txt"
+Singbox_LINK="https://${USERNAME}.serv00.net/${UUID}_singbox.txt"
 cat > list.txt <<EOF
 =================================================================================================
 
