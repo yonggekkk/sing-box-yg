@@ -31,7 +31,7 @@ jobs:
           if [[ "$response" == *"网页保活启动"* ]]; then
             echo "🎉恭喜！$url ✅运行正常，成功拉起一次保活"
             else
-            echo "💥杯具！$url ❌运行失败，⚠️请检查所填保活网址是否正确"
+            echo "💥杯具！$url ❌运行失败，⚠️保活网址是否正确或者Serv00炸了"
           fi
         done
         wait
