@@ -1325,7 +1325,7 @@ green "Serv00服务器名称：$snb"
 green "当前可选择的IP如下："
 cat $WORKDIR/ip.txt
 if [[ -e $WORKDIR/config.json ]]; then
-echo "如默认IP的节点被墙，可在客户端上随时更换以上任意一个未被墙的IP"
+echo "如默认节点IP被墙，可在客户端地址更换以上任意一个显示可用的IP"
 fi
 echo
 insV=$(cat $WORKDIR/v 2>/dev/null)
