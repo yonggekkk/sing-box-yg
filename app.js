@@ -49,7 +49,7 @@ app.get("/list/key", (req, res) => {
     });
 });
 app.use((req, res) => {
-    res.status(404).send('浏览器地址：http://where.name.serv00.net  三种路径功能：/up是保活，/re是重启，/list/key是节点及订阅信息');
+    res.status(404).send('浏览器地址：http://where.name.serv00.net  三种路径功能：/up是保活，/re是重启，/list/你的uuid 是节点及订阅信息');
 });
 setInterval(runCustomCommand, 3 * 60 * 1000);
 app.listen(3000, () => {
