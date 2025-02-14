@@ -1203,7 +1203,6 @@ keep_path="$HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "37s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "52s/key/$UUID/g" "$keep_path"/app.js
 sed -i '' "52s/name/$USERNAME/g" "$keep_path"/app.js
 sed -i '' "52s/where/$snb/g" "$keep_path"/app.js
 devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
