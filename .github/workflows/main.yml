@@ -15,7 +15,7 @@ jobs:
 
     - name: Fetch URLs in parallel
       # secrets设置，变量名称：http
-      # 变量值(保活网址格式)：http://保活网址,http://保活网址,http://…………
+      # 变量值(多个保活网页之间用,分隔)：http://保活网址1,http://保活网址2,http://…………
       run: |
         IFS=$',，' read -r -a http <<< "${{ secrets.http }}"
          echo "*****************************************************"
