@@ -1197,13 +1197,15 @@ fi
 #fi
 #green "安装完毕，默认每10分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
 #echo
-green "开始安装网页进程保活"
+green "开始安装多功能主页，请稍等……"
 keep_path="$HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
-sed -i '' "28s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "28s/where/$snb/g" "$keep_path"/app.js
-sed -i '' "22s/name/$snb/g" "$keep_path"/app.js
+sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
+sed -i '' "37s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "52s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "52s/name/$USERNAME/g" "$keep_path"/app.js
+sed -i '' "52s/where/$snb/g" "$keep_path"/app.js
 devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
 devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 devil www add ${snb}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
@@ -1218,7 +1220,7 @@ npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
 rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
 devil www restart ${snb}.${USERNAME}.serv00.net
 rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
-green "安装完毕，保活网页：http://${snb}.${USERNAME}.serv00.net/up" && sleep 2
+green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.serv00.net" && sleep 2
 }
 
 okip(){
@@ -1363,7 +1365,7 @@ fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
 yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
-green "保活网页：http://${snb}.${USERNAME}.serv00.net/up"
+green "请在浏览器输入多功能主页地址：http://${snb}.${USERNAME}.serv00.net"
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
