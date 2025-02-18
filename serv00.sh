@@ -1219,6 +1219,7 @@ npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
 rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
 devil www restart ${snb}.${USERNAME}.serv00.net
 rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
+curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.serv00.net" && sleep 2
 }
 
@@ -1337,6 +1338,7 @@ echo
 insV=$(cat $WORKDIR/v 2>/dev/null)
 latestV=$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1)
 if [ -f $WORKDIR/v ]; then
+curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 if [ "$insV" = "$latestV" ]; then
 echo -e "当前 Serv00-sb-yg 脚本最新版：${purple}${insV}${re} (已安装)"
 else
