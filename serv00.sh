@@ -53,6 +53,21 @@ read_reym() {
 	green "你的reality域名为: $reym"
 }
 
+resallport(){
+portlist=$(devil port list | grep -E '^[0-9]+[[:space:]]+[a-zA-Z]+' | sed 's/^[[:space:]]*//')
+if [[ -z "$portlist" ]]; then
+yellow "无端口"
+else
+while read -r line; do
+port=$(echo "$line" | awk '{print $1}')
+port_type=$(echo "$line" | awk '{print $2}')
+yellow "删除端口 $port ($port_type)"
+devil port del "$port_type" "$port"
+done <<< "$portlist"
+fi
+check_port
+}
+
 check_port () {
 port_list=$(devil port list)
 tcp_ports=$(echo "$port_list" | grep -c "tcp")
@@ -112,6 +127,7 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
     green "端口已调整完成,将断开ssh连接,请重新连接shh重新执行脚本"
     devil binexec on >/dev/null 2>&1
     kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
+    sleep 2
 else
     tcp_ports=$(echo "$port_list" | awk '/tcp/ {print $1}')
     tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
@@ -121,21 +137,18 @@ else
     purple "当前TCP端口: $tcp_port1 和 $tcp_port2"
     purple "当前UDP端口: $udp_port"
 fi
-
 export vless_port=$tcp_port1
 export vmess_port=$tcp_port2
 export hy2_port=$udp_port
 green "你的vless-reality端口: $vless_port"
 green "你的vmess-ws端口(设置Argo固定域名端口): $vmess_port"
 green "你的hysteria2端口: $hy2_port"
-sleep 2
 }
 
 install_singbox() {
 if [[ -e $WORKDIR/list.txt ]]; then
 yellow "已安装sing-box，请先选择2卸载，再执行安装" && exit
 fi
-yellow "为确保节点可用性，建议在Serv00网页不设置端口，脚本会随机生成有效端口"
 sleep 2
         cd $WORKDIR
 	echo
@@ -206,10 +219,10 @@ reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，
 # Generating argo Config
 argo_configure() {
   while true; do
-    yellow "方式一：Argo临时隧道 (无需域名，推荐)"
-    yellow "方式二：Argo固定隧道 (需要域名，需要CF设置提取Token)"
+    yellow "方式一：Argo临时隧道 (无需域名，推荐)：输入回车"
+    yellow "方式二：Argo固定隧道 (需要域名，需要CF设置提取Token)：输入g"
     echo -e "${red}注意：${purple}Argo固定隧道使用Token时，需要在cloudflare后台设置隧道端口，该端口必须与vmess-ws的tcp端口 $vmess_port 一致)${re}"
-    reading "输入 g 表示使用Argo固定隧道，回车跳过表示使用Argo临时隧道 【请选择 g 或者 回车】: " argo_choice
+    reading "【请选择 g 或者 回车】: " argo_choice
     if [[ "$argo_choice" != "g" && "$argo_choice" != "G" && -n "$argo_choice" ]]; then
         red "无效的选择，请输入 g 或回车"
         continue
@@ -1278,12 +1291,10 @@ else
 red "未安装脚本，请选择1进行安装" && exit
 fi
 }
-#主菜单
+
 menu() {
    clear
    echo "============================================================"
-   purple "修改自Serv00老王sing-box安装脚本"
-   purple "转载请著名出自老王，请勿滥用"
    green "甬哥Github项目  ：github.com/yonggekkk"
    green "甬哥Blogger博客 ：ygkkk.blogspot.com"
    green "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
@@ -1294,15 +1305,17 @@ menu() {
    echo   "------------------------------------------------------------"
    red    "2. 卸载删除 Serv00-sb-yg"
    echo   "------------------------------------------------------------"
-   green  "3. 重启 Serv00-sb-yg 主程序"
+   green  "3. 重启主程序"
    echo   "------------------------------------------------------------"
-   green  "4. 更新 Serv00-sb-yg 脚本"
+   green  "4. 更新脚本"
    echo   "------------------------------------------------------------"
    green  "5. 查看各节点分享/sing-box与clash订阅链接/CF节点proxyip"
    echo   "------------------------------------------------------------"
    green  "6. 查看sing-box与clash配置文件"
    echo   "------------------------------------------------------------"
-   yellow "7. 重置并清理所有服务进程(系统初始化)"
+   yellow "7. 删除所有端口并随机生成新端口"
+   echo   "------------------------------------------------------------"
+   yellow "8. 重置并清理所有服务进程(系统初始化)"
    echo   "------------------------------------------------------------"
    red    "0. 退出脚本"
    echo   "============================================================"
@@ -1333,6 +1346,14 @@ green "当前可选择的IP如下："
 cat $WORKDIR/ip.txt
 if [[ -e $WORKDIR/config.json ]]; then
 echo "如默认节点IP被墙，可在客户端地址更换以上任意一个显示可用的IP"
+fi
+echo
+portlist=$(devil port list | grep -E '^[0-9]+[[:space:]]+[a-zA-Z]+' | sed 's/^[[:space:]]*//')
+if [[ -n $portlist ]]; then
+green "已设置的端口如下："
+echo -e "$portlist"
+else
+yellow "未设置端口！请先选择 7 随机生成端口，再选择 1 安装脚本"
 fi
 echo
 insV=$(cat $WORKDIR/v 2>/dev/null)
@@ -1382,11 +1403,11 @@ green "请在浏览器输入多功能主页地址：http://${snb}.${USERNAME}.se
 #fi
 else
 echo -e "当前 Serv00-sb-yg 脚本版本号：${purple}${latestV}${re}"
-yellow "未安装 Serv00-sb-yg 脚本！请先选择 1 安装"
+yellow "未安装 Serv00-sb-yg 脚本！请选择 1 安装"
 fi
 #curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh -o serv00.sh && chmod +x serv00.sh
    echo -e "========================================================="
-   reading "请输入选择【0-7】: " choice
+   reading "请输入选择【0-8】: " choice
    echo
     case "${choice}" in
         1) install_singbox ;;
@@ -1395,9 +1416,10 @@ fi
 	4) fastrun && green "脚本已更新成功" && sleep 2 && sb ;; 
         5) showlist ;;
 	6) showsbclash ;;
-        7) kill_all_tasks ;;
+        7) resallport ;;
+        8) kill_all_tasks ;;
 	0) exit 0 ;;
-        *) red "无效的选项，请输入 0 到 7" ;;
+        *) red "无效的选项，请输入 0 到 8" ;;
     esac
 }
 menu
