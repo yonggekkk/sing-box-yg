@@ -20,9 +20,25 @@ export hy2_port=${hy2_port:-''}
 export IP=${IP:-''}                  
 export reym=${reym:-''}
 export reset=${reset:-''}
+export resport=${resport:-''}
 
 USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
+if [[ "$resport" =~ ^[Yy]$ ]]; then
+portlist=$(devil port list | grep -E '^[0-9]+[[:space:]]+[a-zA-Z]+' | sed 's/^[[:space:]]*//')
+if [[ -z "$portlist" ]]; then
+yellow "无端口"
+else
+while read -r line; do
+port=$(echo "$line" | awk '{print $1}')
+port_type=$(echo "$line" | awk '{print $2}')
+yellow "删除端口 $port ($port_type)"
+devil port del "$port_type" "$port"
+done <<< "$portlist"
+fi
+check_port
+fi
+
 if [[ "$reset" =~ ^[Yy]$ ]]; then
 #crontab -l | grep -v "serv00keep" >rmcron
 #crontab rmcron >/dev/null 2>&1
@@ -131,6 +147,11 @@ if [[ -z "$reym" ]]; then
 reym=$USERNAME.serv00.net
 fi
 if [[ -z "$vless_port" ]] || [[ -z "$vmess_port" ]] || [[ -z "$hy2_port" ]]; then
+check_port
+fi
+}
+
+check_port(){
 port_list=$(devil port list)
 tcp_ports=$(echo "$port_list" | grep -c "tcp")
 udp_ports=$(echo "$port_list" | grep -c "udp")
@@ -203,7 +224,6 @@ fi
 export vless_port=$tcp_port1
 export vmess_port=$tcp_port2
 export hy2_port=$udp_port
-fi
 }
 
 download_and_run_singbox() {
