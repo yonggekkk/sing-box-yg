@@ -1322,10 +1322,9 @@ menu() {
 nb=$(echo "$HOSTNAME" | cut -d '.' -f 1 | tr -d 's')
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
 rm -rf $WORKDIR/ip.txt $WORKDIR/hy2ip.txt
-for ip in "${ym[@]}"; do
-dig @8.8.8.8 +time=5 +short $ip >> $WORKDIR/hy2ip.txt
-sleep 1  
-done
+dig @8.8.8.8 +time=5 +short "web$nb.serv00.com" >> $WORKDIR/hy2ip.txt
+dig @8.8.8.8 +time=5 +short "$HOSTNAME" >> $WORKDIR/hy2ip.txt
+dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com" >> $WORKDIR/hy2ip.txt
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.serv0.us.kg/api/getip?host=$host")
 if [[ "$response" =~ ^$|unknown|not|error ]]; then
