@@ -16,6 +16,7 @@ devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
+curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 
 read_ip() {
 cat ip.txt
@@ -1358,7 +1359,6 @@ echo
 insV=$(cat $WORKDIR/v 2>/dev/null)
 latestV=$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1)
 if [ -f $WORKDIR/v ]; then
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 if [ "$insV" = "$latestV" ]; then
 echo -e "当前 Serv00-sb-yg 脚本最新版：${purple}${insV}${re} (已安装)"
 else
