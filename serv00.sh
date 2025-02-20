@@ -1349,6 +1349,7 @@ done
 fi
 done
 green "Serv00服务器名称：$snb"
+echo
 green "当前可选择的IP如下："
 cat $WORKDIR/ip.txt
 if [[ -e $WORKDIR/config.json ]]; then
@@ -1379,21 +1380,22 @@ if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log"
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
-green "当前Argo临时域名：$argosl  $check"
+green "Argo临时域名：$argosl  $check"
 fi
 if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --u' > /dev/null; then
-yellow "当前Argo临时域名暂时不存在，请刷新一下保活网页，稍后可再次进入脚本查看"
+yellow "Argo临时域名暂时不存在，请刷新一下保活网页，稍后可再次进入脚本查看"
 fi
 if ps aux | grep '[t]unnel --n' > /dev/null; then
 argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能失效"
-green "当前Argo固定域名：$argogd $check"
+green "Argo固定域名：$argogd $check"
 fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
-yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
+yellow "Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
-green "浏览器输入多功能主页：http://${snb}.${USERNAME}.serv00.net ，支持网页保活、网页重启、网页查节点功能"
+green "多功能主页如下，支持网页保活、网页重启、网页节点查询"
+purple "http://${snb}.${USERNAME}.serv00.net"
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
