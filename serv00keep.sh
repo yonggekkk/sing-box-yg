@@ -24,6 +24,7 @@ export resport=${resport:-''}
 
 USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
+snb=$(hostname | awk -F '.' '{print $1}')
 if [[ "$reset" =~ ^[Yy]$ ]]; then
 #crontab -l | grep -v "serv00keep" >rmcron
 #crontab rmcron >/dev/null 2>&1
@@ -1172,7 +1173,7 @@ done <<< "$portlist"
 fi
 check_port
 fi
-
+rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
 install_singbox() {
 cd $WORKDIR
 read_ip
