@@ -524,7 +524,6 @@ for ((i=1; i<=5; i++)); do
 done
 fi
 fi
-
 if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
    echo "$(basename "${FILE_MAP[bot]}")" > ag.txt
    agg=$(cat ag.txt)
@@ -537,25 +536,33 @@ if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
     else
      #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
      args="tunnel --url http://localhost:$vmess_port --no-autoupdate --logfile boot.log --loglevel info"
-    fi
+    fi    
     nohup ./"$agg" $args >/dev/null 2>&1 &
     sleep 10
 if pgrep -x "$agg" > /dev/null; then
     green "$agg Argo进程已启动"
 else
-    red "$agg Argo进程未启动, 重启中..."
+for ((i=1; i<=5; i++)); do
+    red "$agg Argo进程未启动, 重启中...(尝试次数: $i)"
     pkill -x "$agg"
     nohup ./"$agg" "${args}" >/dev/null 2>&1 &
     sleep 5
-    purple "$agg Argo进程已重启"
+    if pgrep -x "$agg" > /dev/null; then
+        purple "$agg Argo进程已成功重启"
+        break
+    fi
+    if [[ $i -eq 5 ]]; then
+        red "$agg Argo进程重启失败"
+    fi
+done
 fi
 fi
 sleep 2
 if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
 red "主进程未启动，根据以下情况一一排查"
 yellow "1、网页端权限是否开启"
-yellow "2、网页后台删除所有端口，让脚本自动生成随机可用端口"
-yellow "3、选择5重置"
+yellow "2、选择7重置端口，自动生成随机可用端口（重要）"
+yellow "3、选择8重置"
 yellow "4、当前Serv00服务器炸了？等会再试"
 red "5、以上都试了，哥直接躺平，交给进程保活，过会再来看"
 sleep 6
