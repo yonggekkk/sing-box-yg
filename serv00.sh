@@ -1086,7 +1086,8 @@ allip=$(cat hy2ip.txt)
 cat > list.txt <<EOF
 =================================================================================================
 
-当前客户端正在使用的IP：$IP ,如默认节点IP被墙，可在客户端地址更换以下其他IP
+当前客户端正在使用的IP：$IP
+如默认节点IP被墙，可在客户端地址更换以下其他IP
 $allip
 -------------------------------------------------------------------------------------------------
 
@@ -1385,7 +1386,7 @@ fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
 yellow "当前Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
-green "请在浏览器输入多功能主页地址：http://${snb}.${USERNAME}.serv00.net"
+green "浏览器输入多功能主页：http://${snb}.${USERNAME}.serv00.net ，支持网页保活、网页重启、网页查节点功能"
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
