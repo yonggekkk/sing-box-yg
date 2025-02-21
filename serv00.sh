@@ -16,7 +16,7 @@ devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+#curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 
 read_ip() {
 cat ip.txt
@@ -477,10 +477,10 @@ hy3p=$(sed -n '3p' hy2ip.txt)
    "route": {
        "rule_set": [
       {
-        "tag": "geosite-google-gemini",
+        "tag": "google-gemini",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google-gemini.srs",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
         "download_detour": "direct"
       }
     ],
@@ -493,7 +493,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
      "outbound": "wg"
      },
      {
-     "rule_set":"geosite-google-gemini",
+     "rule_set":"google-gemini",
      "outbound": "wg"
     }
     ],
@@ -1241,7 +1241,7 @@ cd "$keep_path"
 npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
 rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
 devil www restart ${snb}.${USERNAME}.serv00.net
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+#curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.serv00.net" && sleep 2
 }
 
