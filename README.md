@@ -1,6 +1,6 @@
 # Sing-box两大脚本
 ## 一、Sing-box-yg精装桶一键四协议共存脚本（VPS专用）
-## 二、Serv00多平台一键三协议共存脚本（Serv00专用）
+## 二、Serv00-sb-yg多平台一键三协议共存脚本（Serv00专用）
 
 ### 交流平台：[甬哥博客地址](https://ygkkk.blogspot.com)、[甬哥YouTube频道](https://www.youtube.com/@ygkkk)、[甬哥TG电报群组](https://t.me/+jZHc6-A-1QQ5ZGVl)、[甬哥TG电报频道](https://t.me/+DkC9ZZUgEFQzMTZl)
 --------------------------------------------------------------
