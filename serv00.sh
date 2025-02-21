@@ -468,10 +468,6 @@ hy3p=$(sed -n '3p' hy2ip.txt)
     {
       "type": "direct",
       "tag": "direct"
-    },
-    {
-      "type": "block",
-      "tag": "block"
     }
   ],
    "route": {
