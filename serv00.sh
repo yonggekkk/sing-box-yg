@@ -42,9 +42,9 @@ read_uuid() {
 }
 
 read_reym() {
-        yellow "方式一：回车使用CF域名，支持proxyip+非标端口反代ip功能 (推荐)"
-	yellow "方式二：输入 s 表示使用Serv00自带域名，不支持proxyip功能 (推荐)"
-        yellow "方式三：支持其他域名，注意要符合reality域名规则"
+        yellow "方式一：(推荐)使用CF域名，支持proxyip+非标端口反代ip功能：输入回车"
+	yellow "方式二：(推荐)使用Serv00自带域名，不支持proxyip功能：输入s"
+        yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
         reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
         if [[ -z "$reym" ]]; then
            reym=www.speedtest.net
@@ -221,8 +221,8 @@ reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，
 # Generating argo Config
 argo_configure() {
   while true; do
-    yellow "方式一：Argo临时隧道 (无需域名，推荐)：输入回车"
-    yellow "方式二：Argo固定隧道 (需要域名，需要CF设置提取Token)：输入g"
+    yellow "方式一：(推荐)无需域名的Argo临时隧道：输入回车"
+    yellow "方式二：需要域名的Argo固定隧道(需要CF设置提取Token)：输入g"
     echo -e "${red}注意：${purple}Argo固定隧道使用Token时，需要在cloudflare后台设置隧道端口，该端口必须与vmess-ws的tcp端口 $vmess_port 一致)${re}"
     reading "【请选择 g 或者 回车】: " argo_choice
     if [[ "$argo_choice" != "g" && "$argo_choice" != "G" && -n "$argo_choice" ]]; then
