@@ -1349,7 +1349,7 @@ fi
 done
 fi
 done
-curl --max-time 5 -sL ip.sb >/dev/null 2>&1 && state="正常可用" || state="可能宕机了"
+curl --max-time 5 -sL ip.sb >/dev/null 2>&1 && state="正常可用" || state="可能宕机了，慢慢等官方修复吧"
 green "Serv00服务器名称及状态：${snb} ${state}"
 echo
 green "当前可选择的IP如下："
