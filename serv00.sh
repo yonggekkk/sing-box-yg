@@ -553,7 +553,7 @@ for ((i=1; i<=5; i++)); do
         break
     fi
     if [[ $i -eq 5 ]]; then
-        red "$agg Argo进程重启失败"
+        red "$agg Argo进程重启失败，Argo节点暂不可用(保活过程中会自动恢复)，其他节点依旧可用"
     fi
 done
 fi
@@ -587,7 +587,7 @@ get_argodomain() {
       sleep 2
     done  
     if [ -z ${argodomain} ]; then
-    argodomain="Argo临时域名暂时获取失败，Argo节点暂不可用，其他节点依旧可用"
+    argodomain="Argo临时域名暂时获取失败，Argo节点暂不可用(保活过程中会自动恢复)，其他节点依旧可用"
     fi
     echo "$argodomain"
   fi
@@ -1384,7 +1384,7 @@ checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
 green "Argo临时域名：$argosl  $check"
 fi
 if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --u' > /dev/null; then
-yellow "Argo临时域名暂时不存在，请刷新一下保活网页，稍后可再次进入脚本查看"
+yellow "Argo临时域名暂时不存在，保活过程中会自动恢复"
 fi
 if ps aux | grep '[t]unnel --n' > /dev/null; then
 argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
@@ -1395,6 +1395,7 @@ fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
 yellow "Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
 fi
+echo
 green "多功能主页如下，支持网页保活、网页重启、网页节点查询"
 purple "http://${snb}.${USERNAME}.serv00.net"
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
