@@ -1376,7 +1376,7 @@ echo -e "检测到最新 Serv00-sb-yg 脚本版本号：${yellow}${latestV}${re}
 echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion)${re}"
 fi
 echo -e "========================================================="
-ps aux | grep '[r]un -c con' > /dev/null && green "主进程运行正常" || yellow "主进程未启动…………请刷新一下保活网页"
+ps aux | grep '[r]un -c con' > /dev/null && green "主进程运行正常" || yellow "主进程启动失败，请检测节点是否可用"
 echo
 if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep '[t]unnel --u' > /dev/null; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
@@ -1394,7 +1394,7 @@ checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argo
 green "Argo固定域名：$argogd $check"
 fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
-yellow "Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启用失败，请检查相关参数是否输入有误"
+yellow "Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启动失败，请检查相关参数是否输入有误"
 fi
 echo
 green "多功能主页如下，支持网页保活、网页重启、网页节点查询"
