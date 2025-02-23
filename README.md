@@ -74,8 +74,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 ```
 
 ### Serv00-sb-yg脚本界面预览图（注：仅供围观）
-![551527748262aad71f58327be9fafa3](https://github.com/user-attachments/assets/26dbda95-9dd3-4244-b9ac-fa5da040734e)
 
+待更新
 
 ### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用）
 
@@ -98,7 +98,6 @@ curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o 
 1、serv00.yml与kp.sh都为"强制保活脚本"，就算Serv00清空你服务器上所有文件，只要让你连接成功，就会自动安装脚本保活，保持不死状态
 
 2、方案一与方案二、三不可混用，方案二与三可相互无缝替换
-
 
 
 -----------------------------------------------------
