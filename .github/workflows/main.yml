@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set environment variable
-      run: echo "URLS=${{ secrets.http }}" >> $GITHUB_ENV
+      run: echo "url=${{ secrets.http }}" >> $GITHUB_ENV
 
     - name: Fetch URLs in parallel
       # secrets设置，变量名称：http
