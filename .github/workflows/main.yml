@@ -2,8 +2,8 @@ name: Parallel URL Fetch
 
 on:
   #如要使用定时运行，请把下面两行开头的#符号删除
-  schedule:
-  - cron: '*/10 * * * *' # 每10分钟执行一次（公开库每月2000分钟运行时长，每天64分钟）
+  #schedule:
+  #- cron: '*/10 * * * *' # 每10分钟执行一次（公开库每月2000分钟运行时长，每天64分钟）
   workflow_dispatch: 
 
 jobs:
