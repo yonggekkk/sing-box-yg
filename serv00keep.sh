@@ -1175,7 +1175,6 @@ fi
 check_port
 fi
 rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
-rm -rf $HOME/domains/${USERNAME}.serv00.net/logs/access/*
 install_singbox() {
 cd $WORKDIR
 read_ip
