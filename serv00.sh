@@ -1373,7 +1373,12 @@ echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-bo
 fi
 echo -e "========================================================="
 showuuid=$(jq -r '.inbounds[0].users[0].password' $WORKDIR/config.json 2>/dev/null)
-ps aux | grep '[r]un -c con' > /dev/null && green "Sing-box主进程运行正常 UUID：$showuuid" || yellow "Sing-box主进程启动失败，请检测节点是否可用"
+if ps aux | grep '[r]un -c con' > /dev/null; then
+green "Sing-box主进程运行正常"    
+green "UUID密码：$showuuid" 
+else
+yellow "Sing-box主进程启动失败，请检测节点是否可用"
+fi
 if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep '[t]unnel --u' > /dev/null; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
