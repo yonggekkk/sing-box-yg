@@ -17,6 +17,7 @@ FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+devil binexec on >/dev/null 2>&1
 
 read_ip() {
 cat ip.txt
