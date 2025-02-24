@@ -22,9 +22,9 @@ app.get("/re", (req, res) => {
         pkill -f 'run -c con' || echo "无进程可终止，准备执行重启……"
         sbb="\$(cat sb.txt 2>/dev/null)"
         nohup ./"\$sbb" run -c config.json >/dev/null 2>&1 &
-        sleep 3
-        # cd ~ && bash serv00keep.sh
-        echo 'Serv00主程序重启成功，请检测三个主节点是否可用，如不可用，可再次刷新重启网页或者卸载重装脚本'
+        sleep 2
+        (cd ~ && bash serv00keep.sh >/dev/null 2>&1) &  
+        echo 'Serv00主程序重启成功，请检测三个主节点是否可用，如不可用，可再次刷新重启网页或者重置端口并卸载重装脚本'
     `;
     exec(additionalCommands, (err, stdout, stderr) => {
         console.log('stdout:', stdout);
