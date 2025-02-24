@@ -73,9 +73,11 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
 
-### Serv00-sb-yg脚本界面预览图（注：仅供围观）
+### Serv00-sb-yg脚本界面预览图，仅限方案一的SSH端安装脚本（注：仅供围观）
+![7cab008213da603d7181839365f7600](https://github.com/user-attachments/assets/9d0d602e-f6d5-46ef-993c-e5c60a00c2fd)
 
-待更新
+![d5f9309ca27a6ac1ca02dfb2dd8b4c3](https://github.com/user-attachments/assets/42dde173-7dbb-4d36-8e7d-5208a587d4e6)
+
 
 ### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用）
 
