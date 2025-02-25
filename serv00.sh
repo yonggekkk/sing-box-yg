@@ -1234,9 +1234,9 @@ red() { echo -e "\e[1;91m$1\033[0m"; }
 green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
-USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
+USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
-snb=$(hostname | awk -F '.' '{print $1}')
+snb=$(hostname | awk -F '\''.'\'' '\''{print $1}'\'')
 ' > webport.sh
 declare -f resallport >> webport.sh
 declare -f check_port >> webport.sh
