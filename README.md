@@ -1,6 +1,3 @@
-
-## 即将更新Serv00最新视频说明教程………………
-
 # Sing-box两大脚本
 
 ### 注：本项目分享订阅节点都为本地化生成，不使用节点转换、订阅器等第三方外链引用，无需担心节点订阅被外链作者查看
@@ -65,9 +62,11 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 #### 视频教程：
 
-[Serv00最全面的代理脚本：独家支持三个IP自定义安装，支持Proxyip+反代IP、支持Argo临时/固定隧道+CDN回源；支持五个节点的Sing-box与Clash订阅配置输出](https://youtu.be/2VF9D6z2z7w)
+[Serv00免费代理脚本最终教程（一）：独家支持三个IP自定义安装，支持Proxyip+反代IP、支持Argo临时/固定隧道+CDN回源；支持五个节点的Sing-box与Clash订阅配置输出](https://youtu.be/2VF9D6z2z7w)
 
-[Serv00免费节点最终教程：Serv00不必再登录SSH了，部署保活融为一体，独家支持Github、VPS、软路由多平台多账户通用部署，四大方案总有一款适合你](https://youtu.be/rYeX1iU_iZ0)
+[Serv00免费代理脚本最终教程（二）：Serv00不必再登录SSH了，部署保活融为一体，独家支持Github、VPS、软路由多平台多账户通用部署，四大方案总有一款适合你](https://youtu.be/rYeX1iU_iZ0)
+
+[Serv00免费代理脚本最终教程（三）：支持多功能网页【保活+重启+节点查看】、随意重置端口功能；Github+Workers自动执行保活功能任你选](https://youtu.be/9uCfFNnjNc0)
 
 ### 方案一、Serv00-sb-yg本地SSH专用一键脚本，快捷方式：```sb```
 ```
