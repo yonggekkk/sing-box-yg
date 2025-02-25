@@ -68,11 +68,11 @@ devil port del "$port_type" "$port"
 done <<< "$portlist"
 fi
 check_port
-if ps aux | grep '[r]un -c con' > /dev/null; then
-hyp=$(jq -r '.inbounds[0].listen_port' domains/ygkkk14.serv00.net/logs/config.json 2>/dev/null)
-vlp=$(jq -r '.inbounds[3].listen_port' domains/ygkkk14.serv00.net/logs/config.json 2>/dev/null)
-vmp=$(jq -r '.inbounds[4].listen_port' domains/ygkkk14.serv00.net/logs/config.json 2>/dev/null)
-purple "检测到Sing-box主进程运行中，执行端口替换，请稍等……"
+if [[ -e $WORKDIR/config.json ]]; then
+hyp=$(jq -r '.inbounds[0].listen_port' $WORKDIR/config.json 2>/dev/null)
+vlp=$(jq -r '.inbounds[3].listen_port' $WORKDIR/config.json 2>/dev/null)
+vmp=$(jq -r '.inbounds[4].listen_port' $WORKDIR/config.json 2>/dev/null)
+purple "检测到Serv00-sb-yg脚本已安装，执行端口替换，请稍等……"
 sed -i '' "12s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "54s/$hyp/$hy2_port/g" $WORKDIR/config.json
@@ -85,8 +85,12 @@ bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}
 curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 sleep 5
 green "端口替换完成！"
-green "Argo临时隧道域名已变更，请在客户端更改下host/sni域名"
-green "Argo固定隧道已失效，请在CF更改隧道端口后重启脚本"
+ps aux | grep '[r]un -c con' > /dev/null && green "Sing-box主进程启动成功" || yellow "Sing-box主进程启动失败，交给保活网页自动恢复吧"
+if [ -f "$WORKDIR/boot.log" ]; then
+ps aux | grep '[t]unnel --u' > /dev/null && green "Argo临时隧道启动成功，请在客户端的host/sni更新临时域名" || yellow "Argo临时隧道启动失败，交给保活网页自动恢复吧"
+else
+ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道启动成功" || yellow "Argo固定隧道启动失败，请在CF更改隧道端口后重启脚本"
+fi
 fi
 }
 
