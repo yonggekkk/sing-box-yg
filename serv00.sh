@@ -1241,6 +1241,7 @@ snb=$(hostname | awk -F '.' '{print $1}')
 declare -f resallport >> webport.sh
 declare -f check_port >> webport.sh
 echo 'resallport' >> webport.sh
+chmod +x webport.sh
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
