@@ -85,11 +85,11 @@ bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}
 curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 sleep 5
 green "端口替换完成！"
-ps aux | grep '[r]un -c con' > /dev/null && green "Sing-box主进程启动成功" || yellow "Sing-box主进程启动失败，交给保活网页自动恢复吧"
+ps aux | grep '[r]un -c con' > /dev/null && green "Sing-box主进程启动成功，单节点用户修改下客户端三协议端口，订阅链接用户更新下订阅即可" || yellow "Sing-box主进程启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
 if [ -f "$WORKDIR/boot.log" ]; then
-ps aux | grep '[t]unnel --u' > /dev/null && green "Argo临时隧道启动成功，请在客户端的host/sni更新临时域名" || yellow "Argo临时隧道启动失败，交给保活网页自动恢复吧"
+ps aux | grep '[t]unnel --u' > /dev/null && green "Argo临时隧道启动成功，单节点用户在客户端host/sni更换临时域名，订阅链接用户更新下订阅即可" || yellow "Argo临时隧道启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
 else
-ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道启动成功" || yellow "Argo固定隧道启动失败，请在CF更改隧道端口后重启脚本"
+ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道启动成功" || yellow "Argo固定隧道启动失败，请先在CF更改隧道端口：$vmess_port，多刷几次保活网页可能会自动恢复"
 fi
 fi
 }
@@ -1342,9 +1342,9 @@ menu() {
    echo   "------------------------------------------------------------"
    green  "6. 查看sing-box与clash配置文件"
    echo   "------------------------------------------------------------"
-   yellow "7. 删除所有端口并随机生成新端口"
+   yellow "7. 重置并随机生成新端口(脚本安装前后都可执行)"
    echo   "------------------------------------------------------------"
-   yellow "8. 重置并清理所有服务进程(系统初始化)"
+   yellow "8. 清理所有服务进程与文件(系统初始化)"
    echo   "------------------------------------------------------------"
    red    "0. 退出脚本"
    echo   "============================================================"
