@@ -434,10 +434,10 @@ hy3p=$(sed -n '3p' hy2ip.txt)
    "route": {
        "rule_set": [
       {
-        "tag": "google-gemini",
+        "tag": "google",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.srs",
         "download_detour": "direct"
       }
     ],
@@ -450,7 +450,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
      "outbound": "wg"
     },
     {
-     "rule_set":"google-gemini",
+     "rule_set":"google",
      "outbound": "wg"
     }
     ],
