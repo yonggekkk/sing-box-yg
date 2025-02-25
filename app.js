@@ -45,8 +45,8 @@ if [[ -z "\$portlist" ]]; then
 echo "无端口"
 else
 while read -r line; do
-port=\$(echo "\$line" | awk '{print $1}')
-port_type=\$(echo "\$line" | awk '{print $2}')
+port=\$(echo "\$line" | awk '{print \$1}')
+port_type=\$(echo "\$line" | awk '{print \$2}')
 echo "删除端口 \$port (\$port_type)"
 devil port del "\$port_type" "\$port"
 done <<< "\$portlist"
@@ -58,15 +58,15 @@ if [[ \$tcp_ports -ne 2 || \$udp_ports -ne 1 ]]; then
     echo "端口数量不符合要求，正在调整..."
     if [[ \$tcp_ports -gt 2 ]]; then
         tcp_to_delete=\$((tcp_ports - 2))
-        echo "\$port_list" | awk '/tcp/ {print $1, $2}' | head -n \$tcp_to_delete | while read port type; do
-            devil port del \$type \$port
+        echo "\$port_list" | awk '/tcp/ {print \$1, \$2}' | head -n \$tcp_to_delete | while read -r port type; do
+            devil port del "\$type" "\$port"
             echo "已删除TCP端口: \$port"
         done
     fi
     if [[ \$udp_ports -gt 1 ]]; then
         udp_to_delete=\$((udp_ports - 1))
-        echo "\$port_list" | awk '/udp/ {print $1, $2}' | head -n \$udp_to_delete | while read port type; do
-            devil port del \$type \$port
+        echo "\$port_list" | awk '/udp/ {print \$1, \$2}' | head -n \$udp_to_delete | while read -r port type; do
+            devil port del "\$type" "\$port"
             echo "已删除UDP端口: \$port"
         done
     fi
@@ -75,7 +75,7 @@ if [[ \$tcp_ports -ne 2 || \$udp_ports -ne 1 ]]; then
         tcp_ports_added=0
         while [[ \$tcp_ports_added -lt \$tcp_ports_to_add ]]; do
             tcp_port=\$(shuf -i 10000-65535 -n 1) 
-            result=\$(devil port add tcp \$tcp_port 2>&1)
+            result=\$(devil port add tcp "\$tcp_port" 2>&1)
             if [[ \$result == *"succesfully"* ]]; then
                 echo "已添加TCP端口: \$tcp_port"
                 if [[ \$tcp_ports_added -eq 0 ]]; then
@@ -92,7 +92,7 @@ if [[ \$tcp_ports -ne 2 || \$udp_ports -ne 1 ]]; then
     if [[ \$udp_ports -lt 1 ]]; then
         while true; do
             udp_port=\$(shuf -i 10000-65535 -n 1) 
-            result=\$(devil port add udp \$udp_port 2>&1)
+            result=\$(devil port add udp "\$udp_port" 2>&1)
             if [[ \$result == *"succesfully"* ]]; then
                 echo "已添加UDP端口: \$udp_port"
                 break
@@ -103,10 +103,10 @@ if [[ \$tcp_ports -ne 2 || \$udp_ports -ne 1 ]]; then
     fi
     sleep 3
 else
-    tcp_ports=\$(echo "\$port_list" | awk '/tcp/ {print $1}')
+    tcp_ports=\$(echo "\$port_list" | awk '/tcp/ {print \$1}')
     tcp_port1=\$(echo "\$tcp_ports" | sed -n '1p')
     tcp_port2=\$(echo "\$tcp_ports" | sed -n '2p')
-    udp_port=\$(echo "\$port_list" | awk '/udp/ {print $1}')
+    udp_port=\$(echo "\$port_list" | awk '/udp/ {print \$1}')
     echo "当前TCP端口: \$tcp_port1 和 \$tcp_port2"
     echo "当前UDP端口: \$udp_port"
 fi
@@ -134,7 +134,7 @@ bash -c 'ps aux | grep \$(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2
 sleep 5
 echo "端口替换完成！"
 ps aux | grep '[r]un -c con' > /dev/null && echo "主进程启动成功，单节点用户修改下客户端三协议端口，订阅链接用户更新下订阅即可" || echo "Sing-box主进程启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
-if [ -f "$WORKDIR/boot.log" ]; then
+if [ -f "\$WORKDIR/boot.log" ]; then
 ps aux | grep '[t]unnel --u' > /dev/null && echo "Argo临时隧道启动成功，单节点用户在客户端host/sni更换临时域名，订阅链接用户更新下订阅即可" || echo "Argo临时隧道启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
 else
 ps aux | grep '[t]unnel --n' > /dev/null && echo "Argo固定隧道启动成功" || echo "Argo固定隧道启动失败，请先在CF更改隧道端口：\$vmess_port，多刷几次保活网页可能会自动恢复"
