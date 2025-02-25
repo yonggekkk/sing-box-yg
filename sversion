@@ -1,5 +1,9 @@
-v25.2.22更新内容：
-1、更新IP显示BUG
+v25.2.26更新内容：
+1、选项7重置端口功能在安装脚本前与后都可执行，端口重置不中断
+2、Github actions与CF workers支持网页保活功能
+3、修复BUG与文字修正
+4、Github/vps/软路由的部署脚本同步更新支持重置端口功能
+本次更新的视频教程：https://youtu.be/9uCfFNnjNc0
 更新方式：在线更新
 （在线更新：SSH选择4更新。。。重装更新：必须卸载重装）
 详见：https://ygkkk.blogspot.com/2025/01/serv00.html
