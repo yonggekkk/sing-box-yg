@@ -16,7 +16,7 @@ devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+#curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 devil binexec on >/dev/null 2>&1
 
 read_ip() {
@@ -1237,7 +1237,7 @@ cd "$keep_path"
 npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
 rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
 devil www restart ${snb}.${USERNAME}.serv00.net
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+#curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.serv00.net" && sleep 2
 }
 
