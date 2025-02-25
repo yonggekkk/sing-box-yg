@@ -1360,7 +1360,7 @@ if [[ -n $portlist ]]; then
 green "已设置的端口如下："
 echo -e "$portlist"
 else
-yellow "未设置端口！请先选择 7 随机生成端口，再选择 1 安装脚本"
+yellow "未设置端口"
 fi
 echo
 insV=$(cat $WORKDIR/v 2>/dev/null)
