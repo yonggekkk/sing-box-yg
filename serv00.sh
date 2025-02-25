@@ -68,6 +68,8 @@ devil port del "$port_type" "$port"
 done <<< "$portlist"
 fi
 check_port
+
+
 }
 
 check_port () {
@@ -126,10 +128,10 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             fi
         done
     fi
-    green "端口已调整完成,将断开ssh连接,请重新连接shh重新执行脚本"
-    devil binexec on >/dev/null 2>&1
-    kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
-    sleep 2
+    #green "端口已调整完成,将断开ssh连接,请重新连接shh重新执行脚本"
+    #devil binexec on >/dev/null 2>&1
+    #kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
+    #sleep 2
 else
     tcp_ports=$(echo "$port_list" | awk '/tcp/ {print $1}')
     tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
