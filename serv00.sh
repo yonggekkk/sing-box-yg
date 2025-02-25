@@ -1218,7 +1218,6 @@ fi
 }
 
 servkeep() {
-#green "开始安装Cron进程保活"
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
 sed -i '' -e "14s|''|'$UUID'|" serv00keep.sh
 sed -i '' -e "17s|''|'$vless_port'|" serv00keep.sh
@@ -1230,6 +1229,18 @@ if [ ! -f "$WORKDIR/boot.log" ]; then
 sed -i '' -e "15s|''|'${ARGO_DOMAIN}'|" serv00keep.sh
 sed -i '' -e "16s|''|'${ARGO_AUTH}'|" serv00keep.sh
 fi
+echo '#!/bin/bash
+red() { echo -e "\e[1;91m$1\033[0m"; }
+green() { echo -e "\e[1;32m$1\033[0m"; }
+yellow() { echo -e "\e[1;33m$1\033[0m"; }
+purple() { echo -e "\e[1;35m$1\033[0m"; }
+USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
+WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
+snb=$(hostname | awk -F '.' '{print $1}')
+' > webport.sh
+declare -f resallport >> webport.sh
+declare -f check_port >> webport.sh
+echo 'resallport' >> webport.sh
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
