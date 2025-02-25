@@ -74,7 +74,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 ```
 
 ### Serv00-sb-yg脚本界面预览图，仅限方案一的SSH端安装脚本（注：仅供围观）
-![7cab008213da603d7181839365f7600](https://github.com/user-attachments/assets/9d0d602e-f6d5-46ef-993c-e5c60a00c2fd)
+![f8a750020441713e60fad2f88721db6](https://github.com/user-attachments/assets/7057bee4-d30a-4e6d-b6d0-1896f702d907)
+
 
 ![d5f9309ca27a6ac1ca02dfb2dd8b4c3](https://github.com/user-attachments/assets/42dde173-7dbb-4d36-8e7d-5208a587d4e6)
 
