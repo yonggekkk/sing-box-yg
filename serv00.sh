@@ -1260,9 +1260,9 @@ sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 #sed -i '' "38s/key/$UUID/g" "$keep_path"/app.js
 #sed -i '' "53s/name/$USERNAME/g" "$keep_path"/app.js
 #sed -i '' "53s/where/$snb/g" "$keep_path"/app.js
-sed -i '' "154s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "169s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "169s/where/$snb/g" "$keep_path"/app.js
+sed -i '' "51s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "66s/name/$USERNAME/g" "$keep_path"/app.js
+sed -i '' "66s/where/$snb/g" "$keep_path"/app.js
 devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
 devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 devil www add ${snb}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
