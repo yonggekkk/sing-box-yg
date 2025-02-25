@@ -129,7 +129,7 @@ sed -i '' "102s/\$vmp/\$vmess_port/g" \$WORKDIR/config.json
 sed -i '' -e "17s|\$vlp|'\$vless_port'|" serv00keep.sh
 sed -i '' -e "18s|\$vmp|'\$vmess_port'|" serv00keep.sh
 sed -i '' -e "19s|\$hyp|'\$hy2_port'|" serv00keep.sh
-bash -c 'ps aux | grep \$(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
+bash -c 'ps aux | grep \$(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 \\>/dev/null 2\\>\\&1' >/dev/null 2>&1
 (cd ~ && bash serv00keep.sh >/dev/null 2>&1) & 
 sleep 5
 echo "端口替换完成！"
