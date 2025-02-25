@@ -69,6 +69,9 @@ done <<< "$portlist"
 fi
 check_port
 if ps aux | grep '[r]un -c con' > /dev/null; then
+hyp=$(jq -r '.inbounds[0].listen_port' domains/ygkkk14.serv00.net/logs/config.json 2>/dev/null)
+vlp=$(jq -r '.inbounds[3].listen_port' domains/ygkkk14.serv00.net/logs/config.json 2>/dev/null)
+vmp=$(jq -r '.inbounds[4].listen_port' domains/ygkkk14.serv00.net/logs/config.json 2>/dev/null)
 purple "检测到Sing-box主进程运行中，执行端口替换，请稍等……"
 sed -i '' "12s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
