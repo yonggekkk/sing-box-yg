@@ -1243,7 +1243,8 @@ fi
 green "开始安装多功能主页，请稍等……"
 keep_path="$HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
+#curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 #sed -i '' "38s/key/$UUID/g" "$keep_path"/app.js
 #sed -i '' "53s/name/$USERNAME/g" "$keep_path"/app.js
