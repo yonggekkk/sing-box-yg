@@ -166,7 +166,7 @@ app.get("/list/key", (req, res) => {
     });
 });
 app.use((req, res) => {
-    res.status(404).send('请在浏览器地址：http://where.name.serv00.net 后面加三种路径功能：/up是保活，/re是重启，/list/你的uuid 是节点及订阅信息');
+    res.status(404).send('请在浏览器地址：http://where.name.serv00.net 后面加三种路径功能：/up是保活，/re是重启，/rp是重置节点端口，/list/你的uuid 是节点及订阅信息');
 });
 setInterval(runCustomCommand, 3 * 60 * 1000);
 app.listen(3000, () => {
