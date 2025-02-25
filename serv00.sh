@@ -68,8 +68,23 @@ devil port del "$port_type" "$port"
 done <<< "$portlist"
 fi
 check_port
-
-
+if ps aux | grep '[r]un -c con' > /dev/null; then
+purple "检测到Sing-box主进程运行中，执行端口替换，请稍等……"
+sed -i '' "12s/$hyp/$hy2_port/g" $WORKDIR/config.json
+sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
+sed -i '' "54s/$hyp/$hy2_port/g" $WORKDIR/config.json
+sed -i '' "75s/$vlp/$vless_port/g" $WORKDIR/config.json
+sed -i '' "102s/$vmp/$vmess_port/g" $WORKDIR/config.json
+sed -i '' -e "17s|$vlp|'$vless_port'|" serv00keep.sh
+sed -i '' -e "18s|$vmp|'$vmess_port'|" serv00keep.sh
+sed -i '' -e "19s|$hyp|'$hy2_port'|" serv00keep.sh
+bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
+curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+sleep 5
+green "端口替换完成！"
+green "Argo临时隧道域名已变更，请在客户端更改下host/sni域名"
+green "Argo固定隧道已失效，请在CF更改隧道端口后重启脚本"
+fi
 }
 
 check_port () {
