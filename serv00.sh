@@ -1192,7 +1192,8 @@ rm -rf sb.log core tunnel.yml tunnel.json fake_useragent_0.2.0.json
 
 showlist(){
 if [[ -e $WORKDIR/list.txt ]]; then
-green "查看节点及proxyip/非标端口反代ip信息"
+green "查看节点、订阅、反代IP、ProxyIP等信息！更新中，请稍等……"
+sleep 3
 cat $WORKDIR/list.txt
 else
 red "未安装脚本，请选择1进行安装" && exit
@@ -1201,6 +1202,8 @@ fi
 
 showsbclash(){
 if [[ -e $WORKDIR/sing_box.json ]]; then
+green "查看clash与singbox配置明文！更新中，请稍等……"
+sleep 3
 green "Sing_box配置文件如下，可上传到订阅类客户端上使用："
 yellow "其中Argo节点为CDN优选IP节点，server地址可自行修改优选IP/域名，被墙依旧能用！"
 sleep 2
