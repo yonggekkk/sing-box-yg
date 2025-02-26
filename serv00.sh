@@ -521,11 +521,11 @@ hy3p=$(sed -n '3p' hy2ip.txt)
      "outbound": "wg"
      },
      {
-     "rule_set":"google-gemini"
+     "rule_set":"google-gemini",
      "outbound": "wg"
     },
      {
-     "rule_set":"google-play"
+     "rule_set":"google-play",
      "outbound": "wg"
     }  
     ],
