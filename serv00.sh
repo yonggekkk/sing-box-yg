@@ -1447,7 +1447,7 @@ fi
 if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
 yellow "Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启动失败，请检查相关参数是否输入有误"
 fi
-green "多功能主页如下：支持网页保活、网页重启、网页节点查询"
+green "多功能主页如下：支持保活、重启、重置端口、节点查询"
 purple "http://${snb}.${USERNAME}.serv00.net"
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
