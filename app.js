@@ -24,7 +24,7 @@ app.get("/re", (req, res) => {
         nohup ./"\$sbb" run -c config.json >/dev/null 2>&1 &
         sleep 2
         (cd ~ && bash serv00keep.sh >/dev/null 2>&1) &  
-        echo 'Serv00主程序重启成功，请检测三个主节点是否可用，如不可用，可再次刷新重启网页或者重置端口并卸载重装脚本'
+        echo 'Serv00主程序重启成功，请检测三个主节点是否可用，如不可用，可再次刷新重启网页或者重置端口'
     `;
     exec(additionalCommands, (err, stdout, stderr) => {
         console.log('stdout:', stdout);
@@ -54,7 +54,7 @@ exec(changeportCommands, { maxBuffer: 1024 * 1024 * 10 }, (err, stdout, stderr) 
 }
 app.get("/rp", (req, res) => {
    runportCommand();  
-   res.type("html").send("<pre>重置节点端口完成！请把后缀改为/list/你的uuid 查看更新端口后的节点及订阅信息</pre>");
+   res.type("html").send("<pre>重置节点端口完成！稍等10秒后，请把主页后缀改为  /list/你的uuid  查看更新端口后的节点及订阅信息</pre>");
 });
 
 app.get("/list/key", (req, res) => {
