@@ -503,6 +503,13 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
         "download_detour": "direct"
+      },
+       {
+        "tag": "google-play",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-play.srs",
+        "download_detour": "direct"
       }
     ],
     "rules": [
@@ -514,7 +521,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
      "outbound": "wg"
      },
      {
-     "rule_set":"google-gemini",
+     "rule_set":["google-gemini","google-play"]
      "outbound": "wg"
     }
     ],
