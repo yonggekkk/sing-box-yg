@@ -78,12 +78,13 @@ sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "54s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "75s/$vlp/$vless_port/g" $WORKDIR/config.json
 sed -i '' "102s/$vmp/$vmess_port/g" $WORKDIR/config.json
-sed -i '' -e "17s|$vlp|'$vless_port'|" serv00keep.sh
-sed -i '' -e "18s|$vmp|'$vmess_port'|" serv00keep.sh
-sed -i '' -e "19s|$hyp|'$hy2_port'|" serv00keep.sh
+sed -i '' -e "17s|'$vlp'|'$vless_port'|" serv00keep.sh
+sed -i '' -e "18s|'$vmp'|'$vmess_port'|" serv00keep.sh
+sed -i '' -e "19s|'$hyp'|'$hy2_port'|" serv00keep.sh
 bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
+sleep 2
 curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
-sleep 5
+sleep 3
 green "端口替换完成！"
 ps aux | grep '[r]un -c con' > /dev/null && green "主进程启动成功，单节点用户修改下客户端三协议端口，订阅链接用户更新下订阅即可" || yellow "Sing-box主进程启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
 if [ -f "$WORKDIR/boot.log" ]; then
@@ -248,7 +249,6 @@ argo_configure() {
   while true; do
     yellow "方式一：(推荐)无需域名的Argo临时隧道：输入回车"
     yellow "方式二：需要域名的Argo固定隧道(需要CF设置提取Token)：输入g"
-    echo -e "${red}注意：${purple}Argo固定隧道使用Token时，需要在cloudflare后台设置隧道端口，该端口必须与vmess-ws的tcp端口 $vmess_port 一致)${re}"
     reading "【请选择 g 或者 回车】: " argo_choice
     if [[ "$argo_choice" != "g" && "$argo_choice" != "G" && -n "$argo_choice" ]]; then
         red "无效的选择，请输入 g 或回车"
@@ -1258,12 +1258,9 @@ keep_path="$HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 #curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
-#sed -i '' "38s/key/$UUID/g" "$keep_path"/app.js
-#sed -i '' "53s/name/$USERNAME/g" "$keep_path"/app.js
-#sed -i '' "53s/where/$snb/g" "$keep_path"/app.js
-sed -i '' "51s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "66s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "66s/where/$snb/g" "$keep_path"/app.js
+sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
+sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
 devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 devil www add ${snb}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
