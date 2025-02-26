@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require("express");
 const { exec } = require('child_process');
-const { spawn } = require('child_process');
 const app = express();
 app.use(express.json());
 const commandToRun = "cd ~ && bash serv00keep.sh";
@@ -37,49 +36,26 @@ app.get("/re", (req, res) => {
     });
 }); 
 
+const changeportCommands = "cd ~ && bash webport.sh"; 
+function runportCommand() {
+exec(changeportCommands, { maxBuffer: 1024 * 1024 * 10 }, (err, stdout, stderr) => {
+        console.log('stdout:', stdout);
+        console.error('stderr:', stderr);
+        if (err) {
+            console.error('Execution error:', err);
+            return res.status(500).send(`错误：${stderr || stdout}`);
+        }
+        if (stderr) {
+            console.error('stderr output:', stderr);
+            return res.status(500).send(`stderr: ${stderr}`);
+        }
+        res.type('text').send(stdout);
+    });
+}
 app.get("/rp", (req, res) => {
-    const changeportCommands = "bash";
-    const args = ["webport.sh"];
-    
-    const child = spawn(changeportCommands, args, { cwd: process.env.HOME });
-
-    let stdoutData = '';
-    let stderrData = '';
-
-    // 处理标准输出
-    child.stdout.on('data', (data) => {
-        stdoutData += data.toString(); // 累加输出
-        console.log(data.toString());  // 输出到控制台，或者可以根据需要修改
-    });
-
-    // 处理标准错误输出
-    child.stderr.on('data', (data) => {
-        stderrData += data.toString(); // 累加错误信息
-        console.error(data.toString());  // 输出错误
-    });
-
-    // 处理结束
-    child.on('close', (code) => {
-        if (code !== 0) {
-            console.error(`子进程退出，错误代码：${code}`);
-            return res.status(500).send(`错误：${stderrData || stdoutData}`);
-        }
-
-        // 如果有stderr信息
-        if (stderrData) {
-            return res.status(500).send(`stderr: ${stderrData}`);
-        }
-
-        // 返回输出
-        res.type('text').send(stdoutData);
-    });
-
-    child.on('error', (err) => {
-        console.error('子进程启动失败:', err);
-        res.status(500).send(`执行错误: ${err.message}`);
-    });
+   runportCommand();  
+   res.type("html").send("<pre>重置节点端口完成！请把后缀改为/list/你的uuid 查看更新端口后的节点及订阅信息</pre>");
 });
-
 
 app.get("/list/key", (req, res) => {
     const listCommands = `
