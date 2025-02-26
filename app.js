@@ -24,7 +24,7 @@ app.get("/re", (req, res) => {
         nohup ./"\$sbb" run -c config.json >/dev/null 2>&1 &
         sleep 2
         (cd ~ && bash serv00keep.sh >/dev/null 2>&1) &  
-        echo 'Serv00主程序重启成功，请检测三个主节点是否可用，如不可用，可再次刷新重启网页或者重置端口并卸载重装脚本'
+        echo '主程序重启成功，请检测三个主节点是否可用，如不可用，可再次刷新重启网页或者重置端口'
     `;
     exec(additionalCommands, (err, stdout, stderr) => {
         console.log('stdout:', stdout);
@@ -35,6 +35,28 @@ app.get("/re", (req, res) => {
         res.type('text').send(stdout);
     });
 }); 
+
+const changeportCommands = "cd ~ && bash webport.sh"; 
+function runportCommand() {
+exec(changeportCommands, { maxBuffer: 1024 * 1024 * 10 }, (err, stdout, stderr) => {
+        console.log('stdout:', stdout);
+        console.error('stderr:', stderr);
+        if (err) {
+            console.error('Execution error:', err);
+            return res.status(500).send(`错误：${stderr || stdout}`);
+        }
+        if (stderr) {
+            console.error('stderr output:', stderr);
+            return res.status(500).send(`stderr: ${stderr}`);
+        }
+        res.type('text').send(stdout);
+    });
+}
+app.get("/rp", (req, res) => {
+   runportCommand();  
+   res.type("html").send("<pre>重置节点端口完成！请稍等10秒后，主页后缀改为  /list/你的uuid  可查看更新端口后的节点及订阅信息</pre>");
+});
+
 app.get("/list/key", (req, res) => {
     const listCommands = `
         USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
@@ -50,7 +72,7 @@ app.get("/list/key", (req, res) => {
     });
 });
 app.use((req, res) => {
-    res.status(404).send('浏览器地址：http://where.name.serv00.net  三种路径功能：/up是保活，/re是重启，/list/你的uuid 是节点及订阅信息');
+    res.status(404).send('请在浏览器地址：http://where.name.serv00.net 后面加三种路径功能：/up是保活，/re是重启，/rp是重置节点端口，/list/你的uuid 是节点及订阅信息');
 });
 setInterval(runCustomCommand, 3 * 60 * 1000);
 app.listen(3000, () => {

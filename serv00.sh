@@ -68,6 +68,31 @@ devil port del "$port_type" "$port"
 done <<< "$portlist"
 fi
 check_port
+if [[ -e $WORKDIR/config.json ]]; then
+hyp=$(jq -r '.inbounds[0].listen_port' $WORKDIR/config.json 2>/dev/null)
+vlp=$(jq -r '.inbounds[3].listen_port' $WORKDIR/config.json 2>/dev/null)
+vmp=$(jq -r '.inbounds[4].listen_port' $WORKDIR/config.json 2>/dev/null)
+purple "检测到Serv00-sb-yg脚本已安装，执行端口替换，请稍等……"
+sed -i '' "12s/$hyp/$hy2_port/g" $WORKDIR/config.json
+sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
+sed -i '' "54s/$hyp/$hy2_port/g" $WORKDIR/config.json
+sed -i '' "75s/$vlp/$vless_port/g" $WORKDIR/config.json
+sed -i '' "102s/$vmp/$vmess_port/g" $WORKDIR/config.json
+sed -i '' -e "17s|'$vlp'|'$vless_port'|" serv00keep.sh
+sed -i '' -e "18s|'$vmp'|'$vmess_port'|" serv00keep.sh
+sed -i '' -e "19s|'$hyp'|'$hy2_port'|" serv00keep.sh
+bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
+sleep 2
+curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+sleep 3
+green "端口替换完成！"
+ps aux | grep '[r]un -c con' > /dev/null && green "主进程启动成功，单节点用户修改下客户端三协议端口，订阅链接用户更新下订阅即可" || yellow "Sing-box主进程启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
+if [ -f "$WORKDIR/boot.log" ]; then
+ps aux | grep '[t]unnel --u' > /dev/null && green "Argo临时隧道启动成功，单节点用户在客户端host/sni更换临时域名，订阅链接用户更新下订阅即可" || yellow "Argo临时隧道启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
+else
+ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道启动成功" || yellow "Argo固定隧道启动失败，请先在CF更改隧道端口：$vmess_port，多刷几次保活网页可能会自动恢复"
+fi
+fi
 }
 
 check_port () {
@@ -126,10 +151,10 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             fi
         done
     fi
-    green "端口已调整完成,将断开ssh连接,请重新连接shh重新执行脚本"
-    devil binexec on >/dev/null 2>&1
-    kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
-    sleep 2
+    #green "端口已调整完成,将断开ssh连接,请重新连接shh重新执行脚本"
+    #devil binexec on >/dev/null 2>&1
+    #kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
+    sleep 3
 else
     tcp_ports=$(echo "$port_list" | awk '/tcp/ {print $1}')
     tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
@@ -182,7 +207,7 @@ uninstall_singbox() {
     case "$choice" in
        [Yy])
 	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-          rm -rf domains bin serv00keep.sh
+          rm -rf domains bin serv00keep.sh webport.sh
           sed -i '/export PATH="\$HOME\/bin:\$PATH"/d' "${HOME}/.bashrc" >/dev/null 2>&1
           source "${HOME}/.bashrc" >/dev/null 2>&1
 	  #crontab -l | grep -v "serv00keep" >rmcron
@@ -224,7 +249,6 @@ argo_configure() {
   while true; do
     yellow "方式一：(推荐)无需域名的Argo临时隧道：输入回车"
     yellow "方式二：需要域名的Argo固定隧道(需要CF设置提取Token)：输入g"
-    echo -e "${red}注意：${purple}Argo固定隧道使用Token时，需要在cloudflare后台设置隧道端口，该端口必须与vmess-ws的tcp端口 $vmess_port 一致)${re}"
     reading "【请选择 g 或者 回车】: " argo_choice
     if [[ "$argo_choice" != "g" && "$argo_choice" != "G" && -n "$argo_choice" ]]; then
         red "无效的选择，请输入 g 或回车"
@@ -479,6 +503,13 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.srs",
         "download_detour": "direct"
+      },
+       {
+        "tag": "google-play",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-play.srs",
+        "download_detour": "direct"
       }
     ],
     "rules": [
@@ -492,7 +523,11 @@ hy3p=$(sed -n '3p' hy2ip.txt)
      {
      "rule_set":"google",
      "outbound": "wg"
-    }
+    },
+     {
+     "rule_set":"google-play",
+     "outbound": "wg"
+    }  
     ],
     "final": "direct"
     }  
@@ -1168,7 +1203,8 @@ rm -rf sb.log core tunnel.yml tunnel.json fake_useragent_0.2.0.json
 
 showlist(){
 if [[ -e $WORKDIR/list.txt ]]; then
-green "查看节点及proxyip/非标端口反代ip信息"
+green "查看节点、订阅、反代IP、ProxyIP等信息！更新中，请稍等……"
+sleep 3
 cat $WORKDIR/list.txt
 else
 red "未安装脚本，请选择1进行安装" && exit
@@ -1177,6 +1213,8 @@ fi
 
 showsbclash(){
 if [[ -e $WORKDIR/sing_box.json ]]; then
+green "查看clash与singbox配置明文！更新中，请稍等……"
+sleep 3
 green "Sing_box配置文件如下，可上传到订阅类客户端上使用："
 yellow "其中Argo节点为CDN优选IP节点，server地址可自行修改优选IP/域名，被墙依旧能用！"
 sleep 2
@@ -1194,7 +1232,6 @@ fi
 }
 
 servkeep() {
-#green "开始安装Cron进程保活"
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
 sed -i '' -e "14s|''|'$UUID'|" serv00keep.sh
 sed -i '' -e "17s|''|'$vless_port'|" serv00keep.sh
@@ -1206,6 +1243,19 @@ if [ ! -f "$WORKDIR/boot.log" ]; then
 sed -i '' -e "15s|''|'${ARGO_DOMAIN}'|" serv00keep.sh
 sed -i '' -e "16s|''|'${ARGO_AUTH}'|" serv00keep.sh
 fi
+echo '#!/bin/bash
+red() { echo -e "\e[1;91m$1\033[0m"; }
+green() { echo -e "\e[1;32m$1\033[0m"; }
+yellow() { echo -e "\e[1;33m$1\033[0m"; }
+purple() { echo -e "\e[1;35m$1\033[0m"; }
+USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
+WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
+snb=$(hostname | awk -F '\''.'\'' '\''{print $1}'\'')
+' > webport.sh
+declare -f resallport >> webport.sh
+declare -f check_port >> webport.sh
+echo 'resallport' >> webport.sh
+chmod +x webport.sh
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
@@ -1221,9 +1271,9 @@ keep_path="$HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
-sed -i '' "38s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "53s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "53s/where/$snb/g" "$keep_path"/app.js
+sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
+sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
 devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 devil www add ${snb}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
@@ -1310,17 +1360,17 @@ menu() {
    echo   "------------------------------------------------------------"
    red    "2. 卸载删除 Serv00-sb-yg"
    echo   "------------------------------------------------------------"
-   green  "3. 重启主进程"
+   green  "3. 重启主进程 (修复节点)"
    echo   "------------------------------------------------------------"
    green  "4. 更新脚本"
    echo   "------------------------------------------------------------"
-   green  "5. 查看各节点分享/sing-box与clash订阅链接/CF节点proxyip"
+   green  "5. 查看各节点分享/sing-box与clash订阅链接/反代IP/ProxyIP"
    echo   "------------------------------------------------------------"
    green  "6. 查看sing-box与clash配置文件"
    echo   "------------------------------------------------------------"
-   yellow "7. 删除所有端口并随机生成新端口"
+   yellow "7. 重置并随机生成新端口 (脚本安装前后都可执行)"
    echo   "------------------------------------------------------------"
-   yellow "8. 重置并清理所有服务进程(系统初始化)"
+   yellow "8. 清理所有服务进程与文件 (系统初始化)"
    echo   "------------------------------------------------------------"
    red    "0. 退出脚本"
    echo   "============================================================"
@@ -1358,7 +1408,7 @@ if [[ -n $portlist ]]; then
 green "已设置的端口如下："
 echo -e "$portlist"
 else
-yellow "未设置端口！请先选择 7 随机生成端口，再选择 1 安装脚本"
+yellow "未设置端口"
 fi
 echo
 insV=$(cat $WORKDIR/v 2>/dev/null)

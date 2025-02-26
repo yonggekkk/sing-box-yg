@@ -193,10 +193,10 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             fi
         done
     fi
-    echo "端口已调整完成,将断开ssh连接"
+    #echo "端口已调整完成,将断开ssh连接"
     sleep 3
-    devil binexec on >/dev/null 2>&1
-    kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
+    #devil binexec on >/dev/null 2>&1
+    #kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
 else
     tcp_ports=$(echo "$port_list" | awk '/tcp/ {print $1}')
     tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
@@ -439,6 +439,13 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.srs",
         "download_detour": "direct"
+      },
+      {
+        "tag": "google-play",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-play.srs",
+        "download_detour": "direct"
       }
     ],
     "rules": [
@@ -452,7 +459,11 @@ hy3p=$(sed -n '3p' hy2ip.txt)
     {
      "rule_set":"google",
      "outbound": "wg"
-    }
+    },
+    {
+     "rule_set":"google-play",
+     "outbound": "wg"
+    }  
     ],
     "final": "direct"
     }  
