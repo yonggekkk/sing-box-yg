@@ -207,7 +207,7 @@ uninstall_singbox() {
     case "$choice" in
        [Yy])
 	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-          rm -rf domains bin serv00keep.sh
+          rm -rf domains bin serv00keep.sh webport.sh
           sed -i '/export PATH="\$HOME\/bin:\$PATH"/d' "${HOME}/.bashrc" >/dev/null 2>&1
           source "${HOME}/.bashrc" >/dev/null 2>&1
 	  #crontab -l | grep -v "serv00keep" >rmcron
@@ -1255,8 +1255,7 @@ chmod +x webport.sh
 green "开始安装多功能主页，请稍等……"
 keep_path="$HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
-#curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/app.js -o "$keep_path"/app.js
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
 sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
