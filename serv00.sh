@@ -1320,11 +1320,14 @@ if [[ -e $WORKDIR/config.json ]]; then
 
 resservsb(){
 if [[ -e $WORKDIR/config.json ]]; then
+yellow "重启中……请稍后……"
 cd $WORKDIR
 ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 sbb=$(cat sb.txt)
 nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
-sleep 3
+sleep 1
+curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+sleep 5
 if pgrep -x "$sbb" > /dev/null; then
 green "$sbb 主进程重启成功"
 else
