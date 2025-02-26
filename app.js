@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require("express");
 const { exec } = require('child_process');
+const { spawn } = require('child_process');
 const app = express();
 app.use(express.json());
 const commandToRun = "cd ~ && bash serv00keep.sh";
@@ -37,27 +38,45 @@ app.get("/re", (req, res) => {
 }); 
 
 app.get("/rp", (req, res) => {
-    const changeportCommands = "cd ~ && env && bash webport.sh";  // 打印环境变量，帮助调试
+    const changeportCommands = "bash";
+    const args = ["webport.sh"];
+    
+    const child = spawn(changeportCommands, args, { cwd: process.env.HOME });
 
-    exec(changeportCommands, { maxBuffer: 1024 * 1024 * 10 }, (err, stdout, stderr) => {
-        // 打印标准输出和错误输出
-        console.log('stdout:', stdout);
-        console.error('stderr:', stderr);
+    let stdoutData = '';
+    let stderrData = '';
 
-        // 错误处理
-        if (err) {
-            console.error('Execution error:', err);
-            return res.status(500).send(`错误：${stderr || stdout}`);
+    // 处理标准输出
+    child.stdout.on('data', (data) => {
+        stdoutData += data.toString(); // 累加输出
+        console.log(data.toString());  // 输出到控制台，或者可以根据需要修改
+    });
+
+    // 处理标准错误输出
+    child.stderr.on('data', (data) => {
+        stderrData += data.toString(); // 累加错误信息
+        console.error(data.toString());  // 输出错误
+    });
+
+    // 处理结束
+    child.on('close', (code) => {
+        if (code !== 0) {
+            console.error(`子进程退出，错误代码：${code}`);
+            return res.status(500).send(`错误：${stderrData || stdoutData}`);
         }
 
-        // 如果有标准错误，返回错误信息
-        if (stderr) {
-            console.error('stderr output:', stderr);
-            return res.status(500).send(`stderr: ${stderr}`);
+        // 如果有stderr信息
+        if (stderrData) {
+            return res.status(500).send(`stderr: ${stderrData}`);
         }
 
-        // 返回正常的输出
-        res.type('text').send(stdout);
+        // 返回输出
+        res.type('text').send(stdoutData);
+    });
+
+    child.on('error', (err) => {
+        console.error('子进程启动失败:', err);
+        res.status(500).send(`执行错误: ${err.message}`);
     });
 });
 
