@@ -73,7 +73,9 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
 
-### Serv00-sb-yg脚本界面预览图，仅限方案一的SSH端安装脚本（注：仅供围观）
+### 支持多功能网页生成【网页保活+网页重启+网页重置端口+网页查看订阅节点】
+
+#### Serv00-sb-yg脚本界面预览图，仅限方案一的SSH端安装脚本（注：仅供围观）
 ![f8a750020441713e60fad2f88721db6](https://github.com/user-attachments/assets/7057bee4-d30a-4e6d-b6d0-1896f702d907)
 
 
