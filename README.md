@@ -1,6 +1,3 @@
-
-
-
 ### 一、Sing-box-yg精装桶一键四协议共存脚本（VPS专用）
 ### 二、Serv00-sb-yg多平台一键三协议共存脚本（Serv00专用）
 
@@ -10,8 +7,6 @@
 --------------------------------------------------------------
 
 ### 一、Sing-box-yg精装桶小白专享一键四协议共存脚本（VPS专用）
-
-脚本特色：多功能前台显示、高自由度交互体验，全平台全客户端无脑通吃
 
 支持人气最高的四大协议：Vless-reality-vision、Vmess-ws(tls)/Argo、Hysteria-2、Tuic-v5
 
@@ -33,10 +28,8 @@
 
 [Sing-box精装桶小白一键脚本（五）：集成oblivion warp免费vpn功能，本地WARP+赛风VPN切换分流(30个国家IP)](https://youtu.be/5Y6NPsYPws0)
 
+### VPS专用一键脚本，快捷方式：```sb``` (serv00不可用哦，serv00脚本在下面，请继续往下翻)
 
-### 截止目前，推荐使用sing-box官方V1.10.0系列正式版本
-
-### VPS专用一键脚本，快捷方式：```sb```
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 ```
