@@ -30,9 +30,11 @@ jobs:
         for url in "${http[@]}"; do
           response=$(curl -sk "$url" || true)
           if [[ "$response" == *"网页保活启动"* ]]; then
-            echo "🎉恭喜！$url ✅运行正常，成功拉起一次保活"
-            else
-            echo "💥杯具！$url ❌运行失败，⚠️保活网址是否正确或者Serv00炸了"
-          fi
+          echo "🎉恭喜！$url ✅运行正常，成功拉起一次保活"
+          elif [[ "$response" == *"主程序重启成功"* ]]; then
+          echo "🎉恭喜！$url ✅运行正常，成功重启一次主程序"
+          else
+         echo "💥杯具！$url ❌运行失败，⚠️保活网址是否正确或者Serv00炸了"
+         fi
         done
         wait
