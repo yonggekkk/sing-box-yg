@@ -73,7 +73,9 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
 
-### 支持多功能网页生成：网页保活+网页重启+网页重置端口+网页查看订阅节点
+### 支持多功能网页生成：1、网页保活 2、网页重启 3、网页重置端口 4、网页查看订阅节点
+
+### 网页保活与网页重启可在github或workers设置定时运行任务，可参考视频教程三
 
 #### Serv00-sb-yg脚本界面预览图，仅限方案一的SSH端安装脚本（注：仅供围观）
 ![5ffb15af2d36e5869d6adf190da451b](https://github.com/user-attachments/assets/9faf6776-8d3f-4bcb-b579-f98c55454ca1)
@@ -97,11 +99,7 @@ curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o 
 ```
 运行```bash kp.sh```可测试有效性 
 
-### 注意：
-
-1、方案二serv00.yml与方案三kp.sh都为"强制保活脚本"，就算Serv00清空你服务器上所有文件，只要让你连接成功，就会自动安装脚本保活，保持不死状态
-
-2、方案一SSH脚本与方案二serv00.yml、方案三kp.sh不可混用，方案二serv00.yml与方案三kp.sh可相互无缝替换
+### 注意：方案二serv00.yml与方案三kp.sh都为"强制保活脚本"，就算Serv00清空你服务器上所有文件(到目前为止从没发生过)，只要让你连接成功，就会自动安装脚本保活，保持不死状态
 
 
 -----------------------------------------------------
