@@ -54,7 +54,7 @@ exec(changeportCommands, { maxBuffer: 1024 * 1024 * 10 }, (err, stdout, stderr) 
 }
 app.get("/rp", (req, res) => {
    runportCommand();  
-   res.type("html").send("<pre>重置节点端口完成！请稍等10秒后，主页后缀改为  /list/你的uuid  可查看更新端口后的节点及订阅信息</pre>");
+   res.type("html").send("<pre>重置三个节点端口完成！请稍等10秒后，主页后缀改为  /list/你的uuid  可查看更新端口后的节点及订阅信息</pre>");
 });
 
 app.get("/list/key", (req, res) => {
