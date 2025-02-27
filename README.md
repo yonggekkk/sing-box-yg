@@ -1,9 +1,10 @@
-# Sing-box两大脚本
 
-### 注：本项目分享订阅节点都为本地化生成，不使用节点转换、订阅器等第三方外链引用，无需担心节点订阅被外链作者查看
+
 
 ### 一、Sing-box-yg精装桶一键四协议共存脚本（VPS专用）
 ### 二、Serv00-sb-yg多平台一键三协议共存脚本（Serv00专用）
+
+### 注：本项目分享订阅节点都为本地化生成，不使用节点转换、订阅器等第三方外链引用，无需担心节点订阅被外链作者查看
 
 ### 交流平台：[甬哥博客地址](https://ygkkk.blogspot.com)、[甬哥YouTube频道](https://www.youtube.com/@ygkkk)、[甬哥TG电报群组](https://t.me/+jZHc6-A-1QQ5ZGVl)、[甬哥TG电报频道](https://t.me/+DkC9ZZUgEFQzMTZl)
 --------------------------------------------------------------
@@ -68,7 +69,10 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 [Serv00免费代理脚本最终教程（三）：多功能网页生成【保活+重启+重置端口+查看订阅节点】、随意重置端口功能；Github+Workers自动执行保活功能任你选！](https://youtu.be/9uCfFNnjNc0)
 
-### 方案一、Serv00-sb-yg本地SSH专用一键脚本，快捷方式：```sb```
+### 方案一、Serv00-sb-yg本地SSH专用一键脚本 【同服务器与方案二、方案三都不通用】
+
+### 快捷方式：```sb```
+
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
@@ -83,12 +87,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 ![a39f5972b1f33b71138fd9b45af6e53](https://github.com/user-attachments/assets/a2e069ea-80cb-4953-b034-3cb518444eb7)
 
 
-### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用）
+### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用，同服务器与方案三通用）
 
 创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点
 
 
-### 方案三、Serv00多账号自动部署脚本：kp.sh（VPS、软路由专用）
+### 方案三、Serv00多账号自动部署脚本：kp.sh（VPS、软路由专用，同服务器与方案二通用）
 
 修改kp.sh文件的参数，可在多个平台上自动远程部署且保活单个或多个Serv00账号的节点，不可用在serv00本地上，默认nano编辑形式
 
