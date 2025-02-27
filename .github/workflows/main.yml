@@ -16,7 +16,8 @@ jobs:
 
     - name: Fetch URLs in parallel
       # secrets设置，变量名称：http
-      # 变量值(每个保活网页之间用空格或者，或者,间隔开，网页前带http://)：http://保活网址1,http://保活网址2,http://…………
+      # 变量值要求：每个保活/up网页或每个重启/re网页之间用空格或者，或者,间隔开，网页前带http://
+      # 变量值填写示例：http://保活或重启网页1 http://保活或重启网页2 http://保活或重启网页3 ………
       run: |
         IFS=$',， ' read -r -a http <<< "${{ secrets.http }}"
          echo "*****************************************************"
@@ -34,7 +35,7 @@ jobs:
           elif [[ "$response" == *"主程序重启成功"* ]]; then
           echo "🎉恭喜！$url ✅运行正常，成功重启一次主程序"
           else
-         echo "💥杯具！$url ❌运行失败，⚠️保活网址是否正确或者Serv00炸了"
+         echo "💥杯具！$url ❌运行失败，⚠️网页变更是否填写正确？或者Serv00炸了"
          fi
         done
         wait
