@@ -50,7 +50,9 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
 
-本项目分享订阅节点为本地化生成，不使用节点转换等第三方外链引用，无需担心节点订阅被外链作者查看
+支持多功能网页生成：1、网页保活 2、网页重启 3、网页重置端口 4、网页查看订阅节点
+
+网页保活与网页重启可在github或workers设置定时运行任务，可参考视频教程三
 
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
 
@@ -69,10 +71,6 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
 ```
-
-### 支持多功能网页生成：1、网页保活 2、网页重启 3、网页重置端口 4、网页查看订阅节点
-
-### 网页保活与网页重启可在github或workers设置定时运行任务，可参考视频教程三
 
 #### Serv00-sb-yg脚本界面预览图，仅限方案一的SSH端安装脚本（注：仅供围观）
 ![5ffb15af2d36e5869d6adf190da451b](https://github.com/user-attachments/assets/9faf6776-8d3f-4bcb-b579-f98c55454ca1)
