@@ -630,10 +630,7 @@ vma_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$NAME-vmess-ws-argo\", \"add
 echo "$vma_link" >> jh.txt
 hy2_link="hysteria2://$UUID@$IP:$hy2_port?sni=www.bing.com&alpn=h3&insecure=1#$NAME-hy2"
 echo "$hy2_link" >> jh.txt
-#url=$(cat jh.txt 2>/dev/null)
-#baseurl=$(echo -e "$url" | base64 -w 0)
 baseurl=$(base64 -w 0 < jh.txt)
-
 
 cat > sing_box.json <<EOF
 {
@@ -1108,7 +1105,6 @@ EOF
 sleep 2
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 cat jh.txt > ${FILE_PATH}/${UUID}_v2sub.txt
-#echo "$baseurl" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/index.html -o "$FILE_PATH"/index.html
