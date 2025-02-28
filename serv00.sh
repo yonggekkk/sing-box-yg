@@ -453,10 +453,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
       }
     }
  ],
-EOF
-if [[ "$nb" =~ (14|15|16) ]]; then
-cat >> config.json <<EOF 
-    "outbounds": [
+     "outbounds": [
      {
         "type": "wireguard",
         "tag": "wg",
@@ -487,8 +484,18 @@ cat >> config.json <<EOF
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
         "download_detour": "direct"
+      },
+       {
+        "tag": "geolocation-!cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs",
+        "download_detour": "direct"
       }
     ],
+EOF
+if [[ "$nb" =~ (14|15|16) ]]; then
+cat >> config.json <<EOF 
     "rules": [
     {
      "domain": [
@@ -497,7 +504,9 @@ cat >> config.json <<EOF
      "outbound": "wg"
      },
      {
-     "rule_set":"google-gemini",
+     "rule_set":[
+     "google-gemini"
+     ],
      "outbound": "wg"
     } 
     ],
@@ -507,12 +516,16 @@ cat >> config.json <<EOF
 EOF
 else
   cat >> config.json <<EOF
-  "outbounds": [
-    {
-      "type": "direct",
-      "tag": "direct"
-    }
-  ]
+    "rules": [
+     {
+     "rule_set":[
+     "yg_kkk"
+     ],
+     "outbound": "wg"
+    } 
+    ],
+    "final": "direct"
+    }  
 }
 EOF
 fi
