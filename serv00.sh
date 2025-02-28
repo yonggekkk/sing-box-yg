@@ -486,7 +486,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "download_detour": "direct"
       },
        {
-        "tag": "geolocation-!cn",
+        "tag": "notcn",
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs",
