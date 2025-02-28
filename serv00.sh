@@ -332,14 +332,9 @@ private_key=$(echo "${output}" | awk '/PrivateKey:/ {print $2}')
 public_key=$(echo "${output}" | awk '/PublicKey:/ {print $2}')
 echo "${private_key}" > private_key.txt
 echo "${public_key}" > public_key.txt
-
 openssl ecparam -genkey -name prime256v1 -out "private.key"
 openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.serv00.net"
-
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
-if [[ "$nb" =~ (14|15|16) ]]; then
-ytb='"jnn-pa.googleapis.com",'
-fi
 hy1p=$(sed -n '1p' hy2ip.txt)
 hy2p=$(sed -n '2p' hy2ip.txt)
 hy3p=$(sed -n '3p' hy2ip.txt)
@@ -352,7 +347,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
   },
     "inbounds": [
     {
-       "tag": "hysteria-in",
+       "tag": "hysteria-in1",
        "type": "hysteria2",
        "listen": "$hy1p",
        "listen_port": $hy2_port,
@@ -373,7 +368,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         }
     },
         {
-       "tag": "hysteria-in",
+       "tag": "hysteria-in2",
        "type": "hysteria2",
        "listen": "$hy2p",
        "listen_port": $hy2_port,
@@ -394,7 +389,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         }
     },
         {
-       "tag": "hysteria-in",
+       "tag": "hysteria-in3",
        "type": "hysteria2",
        "listen": "$hy3p",
        "listen_port": $hy2_port,
@@ -458,6 +453,9 @@ hy3p=$(sed -n '3p' hy2ip.txt)
       }
     }
  ],
+EOF
+if [[ "$nb" =~ (14|15|16) ]]; then
+cat >> config.json <<EOF 
     "outbounds": [
      {
         "type": "wireguard",
@@ -494,8 +492,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
     "rules": [
     {
      "domain": [
-     $ytb
-     "oh.my.god"
+     "jnn-pa.googleapis.com"
       ],
      "outbound": "wg"
      },
@@ -508,6 +505,17 @@ hy3p=$(sed -n '3p' hy2ip.txt)
     }  
 }
 EOF
+else
+  cat >> config.json <<EOF
+  "outbounds": [
+    {
+      "type": "direct",
+      "tag": "direct"
+    }
+  ]
+}
+EOF
+fi
 
 if [ -e "$(basename "${FILE_MAP[web]}")" ]; then
    echo "$(basename "${FILE_MAP[web]}")" > sb.txt
