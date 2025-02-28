@@ -1105,7 +1105,7 @@ EOF
 
 sleep 2
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
-echo "$url" > ${FILE_PATH}/${UUID}_v2sub.txt
+cat jh.txt > ${FILE_PATH}/${UUID}_v2sub.txt
 #echo "$baseurl" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
