@@ -4695,8 +4695,8 @@ cat /etc/s-box/vm_ws.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/vm_ws_tls.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/hy2.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/tuic5.txt 2>/dev/null >> /etc/s-box/jhdy.txt
-baseurl=$(base64 -w 0 < /etc/s-box/jhdy.txt)
-v2sub=$(cat /etc/s-box/jhdy.txt)
+baseurl=$(base64 -w 0 < /etc/s-box/jhdy.txt 2>/dev/null)
+v2sub=$(cat /etc/s-box/jhdy.txt 2>/dev/null)
 echo "$v2sub" > /etc/s-box/jh_sub.txt
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
