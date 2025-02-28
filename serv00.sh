@@ -491,6 +491,13 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs",
         "download_detour": "direct"
+      },
+       {
+        "tag": "cnn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cnn.srs",
+        "download_detour": "direct"
       }
     ],
 EOF
@@ -519,7 +526,7 @@ else
     "rules": [
      {
      "rule_set":[
-     "yg_kkk"
+     "cnn"
      ],
      "outbound": "wg"
     } 
