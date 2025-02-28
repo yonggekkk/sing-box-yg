@@ -1322,6 +1322,7 @@ if [[ -e $WORKDIR/config.json ]]; then
       source "$HOME/.bashrc"
   fi
   curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
+  curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1 > $WORKDIR/v
   else
   red "未安装脚本，请选择1进行安装" && exit
