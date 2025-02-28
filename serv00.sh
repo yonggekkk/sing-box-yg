@@ -1105,9 +1105,11 @@ EOF
 
 sleep 2
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
-echo "$baseurl" > ${FILE_PATH}/${UUID}_v2sub.txt
+echo "$url" > ${FILE_PATH}/${UUID}_v2sub.txt
+#echo "$baseurl" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/index.html -o "$FILE_PATH"/index.html
 V2rayN_LINK="https://${USERNAME}.serv00.net/${UUID}_v2sub.txt"
 Clashmeta_LINK="https://${USERNAME}.serv00.net/${UUID}_clashmeta.txt"
 Singbox_LINK="https://${USERNAME}.serv00.net/${UUID}_singbox.txt"
