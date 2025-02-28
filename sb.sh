@@ -4695,9 +4695,9 @@ cat /etc/s-box/vm_ws.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/vm_ws_tls.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/hy2.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/tuic5.txt 2>/dev/null >> /etc/s-box/jhdy.txt
-url=$(cat /etc/s-box/jhdy.txt 2>/dev/null)
-baseurl=$(echo -e "$url" | base64 -w 0)
-echo "$baseurl" > /etc/s-box/jh_sub.txt
+baseurl=$(base64 -w 0 < /etc/s-box/jhdy.txt)
+v2sub=$(cat /etc/s-box/jhdy.txt)
+echo "$v2sub" > /etc/s-box/jh_sub.txt
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 四合一聚合订阅 】节点信息如下：" && sleep 2
