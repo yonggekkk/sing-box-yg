@@ -486,7 +486,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "download_detour": "direct"
       },
        {
-        "tag": "notcn",
+        "tag": "geolocation-!cn",
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs",
@@ -1332,15 +1332,15 @@ if [[ -e $WORKDIR/config.json ]]; then
 nochinawarp(){
 if [[ -e $WORKDIR/config.json ]]; then
 gosite=$(jq -r '.route.rules[].rule_set[]?' $WORKDIR/config.json)
-[[ "$gosite" == *"notcn"* ]] && echo 已开启非中国全局WARP代理 ||  echo 未开启非中国全局WARP代理
+[[ "$gosite" == *"geolocation-!cn"* ]] && echo 已开启非中国全局WARP代理 ||  echo 未开启非中国全局WARP代理
 yellow "1、开启非中国全局WARP代理 (访问国外网站都用WARP的IP)"
 yellow "2、关闭非中国全局WARP代理 (恢复默认)"
 yellow "3、返回上层"
 reading "【请选择 1 或者 2】: " gowarp
 if [[ "$gowarp" == 1 ]]; then
-jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("cnn"; "notcn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
+jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("cnn"; "geolocation-!cn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
 elif [[ "$gowarp" == 2 ]]; then
-jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("notcn"; "cnn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
+jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("geolocation-!cn"; "cnn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
 else
 sb
 fi
