@@ -512,7 +512,8 @@ cat >> config.json <<EOF
      },
      {
      "rule_set":[
-     "google-gemini"
+     "google-gemini",
+     "cnn"
      ],
      "outbound": "wg"
     } 
