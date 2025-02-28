@@ -698,16 +698,16 @@ cat > sing_box.json <<EOF
       "default": "auto",
       "outbounds": [
         "auto",
-        "vless-$NAME",
-        "vmess-$NAME",
-        "hy2-$NAME",
-"vmess-tls-argo-$NAME",
-"vmess-argo-$NAME"
+        "vless-$snb",
+        "vmess-$snb",
+        "hy2-$snb",
+"vmess-tls-argo-$snb",
+"vmess-argo-$snb"
       ]
     },
     {
       "type": "vless",
-      "tag": "vless-$NAME",
+      "tag": "vless-$snb",
       "server": "$IP",
       "server_port": $vless_port,
       "uuid": "$UUID",
@@ -730,7 +730,7 @@ cat > sing_box.json <<EOF
 {
             "server": "$IP",
             "server_port": $vmess_port,
-            "tag": "vmess-$NAME",
+            "tag": "vmess-$snb",
             "tls": {
                 "enabled": false,
                 "server_name": "www.bing.com",
@@ -757,7 +757,7 @@ cat > sing_box.json <<EOF
 
     {
         "type": "hysteria2",
-        "tag": "hy2-$NAME",
+        "tag": "hy2-$snb",
         "server": "$IP",
         "server_port": $hy2_port,
         "password": "$UUID",
@@ -773,7 +773,7 @@ cat > sing_box.json <<EOF
 {
             "server": "icook.hk",
             "server_port": 8443,
-            "tag": "vmess-tls-argo-$NAME",
+            "tag": "vmess-tls-argo-$snb",
             "tls": {
                 "enabled": true,
                 "server_name": "$argodomain",
@@ -800,7 +800,7 @@ cat > sing_box.json <<EOF
 {
             "server": "icook.hk",
             "server_port": 8880,
-            "tag": "vmess-argo-$NAME",
+            "tag": "vmess-argo-$snb",
             "tls": {
                 "enabled": false,
                 "server_name": "$argodomain",
@@ -832,11 +832,11 @@ cat > sing_box.json <<EOF
       "tag": "auto",
       "type": "urltest",
       "outbounds": [
-        "vless-$NAME",
-        "vmess-$NAME",
-        "hy2-$NAME",
-"vmess-tls-argo-$NAME",
-"vmess-argo-$NAME"
+        "vless-$snb",
+        "vmess-$snb",
+        "hy2-$snb",
+"vmess-tls-argo-$snb",
+"vmess-argo-$snb"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -952,7 +952,7 @@ dns:
       - 240.0.0.0/4
 
 proxies:
-- name: vless-reality-vision-$NAME               
+- name: vless-reality-vision-$snb               
   type: vless
   server: $IP                           
   port: $vless_port                                
@@ -966,7 +966,7 @@ proxies:
     public-key: $public_key                      
   client-fingerprint: chrome                  
 
-- name: vmess-ws-$NAME                         
+- name: vmess-ws-$snb                         
   type: vmess
   server: $IP                       
   port: $vmess_port                                     
@@ -982,7 +982,7 @@ proxies:
     headers:
       Host: www.bing.com                     
 
-- name: hysteria2-$NAME                            
+- name: hysteria2-$snb                            
   type: hysteria2                                      
   server: $IP                               
   port: $hy2_port                                
@@ -993,7 +993,7 @@ proxies:
   skip-cert-verify: true
   fast-open: true
 
-- name: vmess-tls-argo-$NAME                         
+- name: vmess-tls-argo-$snb                         
   type: vmess
   server: icook.hk                        
   port: 8443                                     
@@ -1009,7 +1009,7 @@ proxies:
     headers:
       Host: $argodomain
 
-- name: vmess-argo-$NAME                         
+- name: vmess-argo-$snb                         
   type: vmess
   server: icook.hk                        
   port: 8880                                     
@@ -1032,11 +1032,11 @@ proxy-groups:
   interval: 300
   strategy: round-robin
   proxies:
-    - vless-reality-vision-$NAME                              
-    - vmess-ws-$NAME
-    - hysteria2-$NAME
-    - vmess-tls-argo-$NAME
-    - vmess-argo-$NAME
+    - vless-reality-vision-$snb                              
+    - vmess-ws-$snb
+    - hysteria2-$snb
+    - vmess-tls-argo-$snb
+    - vmess-argo-$snb
 
 - name: Auto
   type: url-test
@@ -1044,11 +1044,11 @@ proxy-groups:
   interval: 300
   tolerance: 50
   proxies:
-    - vless-reality-vision-$NAME                              
-    - vmess-ws-$NAME
-    - hysteria2-$NAME
-    - vmess-tls-argo-$NAME
-    - vmess-argo-$NAME
+    - vless-reality-vision-$snb                             
+    - vmess-ws-$snb
+    - hysteria2-$snb
+    - vmess-tls-argo-$snb
+    - vmess-argo-$snb
     
 - name: Select
   type: select
@@ -1056,11 +1056,11 @@ proxy-groups:
     - Balance                                         
     - Auto
     - DIRECT
-    - vless-reality-vision-$NAME                              
-    - vmess-ws-$NAME
-    - hysteria2-$NAME
-    - vmess-tls-argo-$NAME
-    - vmess-argo-$NAME
+    - vless-reality-vision-$snb                              
+    - vmess-ws-$snb
+    - hysteria2-$snb
+    - vmess-tls-argo-$snb
+    - vmess-argo-$snb
 rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
