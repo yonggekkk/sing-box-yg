@@ -43,14 +43,14 @@ read_uuid() {
 }
 
 read_reym() {
-        yellow "方式一：(推荐)使用CF域名，支持proxyip+非标端口反代ip功能：输入回车"
-	yellow "方式二：(推荐)使用Serv00自带域名，不支持proxyip功能：输入s"
+	yellow "方式一：(推荐)使用Serv00自带域名，不支持proxyip功能：输入回车"
+        yellow "方式二：使用CF域名(www.speedtest.net)，支持proxyip+非标端口反代ip功能：输入s"
         yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
         reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
         if [[ -z "$reym" ]]; then
-           reym=www.speedtest.net
+	    reym=$USERNAME.serv00.net
 	elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
-           reym=$USERNAME.serv00.net
+	    reym=www.speedtest.net
         fi
 	green "你的reality域名为: $reym"
 }
