@@ -1308,22 +1308,27 @@ if [[ -e $WORKDIR/config.json ]]; then
 
 nochinawarp(){
 if [[ -e $WORKDIR/config.json ]]; then
-gosite=$(jq -r '.route.rules[].rule_set[]?' $WORKDIR/config.json)
-[[ "$gosite" == *"geolocation-!cn"* ]] && echo 已开启非中国全局WARP代理 ||  echo 未开启非中国全局WARP代理
-yellow "1、开启非中国全局WARP代理 (访问国外网站都用WARP的IP)"
-yellow "2、关闭非中国全局WARP代理 (恢复默认)"
-yellow "3、返回上层"
-reading "【请选择 1 或者 2】: " gowarp
+gosite=$(jq -r '.route.final' $WORKDIR/config.json)
+[[ "$gosite" == wg ]] && purple "当前已开启全局WARP代理" || purple "当前未开启全局WARP代理"
+yellow "1、开启全局WARP代理"
+yellow "2、关闭全局WARP代理"
+yellow "0、返回上层"
+reading "【请选择0-2】: " gowarp
 if [[ "$gowarp" == 1 ]]; then
-jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("cnn"; "geolocation-!cn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
+sed -i'' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' "$WORKDIR"/config.json
 elif [[ "$gowarp" == 2 ]]; then
-jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("geolocation-!cn"; "cnn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
+sed -i'' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' "$WORKDIR"/config.json
 else
 sb
 fi
 else
 red "未安装脚本，请选择1进行安装" && exit
 fi
+}
+
+changekeep(){
+gosite=$(jq -r '.route.final' $WORKDIR/config.json)
+
 }
 
 resservsb(){
@@ -1364,7 +1369,7 @@ menu() {
    echo   "------------------------------------------------------------"
    green  "4. 更新脚本"
    echo   "------------------------------------------------------------"
-   green  "5. 开启非中国全局WARP代理"
+   green  "5. 开启全局WARP代理"
    echo   "------------------------------------------------------------"
    green  "6. 查看各节点分享/sing-box与clash订阅链接/反代IP/ProxyIP"
    echo   "------------------------------------------------------------"
