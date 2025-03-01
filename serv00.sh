@@ -1339,8 +1339,10 @@ yellow "3、返回上层"
 reading "【请选择 1 或者 2】: " gowarp
 if [[ "$gowarp" == 1 ]]; then
 jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("cnn"; "geolocation-!cn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
+resservsb
 elif [[ "$gowarp" == 2 ]]; then
 jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("geolocation-!cn"; "cnn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
+resservsb
 else
 sb
 fi
