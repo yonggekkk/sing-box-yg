@@ -1315,10 +1315,10 @@ yellow "2、关闭全局WARP代理"
 yellow "0、返回上层"
 reading "【请选择0-2】: " gowarp
 if [[ "$gowarp" == 1 ]]; then
-sed -i'' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' "$WORKDIR"/config.json
+sed -i '' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' "$WORKDIR"/config.json
 changekeep && resservsb
 elif [[ "$gowarp" == 2 ]]; then
-sed -i'' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' "$WORKDIR"/config.json
+sed -i '' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' "$WORKDIR"/config.json
 changekeep && resservsb
 else
 sb
@@ -1330,7 +1330,7 @@ fi
 
 changekeep(){
 gosite=$(jq -r '.route.final' "$WORKDIR/config.json")
-[[ "$gosite" == "wg" ]] && sed -i'' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' serv00keep.sh || sed -i'' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' serv00keep.sh
+[[ "$gosite" == "wg" ]] && sed -i '' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' serv00keep.sh || sed -i '' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' serv00keep.sh
 }
 
 resservsb(){
