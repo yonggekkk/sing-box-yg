@@ -1323,7 +1323,7 @@ sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
   curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1 > $WORKDIR/v
-  #changekeep
+  changekeep
   else
   red "未安装脚本，请选择1进行安装" && exit
   fi
@@ -1332,17 +1332,17 @@ sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 allwarp(){
 if [[ -e $WORKDIR/config.json ]]; then
 gosite=$(jq -r '.route.rules[].rule_set[]?' $WORKDIR/config.json)
-[[ "$gosite" == *"geolocation-!cn"* ]] && echo 已开启非中国全局WARP代理 ||  echo 未开启非中国全局WARP代理
+[[ "$gosite" == *"cnn"* ]] && purple "未开启非中国全局WARP代理" || purple "已开启非中国全局WARP代理"
 yellow "1、开启非中国全局WARP代理 (访问国外网站都用WARP的IP)"
 yellow "2、关闭非中国全局WARP代理 (恢复默认)"
 yellow "3、返回上层"
 reading "【请选择 1 或者 2】: " gowarp
 if [[ "$gowarp" == 1 ]]; then
 jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("cnn"; "geolocation-!cn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
-resservsb
+changekeep && resservsb
 elif [[ "$gowarp" == 2 ]]; then
 jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("geolocation-!cn"; "cnn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
-resservsb
+changekeep && resservsb
 else
 sb
 fi
@@ -1352,8 +1352,8 @@ fi
 }
 
 changekeep(){
-gosite=$(jq -r '.route.final' "$WORKDIR/config.json")
-[[ "$gosite" == "wg" ]] && sed -i '' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' serv00keep.sh || sed -i '' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' serv00keep.sh
+gosite=$(jq -r '.route.rules[].rule_set[]?' $WORKDIR/config.json)
+[[ "$gosite" == *"cnn"* ]] && sed -i '' '/^"geolocation-!cn"$/c\"cnn"' serv00keep.sh || sed -i '' '/^"cnn"$/c\"geolocation-!cn"' serv00keep.sh
 }
 
 resservsb(){
