@@ -1206,7 +1206,6 @@ fi
 }
 
 servkeep() {
-curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
 sed -i '' -e "14s|''|'$UUID'|" serv00keep.sh
 sed -i '' -e "17s|''|'$vless_port'|" serv00keep.sh
 sed -i '' -e "18s|''|'$vmess_port'|" serv00keep.sh
@@ -1301,12 +1300,13 @@ if [[ -e $WORKDIR/config.json ]]; then
   curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1 > $WORKDIR/v
+  changekeep
   else
   red "未安装脚本，请选择1进行安装" && exit
   fi
 }
 
-nochinawarp(){
+allwarp(){
 if [[ -e $WORKDIR/config.json ]]; then
 gosite=$(jq -r '.route.final' "$WORKDIR"/config.json)
 [[ "$gosite" == wg ]] && purple "当前已开启全局WARP代理" || purple "当前未开启全局WARP代理"
@@ -1316,10 +1316,10 @@ yellow "0、返回上层"
 reading "【请选择0-2】: " gowarp
 if [[ "$gowarp" == 1 ]]; then
 sed -i'' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' "$WORKDIR"/config.json
-changekeep
+changekeep && resservsb
 elif [[ "$gowarp" == 2 ]]; then
 sed -i'' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' "$WORKDIR"/config.json
-changekeep
+changekeep && resservsb
 else
 sb
 fi
@@ -1484,7 +1484,7 @@ fi
         2) uninstall_singbox ;; 
 	3) resservsb ;;
 	4) fastrun && green "脚本已更新成功" && sleep 2 && sb ;; 
-        5) nochinawarp ;;
+        5) allwarp ;;
         6) showlist ;;
 	7) showsbclash ;;
         8) resallport ;;
