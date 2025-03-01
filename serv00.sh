@@ -1308,7 +1308,7 @@ if [[ -e $WORKDIR/config.json ]]; then
 
 nochinawarp(){
 if [[ -e $WORKDIR/config.json ]]; then
-gosite=$(jq -r '.route.final' $WORKDIR/config.json)
+gosite=$(jq -r '.route.final' "$WORKDIR"/config.json)
 [[ "$gosite" == wg ]] && purple "当前已开启全局WARP代理" || purple "当前未开启全局WARP代理"
 yellow "1、开启全局WARP代理"
 yellow "2、关闭全局WARP代理"
@@ -1316,8 +1316,10 @@ yellow "0、返回上层"
 reading "【请选择0-2】: " gowarp
 if [[ "$gowarp" == 1 ]]; then
 sed -i'' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' "$WORKDIR"/config.json
+changekeep
 elif [[ "$gowarp" == 2 ]]; then
 sed -i'' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' "$WORKDIR"/config.json
+changekeep
 else
 sb
 fi
@@ -1327,8 +1329,8 @@ fi
 }
 
 changekeep(){
-gosite=$(jq -r '.route.final' $WORKDIR/config.json)
-
+gosite=$(jq -r '.route.final' "$WORKDIR/config.json")
+[[ "$gosite" == "wg" ]] && sed -i'' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' serv00keep.sh || sed -i'' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' serv00keep.sh
 }
 
 resservsb(){
