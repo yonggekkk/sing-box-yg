@@ -487,7 +487,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
         "download_detour": "direct"
-      }
+      },
         "tag": "geolocation-!cn",
         "type": "remote",
         "format": "binary",
