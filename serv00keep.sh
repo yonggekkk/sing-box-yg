@@ -435,11 +435,15 @@ cat >> config.json <<EOF
      },
      {
      "rule_set":[
-     "google-gemini",
+     "google-gemini"
+     ],
+     "outbound": "wg"
+    },
+    "rule_set":[
      "cnn"
      ],
      "outbound": "wg"
-    } 
+    }
     ],
     "final": "direct"
     }  
