@@ -439,6 +439,7 @@ cat >> config.json <<EOF
      ],
      "outbound": "wg"
     },
+    {
     "rule_set":[
      "cnn"
      ],
