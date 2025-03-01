@@ -488,6 +488,19 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
         "download_detour": "direct"
       }
+        "tag": "geolocation-!cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs",
+        "download_detour": "direct"
+      },
+       {
+        "tag": "cnn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cnn.srs",
+        "download_detour": "direct"
+      }
     ],
 EOF
 if [[ "$nb" =~ (14|15|16) ]]; then
@@ -501,7 +514,8 @@ cat >> config.json <<EOF
      },
      {
      "rule_set":[
-     "google-gemini"
+     "google-gemini",
+     "cnn"
      ],
      "outbound": "wg"
     } 
@@ -512,6 +526,14 @@ cat >> config.json <<EOF
 EOF
 else
   cat >> config.json <<EOF
+    "rules": [
+     {
+     "rule_set":[
+     "cnn"
+     ],
+     "outbound": "wg"
+    } 
+    ],
     "final": "direct"
     }  
 }
@@ -1300,7 +1322,7 @@ sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
   curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1 > $WORKDIR/v
-  changekeep
+  #changekeep
   else
   red "未安装脚本，请选择1进行安装" && exit
   fi
@@ -1308,18 +1330,16 @@ sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 
 allwarp(){
 if [[ -e $WORKDIR/config.json ]]; then
-gosite=$(jq -r '.route.final' "$WORKDIR"/config.json)
-[[ "$gosite" == wg ]] && purple "当前已开启全局WARP代理" || purple "当前未开启全局WARP代理"
-yellow "1、开启全局WARP代理"
-yellow "2、关闭全局WARP代理"
-yellow "0、返回上层"
-reading "【请选择0-2】: " gowarp
+gosite=$(jq -r '.route.rules[].rule_set[]?' $WORKDIR/config.json)
+[[ "$gosite" == *"geolocation-!cn"* ]] && echo 已开启非中国全局WARP代理 ||  echo 未开启非中国全局WARP代理
+yellow "1、开启非中国全局WARP代理 (访问国外网站都用WARP的IP)"
+yellow "2、关闭非中国全局WARP代理 (恢复默认)"
+yellow "3、返回上层"
+reading "【请选择 1 或者 2】: " gowarp
 if [[ "$gowarp" == 1 ]]; then
-sed -i '' 's/\"final\": \"direct\"/\"final\": \"wg\"/g' "$WORKDIR"/config.json
-changekeep && resservsb
+jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("cnn"; "geolocation-!cn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
 elif [[ "$gowarp" == 2 ]]; then
-sed -i '' 's/\"final\": \"wg\"/\"final\": \"direct\"/g' "$WORKDIR"/config.json
-changekeep && resservsb
+jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("geolocation-!cn"; "cnn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
 else
 sb
 fi
