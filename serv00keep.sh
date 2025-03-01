@@ -407,20 +407,6 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
         "download_detour": "direct"
-      },
-      {
-        "tag": "geolocation-!cn",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs",
-        "download_detour": "direct"
-      },
-       {
-        "tag": "cnn",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cnn.srs",
-        "download_detour": "direct"
       }
     ],
 EOF
@@ -438,12 +424,6 @@ cat >> config.json <<EOF
      "google-gemini"
      ],
      "outbound": "wg"
-    },
-    {
-    "rule_set":[
-     "cnn"
-     ],
-     "outbound": "wg"
     }
     ],
     "final": "direct"
@@ -452,14 +432,6 @@ cat >> config.json <<EOF
 EOF
 else
   cat >> config.json <<EOF
-    "rules": [
-     {
-     "rule_set":[
-     "cnn"
-     ],
-     "outbound": "wg"
-    } 
-    ],
     "final": "direct"
     }  
 }
