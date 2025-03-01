@@ -1353,7 +1353,7 @@ fi
 
 changekeep(){
 gosite=$(jq -r '.route.rules[].rule_set[]?' $WORKDIR/config.json)
-[[ "$gosite" == *"cnn"* ]] && sed -i '' '/^"geolocation-!cn"$/c\"cnn"' serv00keep.sh || sed -i '' '/^"cnn"$/c\"geolocation-!cn"' serv00keep.sh
+[[ "$gosite" == *"cnn"* ]] && sed -i '' 's/\"geolocation-!cn\"/\"cnn\"/g' serv00keep.sh || sed -i '' 's/\"cnn\"/\"geolocation-!cn\"/g' serv00keep.sh
 }
 
 resservsb(){
