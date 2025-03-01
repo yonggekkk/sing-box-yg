@@ -281,7 +281,7 @@ done
 # Download Dependency Files
 download_and_run_singbox() {
 DOWNLOAD_DIR="." && mkdir -p "$DOWNLOAD_DIR" && FILE_INFO=()
-FILE_INFO=("https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/sb web" "https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/server bot")
+FILE_INFO=("https://github.com/yonggekkk/sing-box-yg/releases/download/singbox/sb web" "https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/server bot")
 declare -A FILE_MAP
 generate_random_name() {
     local chars=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890
@@ -456,24 +456,30 @@ hy3p=$(sed -n '3p' hy2ip.txt)
       }
     }
  ],
-     "outbounds": [
-     {
-        "type": "wireguard",
-        "tag": "wg",
-        "server": "162.159.192.200",
-        "server_port": 4500,
-        "local_address": [
-                "172.16.0.2/32",
-                "2606:4700:110:8f77:1ca9:f086:846c:5f9e/128"
-        ],
-        "private_key": "wIxszdR2nMdA7a2Ul3XQcniSfSZqdqjPb6w6opvf5AU=",
-        "peer_public_key": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
-        "reserved": [
-            126,
-            246,
-            173
-        ]
-    },
+"endpoints":[
+{
+"type":"wireguard",
+"tag":"warp-out",
+"address":[
+"172.16.0.2/32",
+"2606:4700:110:8f77:1ca9:f086:846c:5f9e/128"
+],
+"private_key":"wIxszdR2nMdA7a2Ul3XQcniSfSZqdqjPb6w6opvf5AU=",
+"peers": [
+{
+"address": "162.159.192.200",
+"port":4500,
+"public_key":"bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
+"allowed_ips": [
+"0.0.0.0/0",
+"::/0"
+],
+"reserved":[126,246,173]
+}
+]
+}
+],
+ "outbounds": [
     {
       "type": "direct",
       "tag": "direct"
@@ -494,17 +500,29 @@ if [[ "$nb" =~ (14|15|16) ]]; then
 cat >> config.json <<EOF 
     "rules": [
     {
-     "domain": [
-     "jnn-pa.googleapis.com"
-      ],
-     "outbound": "wg"
-     },
-     {
-     "rule_set":[
-     "google-gemini"
-     ],
-     "outbound": "wg"
-    }
+    "action": "sniff"
+    },
+    {
+     "action": "resolve",
+    "domain":[
+    "jnn-pa.googleapis.com"
+    ]
+    },
+    {
+     "action": "resolve",
+    "rule_set":[
+    "google-gemini"
+    ]
+    },
+   {
+   "domain":[
+   "jnn-pa.googleapis.com"
+    ],
+    "rule_set":[
+    "google-gemini"
+    ],
+   "outbound":"wg"
+   }
     ],
     "final": "direct"
     }  
