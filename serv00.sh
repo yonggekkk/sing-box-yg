@@ -487,20 +487,6 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         "format": "binary",
         "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
         "download_detour": "direct"
-      },
-      {
-        "tag": "geolocation-!cn",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/geolocation-!cn.srs",
-        "download_detour": "direct"
-      },
-       {
-        "tag": "cnn",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cnn.srs",
-        "download_detour": "direct"
       }
     ],
 EOF
@@ -518,12 +504,6 @@ cat >> config.json <<EOF
      "google-gemini"
      ],
      "outbound": "wg"
-    },
-    {
-     "rule_set":[
-     "cnn"
-     ],
-     "outbound": "wg"
     }
     ],
     "final": "direct"
@@ -532,14 +512,6 @@ cat >> config.json <<EOF
 EOF
 else
   cat >> config.json <<EOF
-    "rules": [
-     {
-     "rule_set":[
-     "cnn"
-     ],
-     "outbound": "wg"
-    } 
-    ],
     "final": "direct"
     }  
 }
@@ -1328,37 +1300,9 @@ sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
   curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
   curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1 > $WORKDIR/v
-  changekeep
   else
   red "未安装脚本，请选择1进行安装" && exit
   fi
-}
-
-allwarp(){
-if [[ -e $WORKDIR/config.json ]]; then
-gosite=$(jq -r '.route.rules[].rule_set[]?' $WORKDIR/config.json)
-[[ "$gosite" == *"cnn"* ]] && purple "未开启非中国全局WARP代理" || purple "已开启非中国全局WARP代理"
-yellow "1、开启非中国全局WARP代理 (访问国外网站都用WARP的IP)"
-yellow "2、关闭非中国全局WARP代理 (恢复默认)"
-yellow "3、返回上层"
-reading "【请选择 1 或者 2】: " gowarp
-if [[ "$gowarp" == 1 ]]; then
-jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("cnn"; "geolocation-!cn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
-changekeep && resservsb
-elif [[ "$gowarp" == 2 ]]; then
-jq -r '(.route.rules[] | select(.rule_set != null) | .rule_set[]) |= sub("geolocation-!cn"; "cnn")' "$WORKDIR/config.json" > "$WORKDIR/temp.json" && mv "$WORKDIR/temp.json" "$WORKDIR/config.json"
-changekeep && resservsb
-else
-sb
-fi
-else
-red "未安装脚本，请选择1进行安装" && exit
-fi
-}
-
-changekeep(){
-gosite=$(jq -r '.route.rules[].rule_set[]?' $WORKDIR/config.json)
-[[ "$gosite" == *"cnn"* ]] && sed -i '' 's/\"geolocation-!cn\"/\"cnn\"/g' serv00keep.sh || sed -i '' 's/\"cnn\"/\"geolocation-!cn\"/g' serv00keep.sh
 }
 
 resservsb(){
@@ -1399,15 +1343,13 @@ menu() {
    echo   "------------------------------------------------------------"
    green  "4. 更新脚本"
    echo   "------------------------------------------------------------"
-   green  "5. 开启全局WARP代理"
+   green  "5. 查看各节点分享/sing-box与clash订阅链接/反代IP/ProxyIP"
    echo   "------------------------------------------------------------"
-   green  "6. 查看各节点分享/sing-box与clash订阅链接/反代IP/ProxyIP"
+   green  "6. 查看sing-box与clash配置文件"
    echo   "------------------------------------------------------------"
-   green  "7. 查看sing-box与clash配置文件"
+   yellow "7. 重置并随机生成新端口 (脚本安装前后都可执行)"
    echo   "------------------------------------------------------------"
-   yellow "8. 重置并随机生成新端口 (脚本安装前后都可执行)"
-   echo   "------------------------------------------------------------"
-   yellow "9. 清理所有服务进程与文件 (系统初始化)"
+   yellow "8. 清理所有服务进程与文件 (系统初始化)"
    echo   "------------------------------------------------------------"
    red    "0. 退出脚本"
    echo   "============================================================"
@@ -1505,20 +1447,19 @@ yellow "未安装 Serv00-sb-yg 脚本！请选择 1 安装"
 fi
 #curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh -o serv00.sh && chmod +x serv00.sh
    echo -e "========================================================="
-   reading "请输入选择【0-9】: " choice
+   reading "请输入选择【0-8】: " choice
    echo
     case "${choice}" in
         1) install_singbox ;;
         2) uninstall_singbox ;; 
 	3) resservsb ;;
 	4) fastrun && green "脚本已更新成功" && sleep 2 && sb ;; 
-        5) allwarp ;;
-        6) showlist ;;
-	7) showsbclash ;;
-        8) resallport ;;
-        9) kill_all_tasks ;;
+        5) showlist ;;
+	6) showsbclash ;;
+        7) resallport ;;
+        8) kill_all_tasks ;;
 	0) exit 0 ;;
-        *) red "无效的选项，请输入 0 到 9" ;;
+        *) red "无效的选项，请输入 0 到 8" ;;
     esac
 }
 menu
