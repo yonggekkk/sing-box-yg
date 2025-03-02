@@ -50,13 +50,7 @@ WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 read_ip(){
 nb=$(echo "$HOSTNAME" | cut -d '.' -f 1 | tr -d 's')
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
-rm -rf ip.txt hy2ip.txt
-dig @8.8.8.8 +time=5 +short "web$nb.serv00.com" >> hy2ip.txt
-sleep 2 
-dig @8.8.8.8 +time=5 +short "$HOSTNAME" >> hy2ip.txt
-sleep 2 
-dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com" >> hy2ip.txt
-sleep 2 
+rm -rf ip.txt
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
 if [[ "$response" =~ ^$|unknown|not|error ]]; then
@@ -261,9 +255,6 @@ public_key=$(<public_key.txt)
 openssl ecparam -genkey -name prime256v1 -out "private.key"
 openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.serv00.net"
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
-hy1p=$(sed -n '1p' hy2ip.txt)
-hy2p=$(sed -n '2p' hy2ip.txt)
-hy3p=$(sed -n '3p' hy2ip.txt)
   cat > config.json << EOF
 {
   "log": {
@@ -275,7 +266,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
     {
        "tag": "hysteria-in1",
        "type": "hysteria2",
-       "listen": "$hy1p",
+       "listen": "$(dig @8.8.8.8 +time=5 +short "web$nb.serv00.com")",
        "listen_port": $hy2_port,
        "users": [
          {
@@ -296,7 +287,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         {
        "tag": "hysteria-in2",
        "type": "hysteria2",
-       "listen": "$hy2p",
+       "listen": "$(dig @8.8.8.8 +time=5 +short "$HOSTNAME")",
        "listen_port": $hy2_port,
        "users": [
          {
@@ -317,7 +308,7 @@ hy3p=$(sed -n '3p' hy2ip.txt)
         {
        "tag": "hysteria-in3",
        "type": "hysteria2",
-       "listen": "$hy3p",
+       "listen": "$(dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com")",
        "listen_port": $hy2_port,
        "users": [
          {
