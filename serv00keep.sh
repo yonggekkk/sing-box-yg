@@ -55,18 +55,19 @@ rm -rf ip.txt
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
 if [[ "$response" =~ ^$|unknown|not|error ]]; then
-dig @8.8.8.8 +time=5 +short $host >> ip.txt
+dig @8.8.8.8 +time=5 +short $host | sort -u >> ip.txt
 sleep 1  
 else
-echo "$response" | while IFS='|' read -r ip status; do
+while IFS='|' read -r ip status; do
 if [[ $status == "Accessible" ]]; then
-echo "$ip: 可用"  >> ip.txt
+echo "$ip: 可用" >> ip.txt
 else
-echo "$ip: 被墙 (Argo与CDN回源节点、proxyip依旧有效)"  >> ip.txt
+echo "$ip: 被墙 (Argo与CDN回源节点、proxyip依旧有效)" >> ip.txt
 fi	
-done
+done <<< "$response"
 fi
 done
+sort -u ip.txt -o ip.txt
 if [[ -z "$IP" ]]; then
 IP=$(grep -m 1 "可用" ip.txt | awk -F ':' '{print $1}')
 if [ -z "$IP" ]; then
