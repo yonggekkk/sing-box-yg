@@ -1397,7 +1397,6 @@ echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-bo
 fi
 echo -e "========================================================="
 sbb=$(cat $WORKDIR/sb.txt 2>/dev/null)
-agg=$(cat $WORKDIR/ag.txt 2>/dev/null)
 showuuid=$(jq -r '.inbounds[0].users[0].password' $WORKDIR/config.json 2>/dev/null)
 if pgrep -x "$sbb" > /dev/null; then
 green "Sing-box主进程运行正常"
