@@ -26,6 +26,7 @@ devil binexec on >/dev/null 2>&1
 USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
 snb=$(hostname | awk -F '.' '{print $1}')
+nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
 if [[ "$reset" =~ ^[Yy]$ ]]; then
 #crontab -l | grep -v "serv00keep" >rmcron
 #crontab rmcron >/dev/null 2>&1
@@ -48,7 +49,6 @@ WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 
 read_ip(){
-nb=$(echo "$HOSTNAME" | cut -d '.' -f 1 | tr -d 's')
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
 rm -rf ip.txt
 for host in "${ym[@]}"; do
@@ -254,7 +254,6 @@ private_key=$(<private_key.txt)
 public_key=$(<public_key.txt)
 openssl ecparam -genkey -name prime256v1 -out "private.key"
 openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.serv00.net"
-nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
   cat > config.json << EOF
 {
   "log": {
