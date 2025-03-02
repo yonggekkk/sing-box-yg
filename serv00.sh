@@ -1405,13 +1405,13 @@ green "UUID密码：$showuuid"
 else
 yellow "Sing-box主进程启动失败，请检测节点是否可用"
 fi
-if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep "$agg" > /dev/null; then
+if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log"; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
 green "Argo临时域名：$argosl  $check"
 fi
-if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep "$agg" > /dev/null; then
+if [ -f "$WORKDIR/boot.log" ] && ! grep -q "trycloudflare.com" "$WORKDIR/boot.log"; then
 yellow "Argo临时域名暂时不存在，保活过程中会自动恢复"
 fi
 if [ ! -f "$WORKDIR/boot.log" ] && ps aux | grep "$agg" > /dev/null; then
