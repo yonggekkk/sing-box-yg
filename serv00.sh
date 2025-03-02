@@ -1352,22 +1352,23 @@ menu() {
    red    "0. 退出脚本"
    echo   "============================================================"
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
-rm -rf $WORKDIR/ip.txt
+rm -rf ip.txt
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
 if [[ "$response" =~ ^$|unknown|not|error ]]; then
-dig @8.8.8.8 +time=5 +short $host >> $WORKDIR/ip.txt
-sleep 1 
+dig @8.8.8.8 +time=5 +short $host | sort -u >> $WORKDIR/ip.txt
+sleep 1  
 else
-echo "$response" | while IFS='|' read -r ip status; do
+while IFS='|' read -r ip status; do
 if [[ $status == "Accessible" ]]; then
-echo "$ip: 可用"  >> $WORKDIR/ip.txt
+echo "$ip: 可用" >> $WORKDIR/ip.txt
 else
-echo "$ip: 被墙 (Argo与CDN回源节点、proxyip依旧有效)"  >> $WORKDIR/ip.txt
+echo "$ip: 被墙 (Argo与CDN回源节点、proxyip依旧有效)" >> $WORKDIR/ip.txt
 fi	
-done
+done <<< "$response"
 fi
 done
+sort -u $WORKDIR/ip.txt -o $WORKDIR/ip.txt
 green "Serv00服务器名称：${snb}"
 echo
 green "当前可选择的IP如下："
