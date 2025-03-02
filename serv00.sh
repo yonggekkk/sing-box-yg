@@ -1368,7 +1368,7 @@ fi
 done <<< "$response"
 fi
 done
-sort -u $WORKDIR/ip.txt -o $WORKDIR/ip.txt
+grep ':' $WORKDIR/ip.txt | sort -u -o $WORKDIR/ip.txt
 green "Serv00服务器名称：${snb}"
 echo
 green "当前可选择的IP如下："
