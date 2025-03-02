@@ -52,8 +52,11 @@ nb=$(echo "$HOSTNAME" | cut -d '.' -f 1 | tr -d 's')
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
 rm -rf ip.txt hy2ip.txt
 dig @8.8.8.8 +time=5 +short "web$nb.serv00.com" >> hy2ip.txt
+sleep 2 
 dig @8.8.8.8 +time=5 +short "$HOSTNAME" >> hy2ip.txt
+sleep 2 
 dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com" >> hy2ip.txt
+sleep 2 
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
 if [[ "$response" =~ ^$|unknown|not|error ]]; then
