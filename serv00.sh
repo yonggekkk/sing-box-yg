@@ -1401,29 +1401,31 @@ echo -e "检测到最新 Serv00-sb-yg 脚本版本号：${yellow}${latestV}${re}
 echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion)${re}"
 fi
 echo -e "========================================================="
+sbb=$(cat $WORKDIR/sb.txt 2>/dev/null)
+agg=$(cat $WORKDIR/ag.txt 2>/dev/null)
 showuuid=$(jq -r '.inbounds[0].users[0].password' $WORKDIR/config.json 2>/dev/null)
-if ps aux | grep '[r]un -c con' > /dev/null; then
+if ps aux | grep "$sbb" > /dev/null; then
 green "Sing-box主进程运行正常"    
 green "UUID密码：$showuuid" 
 else
 yellow "Sing-box主进程启动失败，请检测节点是否可用"
 fi
-if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep '[t]unnel --u' > /dev/null; then
+if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null && ps aux | grep "$agg" > /dev/null; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
 green "Argo临时域名：$argosl  $check"
 fi
-if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --u' > /dev/null; then
+if [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep "$agg" > /dev/null; then
 yellow "Argo临时域名暂时不存在，保活过程中会自动恢复"
 fi
-if ps aux | grep '[t]unnel --n' > /dev/null; then
+if [ ! -f "$WORKDIR/boot.log" ] && ps aux | grep "$agg" > /dev/null; then
 argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能失效"
 green "Argo固定域名：$argogd $check"
 fi
-if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
+if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep "$agg" > /dev/null; then
 yellow "Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启动失败"
 fi
 green "多功能主页如下(支持保活、重启、重置端口、节点查询)"
