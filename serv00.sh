@@ -1399,11 +1399,11 @@ echo -e "========================================================="
 sbb=$(cat $WORKDIR/sb.txt 2>/dev/null)
 agg=$(cat $WORKDIR/ag.txt 2>/dev/null)
 showuuid=$(jq -r '.inbounds[0].users[0].password' $WORKDIR/config.json 2>/dev/null)
-if ps aux | grep "$sbb" > /dev/null; then
-green "Sing-box主进程运行正常"    
+if pgrep -x "$sbb" > /dev/null; then
+green "Sing-box主进程运行正常"
 green "UUID密码：$showuuid" 
 else
-yellow "Sing-box主进程启动失败，请检测节点是否可用"
+yellow "Sing-box主进程启动失败，尝试运行下保活网页、重启、重置端口"
 fi
 if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log"; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
