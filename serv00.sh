@@ -73,9 +73,9 @@ done <<< "$portlist"
 fi
 check_port
 if [[ -e $WORKDIR/config.json ]]; then
-hyp=$(jq -r '.inbounds[0].listen_port' $WORKDIR/config.json 2>/dev/null)
-vlp=$(jq -r '.inbounds[3].listen_port' $WORKDIR/config.json 2>/dev/null)
-vmp=$(jq -r '.inbounds[4].listen_port' $WORKDIR/config.json 2>/dev/null)
+hyp=$(jq -r '.inbounds[0].listen_port' $WORKDIR/config.json)
+vlp=$(jq -r '.inbounds[3].listen_port' $WORKDIR/config.json)
+vmp=$(jq -r '.inbounds[4].listen_port' $WORKDIR/config.json)
 purple "检测到Serv00-sb-yg脚本已安装，执行端口替换，请稍等……"
 sed -i '' "12s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
@@ -86,9 +86,9 @@ sed -i '' -e "17s|'$vlp'|'$vless_port'|" serv00keep.sh
 sed -i '' -e "18s|'$vmp'|'$vmess_port'|" serv00keep.sh
 sed -i '' -e "19s|'$hyp'|'$hy2_port'|" serv00keep.sh
 bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-sleep 2
+sleep 1
 curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
-sleep 3
+sleep 5
 green "端口替换完成！"
 ps aux | grep '[r]un -c con' > /dev/null && green "主进程启动成功，单节点用户修改下客户端三协议端口，订阅链接用户更新下订阅即可" || yellow "Sing-box主进程启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
 if [ -f "$WORKDIR/boot.log" ]; then
