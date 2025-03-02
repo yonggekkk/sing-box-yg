@@ -19,7 +19,7 @@ keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-#curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 devil binexec on >/dev/null 2>&1
 
 read_ip() {
@@ -1256,7 +1256,7 @@ cd "$keep_path"
 npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
 rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
 devil www restart ${snb}.${USERNAME}.serv00.net
-#curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
 green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.serv00.net" && sleep 2
 }
 
@@ -1297,12 +1297,12 @@ sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
 sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
 sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
-  curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/beta/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
-  curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
-  curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1 > $WORKDIR/v
-  else
-  red "未安装脚本，请选择1进行安装" && exit
-  fi
+curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1 > $WORKDIR/v
+else
+red "未安装脚本，请选择1进行安装" && exit
+fi
 }
 
 resservsb(){
