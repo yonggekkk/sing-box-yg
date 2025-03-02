@@ -510,11 +510,11 @@ else
 fi
 fi
 }
-if [ -z "$ARGO_DOMAIN" ] && [ -f "$WORKDIR/boot.log" ] && ! ps aux | grep "$agg" > /dev/null; then
-ps aux | grep "$agg" | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+if [ -z "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --u' > /dev/null; then
+ps aux | grep '[t]unnel --u' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 cfgo
-elif [ -n "$ARGO_DOMAIN" ] && [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep "$agg" > /dev/null; then
-ps aux | grep "$agg" | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+elif [ -n "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
+ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 cfgo
 else
 green "Arog进程已启动"
