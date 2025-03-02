@@ -46,6 +46,7 @@ sleep 2
 devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
+[ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 
 read_ip(){
@@ -1037,7 +1038,6 @@ rules:
 EOF
 
 sleep 2
-[ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 v2sub=$(cat jh.txt)
 echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
@@ -1046,13 +1046,14 @@ curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html
 V2rayN_LINK="https://${USERNAME}.serv00.net/${UUID}_v2sub.txt"
 Clashmeta_LINK="https://${USERNAME}.serv00.net/${UUID}_clashmeta.txt"
 Singbox_LINK="https://${USERNAME}.serv00.net/${UUID}_singbox.txt"
-allip=$(cat hy2ip.txt)
 cat > list.txt <<EOF
 =================================================================================================
 
 当前客户端正在使用的IP：$IP
 如默认节点IP被墙，可在客户端地址更换以下其他IP
-$allip
+$(dig @8.8.8.8 +time=5 +short "web$nb.serv00.com")
+$(dig @8.8.8.8 +time=5 +short "$HOSTNAME")
+$(dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com")
 -------------------------------------------------------------------------------------------------
 
 一、Vless-reality分享链接如下：
