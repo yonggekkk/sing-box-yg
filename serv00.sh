@@ -1414,16 +1414,13 @@ fi
 if [ -f "$WORKDIR/boot.log" ] && ! grep -q "trycloudflare.com" "$WORKDIR/boot.log"; then
 yellow "Argo临时域名暂时不存在，保活过程中会自动恢复"
 fi
-if [ ! -f "$WORKDIR/boot.log" ] && ps aux | grep "$agg" > /dev/null; then
+if [ ! -f "$WORKDIR/boot.log" ]; then
 argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
-[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能失效"
+[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
 green "Argo固定域名：$argogd $check"
 fi
-if [ ! -f "$WORKDIR/boot.log" ] && ! ps aux | grep "$agg" > /dev/null; then
-yellow "Argo固定域名：$(cat $WORKDIR/gdym.log 2>/dev/null)，启动失败"
-fi
-green "多功能主页如下(支持保活、重启、重置端口、节点查询)"
+green "多功能主页如下 (支持保活、重启、重置端口、节点查询)"
 purple "http://${snb}.${USERNAME}.serv00.net"
 #if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
