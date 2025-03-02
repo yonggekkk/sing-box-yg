@@ -13,6 +13,7 @@ USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 snb=$(hostname | awk -F '.' '{print $1}')
+nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
 devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
 FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
 keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
@@ -337,10 +338,6 @@ echo "${private_key}" > private_key.txt
 echo "${public_key}" > public_key.txt
 openssl ecparam -genkey -name prime256v1 -out "private.key"
 openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.serv00.net"
-nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
-#hy1p=$(sed -n '1p' hy2ip.txt)
-#hy2p=$(sed -n '2p' hy2ip.txt)
-#hy3p=$(sed -n '3p' hy2ip.txt)
   cat > config.json << EOF
 {
   "log": {
@@ -1353,12 +1350,8 @@ menu() {
    echo   "------------------------------------------------------------"
    red    "0. 退出脚本"
    echo   "============================================================"
-nb=$(echo "$HOSTNAME" | cut -d '.' -f 1 | tr -d 's')
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
-rm -rf $WORKDIR/ip.txt $WORKDIR/hy2ip.txt
-#dig @8.8.8.8 +time=5 +short "web$nb.serv00.com" >> $WORKDIR/hy2ip.txt 
-#dig @8.8.8.8 +time=5 +short "$HOSTNAME" >> $WORKDIR/hy2ip.txt
-#dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com" >> $WORKDIR/hy2ip.txt
+rm -rf $WORKDIR/ip.txt
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
 if [[ "$response" =~ ^$|unknown|not|error ]]; then
