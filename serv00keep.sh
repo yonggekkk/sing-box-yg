@@ -67,7 +67,7 @@ fi
 done <<< "$response"
 fi
 done
-sort -u ip.txt -o ip.txt
+grep ':' ip.txt | sort -u -o ip.txt
 if [[ -z "$IP" ]]; then
 IP=$(grep -m 1 "可用" ip.txt | awk -F ':' '{print $1}')
 if [ -z "$IP" ]; then
