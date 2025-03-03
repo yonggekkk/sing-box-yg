@@ -1038,7 +1038,7 @@ rules:
   
 EOF
 
-sleep 2
+rm -rf ${FILE_PATH}/*.txt
 v2sub=$(cat jh.txt)
 echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
