@@ -8,11 +8,11 @@
 
 ### 一、Sing-box-yg精装桶小白专享一键四协议共存脚本（VPS专用）
 
-支持人气最高的四大协议：Vless-reality-vision、Vmess-ws(tls)/Argo、Hysteria-2、Tuic-v5
+* 支持人气最高的四大协议：Vless-reality-vision、Vmess-ws(tls)/Argo、Hysteria-2、Tuic-v5
 
-支持纯IPV6、纯IPV4、双栈VPS，支持amd与arm架构，支持alpine系统，推荐使用最新的Ubuntu系统
+* 支持纯IPV6、纯IPV4、双栈VPS，支持amd与arm架构，支持alpine系统，推荐使用最新的Ubuntu系统
 
-小白简单模式：无需域名证书，回车三次就安装完成，复制、扫描你要的节点配置
+* 小白简单模式：无需域名证书，回车三次就安装完成，复制、扫描你要的节点配置
 
 #### 相关说明及注意点请查看[甬哥博客说明与Sing-box视频教程](https://ygkkk.blogspot.com/2023/10/sing-box-yg.html)
 
@@ -46,13 +46,15 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 ### 二、Serv00一键三协议共存脚本（Serv00专用）：
 
-修改自Serv00老王sing-box安装脚本，支持一键三协议：vless-reality、vmess-ws(argo)、hysteria2
+* 切勿与其他Serv00脚本混用！！！
 
-主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
+* 修改自Serv00老王sing-box安装脚本，支持一键三协议：vless-reality、vmess-ws(argo)、hysteria2
 
-支持多功能网页生成：1、网页保活 2、网页重启 3、网页重置端口 4、网页查看订阅节点
+* 主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
 
-网页保活与网页重启可在github或workers设置定时运行任务，可参考视频教程三
+* 支持多功能网页生成：1、网页保活 2、网页重启 3、网页重置端口 4、网页查看订阅节点
+
+* 网页保活与网页重启可在github或workers设置定时运行任务，可参考视频教程三
 
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
 
@@ -80,19 +82,18 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 
 ### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用，同服务器与方案三通用）
 
-创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点
+* 创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点
 
 
 ### 方案三、Serv00多账号自动部署脚本：kp.sh（VPS、软路由专用，同服务器与方案二通用）
 
-修改kp.sh文件的参数，可在多个平台上自动远程部署且保活单个或多个Serv00账号的节点，不可用在serv00本地上，默认nano编辑形式
+* 修改kp.sh文件的参数，可在多个平台上自动远程部署且保活单个或多个Serv00账号的节点，不可用在serv00本地上，默认nano编辑形式
 
-也可以手动放在其他目录，做好cron定时运行
+* 也可以手动放在其他目录，做好cron定时运行
 
 ```
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o kp.sh && chmod +x kp.sh && nano kp.sh
 ```
-运行```bash kp.sh```可测试有效性 
 
 ### 注意：方案二serv00.yml与方案三kp.sh都为"强制保活脚本"，就算Serv00清空你服务器上所有文件(到目前为止从没发生过)，只要让你连接成功，就会自动安装脚本保活，保持不死状态
 
