@@ -52,7 +52,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 * 主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
 
-* 支持多功能网页生成：1、保活 2、重启 3、重置端口 4、查看订阅节点 (目前仅支持方案一，后续方案二、三将支持)
+* 支持多功能网页：1、保活 2、重启 3、重置端口 4、查看订阅节点 (目前仅支持方案一，后续方案二、三将支持)
 
 * 网页保活与网页重启可在github或workers设置定时运行任务，可参考视频教程三
 
