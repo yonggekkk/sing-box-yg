@@ -54,7 +54,7 @@ ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
 rm -rf ip.txt
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
-if [[ "$response" =~ ^$|unknown|not|error ]]; then
+if [[ "$response" =~ (unknown|not|error) ]]; then
 dig @8.8.8.8 +time=5 +short $host | sort -u >> ip.txt
 sleep 1  
 else
@@ -67,7 +67,9 @@ fi
 done <<< "$response"
 fi
 done
-grep ':' ip.txt | sort -u -o ip.txt
+if [[ ! "$response" =~ (unknown|not|error) ]]; then
+grep ':' $WORKDIR/ip.txt | sort -u -o $WORKDIR/ip.txt
+fi
 if [[ -z "$IP" ]]; then
 IP=$(grep -m 1 "可用" ip.txt | awk -F ':' '{print $1}')
 if [ -z "$IP" ]; then
