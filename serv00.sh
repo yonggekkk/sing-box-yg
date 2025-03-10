@@ -1286,10 +1286,8 @@ if [[ -e $WORKDIR/config.json ]]; then
   mkdir -p "$HOME/bin"
   curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh > "$SCRIPT_PATH"
   chmod +x "$SCRIPT_PATH"
-  if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
-      echo "export PATH=\"\$HOME/bin:\$PATH\"" >> "$HOME/.bashrc"
-      source "$HOME/.bashrc"
-  fi
+  echo "export PATH=\"\$HOME/bin:\$PATH\"" >> "$HOME/.bashrc"
+  source "$HOME/.bashrc"
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
