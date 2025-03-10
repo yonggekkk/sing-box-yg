@@ -1350,7 +1350,7 @@ menu() {
    red    "0. 退出脚本"
    echo   "============================================================"
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
-rm -rf ip.txt
+rm -rf $WORKDIR/ip.txt
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
 if [[ "$response" =~ (unknown|not|error) ]]; then
