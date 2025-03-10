@@ -208,7 +208,7 @@ sleep 2
         purple "Serv00-sb-yg脚本安装结束，退出SHH"
 	purple "再次进入脚本时，请输入快捷方式：sb"
 	purple "************************************************************"
-        logout
+        kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
 }
 
 uninstall_singbox() {
