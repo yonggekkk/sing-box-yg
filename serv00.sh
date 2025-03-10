@@ -205,8 +205,10 @@ sleep 2
         get_links
 	cd
         purple "************************************************************"
-        purple "Serv00-sb-yg脚本安装结束！再次进入脚本时，请输入快捷方式：sb"
+        purple "Serv00-sb-yg脚本安装结束，退出SHH"
+	purple "再次进入脚本时，请输入快捷方式：sb"
 	purple "************************************************************"
+        logout
 }
 
 uninstall_singbox() {
@@ -215,8 +217,6 @@ uninstall_singbox() {
        [Yy])
 	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
           rm -rf domains bin serv00keep.sh webport.sh
-          sed -i '/export PATH="\$HOME\/bin:\$PATH"/d' "${HOME}/.bashrc" >/dev/null 2>&1
-          source "${HOME}/.bashrc" >/dev/null 2>&1
 	  #crontab -l | grep -v "serv00keep" >rmcron
           #crontab rmcron >/dev/null 2>&1
           #rm rmcron
@@ -237,8 +237,6 @@ reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，
     bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
     devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
     devil www del ${USERNAME}.serv00.net > /dev/null 2>&1
-    sed -i '/export PATH="\$HOME\/bin:\$PATH"/d' "${HOME}/.bashrc" >/dev/null 2>&1
-    source "${HOME}/.bashrc" >/dev/null 2>&1 
     #crontab -l | grep -v "serv00keep" >rmcron
     #crontab rmcron >/dev/null 2>&1
     #rm rmcron
@@ -1286,8 +1284,10 @@ if [[ -e $WORKDIR/config.json ]]; then
   mkdir -p "$HOME/bin"
   curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh > "$SCRIPT_PATH"
   chmod +x "$SCRIPT_PATH"
-  echo "export PATH=\"\$HOME/bin:\$PATH\"" >> "$HOME/.bashrc"
-  source "$HOME/.bashrc"
+  if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
+      echo "export PATH=\"\$HOME/bin:\$PATH\"" >> "$HOME/.bashrc"
+      source "$HOME/.bashrc"
+  fi
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
