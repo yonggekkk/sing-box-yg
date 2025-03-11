@@ -218,9 +218,6 @@ uninstall_singbox() {
        [Yy])
 	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
           rm -rf domains bin serv00keep.sh webport.sh
-	  #crontab -l | grep -v "${hona}keep" >rmcron
-          #crontab rmcron >/dev/null 2>&1
-          #rm rmcron
           purple "************************************************************"
           purple "${hona}-sb-yg卸载完成！"
           purple "欢迎继续使用脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)"
@@ -238,9 +235,6 @@ reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，
     bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
     devil www del ${snb}.${USERNAME}.${hona}.net > /dev/null 2>&1
     devil www del ${USERNAME}.${hona}.net > /dev/null 2>&1
-    #crontab -l | grep -v "${hona}keep" >rmcron
-    #crontab rmcron >/dev/null 2>&1
-    #rm rmcron
     purple "************************************************************"
     purple "${hona}-sb-yg清理重置完成！"
     purple "欢迎继续使用脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)"
@@ -1422,24 +1416,10 @@ green "Argo固定域名：$argogd $check"
 fi
 green "多功能主页如下 (支持保活、重启、重置端口、节点查询)"
 purple "http://${snb}.${USERNAME}.${hona}.net"
-#if ! crontab -l 2>/dev/null | grep -q '${hona}keep'; then
-#if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
-#check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
-#else
-#check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
-#fi
-#(crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash ${hona}keep.sh; fi") | crontab -
-#purple "发现${hona}开大招了，Cron保活被重置清空了"
-#purple "目前Cron保活已修复成功。打开 http://${USERNAME}.${USERNAME}.${hona}.net/up 也可实时保活"
-#purple "主进程与Argo进程启动中…………1分钟后可再次进入脚本查看"
-#else
-#green "Cron保活运行正常。打开 http://${USERNAME}.${USERNAME}.${hona}.net/up 也可实时保活"
-#fi
 else
 echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${latestV}${re}"
 yellow "未安装 ${hona}-sb-yg 脚本！请选择 1 安装"
 fi
-#curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/${hona}.sh -o ${hona}.sh && chmod +x ${hona}.sh
    echo -e "========================================================="
    reading "请输入选择【0-8】: " choice
    echo
