@@ -12,16 +12,16 @@ reading() { read -p "$(red "$1")" "$2"; }
 USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 hona=$(hostname | cut -d. -f2)
 HOSTNAME=$(hostname)
-WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
+WORKDIR="${HOME}/domains/${USERNAME}.${hona}.net/logs"
 snb=$(hostname | awk -F '.' '{print $1}')
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
-devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
-FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
-keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
+devil www add ${USERNAME}.${hona}.net php > /dev/null 2>&1
+FILE_PATH="${HOME}/domains/${USERNAME}.${hona}.net/public_html"
+keep_path="${HOME}/domains/${snb}.${USERNAME}.${hona}.net/public_nodejs"
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
 devil binexec on >/dev/null 2>&1
 
 read_ip() {
@@ -48,12 +48,12 @@ read_uuid() {
 }
 
 read_reym() {
-	yellow "方式一：(推荐)使用Serv00自带域名，不支持proxyip功能：输入回车"
+	yellow "方式一：(推荐)使用${hona}自带域名，不支持proxyip功能：输入回车"
         yellow "方式二：使用CF域名(www.speedtest.net)，支持proxyip+非标端口反代ip功能：输入s"
         yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
         reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
         if [[ -z "$reym" ]]; then
-	    reym=$USERNAME.serv00.net
+	    reym=$USERNAME.${hona}.net
 	elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
 	    reym=www.speedtest.net
         fi
@@ -77,7 +77,7 @@ if [[ -e $WORKDIR/config.json ]]; then
 hyp=$(jq -r '.inbounds[0].listen_port' $WORKDIR/config.json)
 vlp=$(jq -r '.inbounds[3].listen_port' $WORKDIR/config.json)
 vmp=$(jq -r '.inbounds[4].listen_port' $WORKDIR/config.json)
-purple "检测到Serv00-sb-yg脚本已安装，执行端口替换，请稍等……"
+purple "检测到${hona}-sb-yg脚本已安装，执行端口替换，请稍等……"
 sed -i '' "12s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "54s/$hyp/$hy2_port/g" $WORKDIR/config.json
@@ -88,7 +88,7 @@ sed -i '' -e "18s|'$vmp'|'$vmess_port'|" serv00keep.sh
 sed -i '' -e "19s|'$hyp'|'$hy2_port'|" serv00keep.sh
 bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
 sleep 1
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
 sleep 5
 green "端口替换完成！"
 ps aux | grep '[r]un -c con' > /dev/null && green "主进程启动成功，单节点用户修改下客户端三协议端口，订阅链接用户更新下订阅即可" || yellow "Sing-box主进程启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
@@ -206,7 +206,7 @@ sleep 2
         get_links
 	cd
         purple "************************************************************"
-        purple "Serv00-sb-yg脚本安装结束，退出SHH"
+        purple "${hona}-sb-yg脚本安装结束，退出SHH"
 	purple "再次进入脚本时，请输入快捷方式：sb"
 	purple "************************************************************"
         kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
@@ -218,11 +218,11 @@ uninstall_singbox() {
        [Yy])
 	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
           rm -rf domains bin serv00keep.sh webport.sh
-	  #crontab -l | grep -v "serv00keep" >rmcron
+	  #crontab -l | grep -v "${hona}keep" >rmcron
           #crontab rmcron >/dev/null 2>&1
           #rm rmcron
           purple "************************************************************"
-          purple "Serv00-sb-yg卸载完成！"
+          purple "${hona}-sb-yg卸载完成！"
           purple "欢迎继续使用脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)"
           purple "************************************************************"
           ;;
@@ -236,13 +236,13 @@ reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，
   case "$choice" in
     [Yy]) 
     bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-    devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
-    devil www del ${USERNAME}.serv00.net > /dev/null 2>&1
-    #crontab -l | grep -v "serv00keep" >rmcron
+    devil www del ${snb}.${USERNAME}.${hona}.net > /dev/null 2>&1
+    devil www del ${USERNAME}.${hona}.net > /dev/null 2>&1
+    #crontab -l | grep -v "${hona}keep" >rmcron
     #crontab rmcron >/dev/null 2>&1
     #rm rmcron
     purple "************************************************************"
-    purple "Serv00-sb-yg清理重置完成！"
+    purple "${hona}-sb-yg清理重置完成！"
     purple "欢迎继续使用脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)"
     purple "************************************************************"
     find ~ -type f -exec chmod 644 {} \; 2>/dev/null
@@ -336,7 +336,7 @@ public_key=$(echo "${output}" | awk '/PublicKey:/ {print $2}')
 echo "${private_key}" > private_key.txt
 echo "${public_key}" > public_key.txt
 openssl ecparam -genkey -name prime256v1 -out "private.key"
-openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.serv00.net"
+openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.${hona}.net"
   cat > config.json << EOF
 {
   "log": {
@@ -348,7 +348,7 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
     {
        "tag": "hysteria-in1",
        "type": "hysteria2",
-       "listen": "$(dig @8.8.8.8 +time=5 +short "web$nb.serv00.com" | sort -u)",
+       "listen": "$(dig @8.8.8.8 +time=5 +short "web$nb.${hona}.com" | sort -u)",
        "listen_port": $hy2_port,
        "users": [
          {
@@ -390,7 +390,7 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
         {
        "tag": "hysteria-in3",
        "type": "hysteria2",
-       "listen": "$(dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com" | sort -u)",
+       "listen": "$(dig @8.8.8.8 +time=5 +short "cache$nb.${hona}.com" | sort -u)",
        "listen_port": $hy2_port,
        "users": [
          {
@@ -573,7 +573,7 @@ if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
 red "主进程未启动，根据以下情况一一排查"
 yellow "1、选择7重置端口，自动生成随机可用端口（重要）"
 yellow "2、选择8重置"
-yellow "3、当前Serv00服务器炸了？等会再试"
+yellow "3、当前${hona}服务器炸了？等会再试"
 red "4、以上都试了，哥直接躺平，交给进程保活，过会再来看"
 sleep 6
 fi
@@ -1092,17 +1092,17 @@ v2sub=$(cat jh.txt)
 echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
-V2rayN_LINK="https://${USERNAME}.serv00.net/${UUID}_v2sub.txt"
-Clashmeta_LINK="https://${USERNAME}.serv00.net/${UUID}_clashmeta.txt"
-Singbox_LINK="https://${USERNAME}.serv00.net/${UUID}_singbox.txt"
+V2rayN_LINK="https://${USERNAME}.${hona}.net/${UUID}_v2sub.txt"
+Clashmeta_LINK="https://${USERNAME}.${hona}.net/${UUID}_clashmeta.txt"
+Singbox_LINK="https://${USERNAME}.${hona}.net/${UUID}_singbox.txt"
 cat > list.txt <<EOF
 =================================================================================================
 
 当前客户端正在使用的IP：$IP
 如默认节点IP被墙，可在客户端地址更换以下其他IP
-$(dig @8.8.8.8 +time=5 +short "web$nb.serv00.com" | sort -u)
+$(dig @8.8.8.8 +time=5 +short "web$nb.${hona}.com" | sort -u)
 $(dig @8.8.8.8 +time=5 +short "$HOSTNAME" | sort -u)
-$(dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com" | sort -u)
+$(dig @8.8.8.8 +time=5 +short "cache$nb.${hona}.com" | sort -u)
 -------------------------------------------------------------------------------------------------
 
 一、Vless-reality分享链接如下：
@@ -1121,8 +1121,8 @@ CF节点落地到CF网站的地区为：$IP所在地区
 CF节点的TLS必须开启
 CF节点落地到非CF网站的地区为：$IP所在地区
 
-注：如果Serv00的IP被墙，proxyip依旧有效，但用于客户端地址与端口的非标端口反代IP将不可用
-注：可能有大佬会扫Serv00的反代IP作为其共享IP库或者出售，请慎重将reality域名设置为CF域名
+注：如果${hona}的IP被墙，proxyip依旧有效，但用于客户端地址与端口的非标端口反代IP将不可用
+注：可能有大佬会扫${hona}的反代IP作为其共享IP库或者出售，请慎重将reality域名设置为CF域名
 -------------------------------------------------------------------------------------------------
 
 
@@ -1222,27 +1222,27 @@ green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
 USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
-WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
+WORKDIR="${HOME}/domains/${USERNAME}.${hona}.net/logs"
 snb=$(hostname | awk -F '\''.'\'' '\''{print $1}'\'')
 ' > webport.sh
 declare -f resallport >> webport.sh
 declare -f check_port >> webport.sh
 echo 'resallport' >> webport.sh
 chmod +x webport.sh
-#if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
+#if ! crontab -l 2>/dev/null | grep -q '${hona}keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
 #else
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
 #fi
-#(crontab -l 2>/dev/null; echo "*/10 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
+#(crontab -l 2>/dev/null; echo "*/10 * * * * if $check_process; then /bin/bash ${hona}keep.sh; fi") | crontab -
 #fi
 #green "安装完毕，默认每10分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
 #echo
 green "开始安装多功能主页，请稍等……"
-devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
-devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
-devil www add ${snb}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
+devil www del ${snb}.${USERNAME}.${hona}.net > /dev/null 2>&1
+devil www add ${USERNAME}.${hona}.net php > /dev/null 2>&1
+devil www add ${snb}.${USERNAME}.${hona}.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
 ln -fs /usr/local/bin/node18 ~/bin/node > /dev/null 2>&1
 ln -fs /usr/local/bin/npm18 ~/bin/npm > /dev/null 2>&1
 mkdir -p ~/.npm-global
@@ -1251,10 +1251,10 @@ echo 'export PATH=~/.npm-global/bin:~/bin:$PATH' >> $HOME/.bash_profile && sourc
 rm -rf $HOME/.npmrc > /dev/null 2>&1
 cd "$keep_path"
 npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
-rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
-devil www restart ${snb}.${USERNAME}.serv00.net
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
-green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.serv00.net" && sleep 2
+rm $HOME/domains/${snb}.${USERNAME}.${hona}.net/public_nodejs/public/index.html > /dev/null 2>&1
+devil www restart ${snb}.${USERNAME}.${hona}.net
+curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
+green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.${hona}.net" && sleep 2
 }
 
 okip(){
@@ -1310,7 +1310,7 @@ ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2
 sbb=$(cat sb.txt)
 nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
 sleep 1
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
 sleep 5
 if pgrep -x "$sbb" > /dev/null; then
 green "$sbb 主进程重启成功"
@@ -1329,12 +1329,12 @@ menu() {
    green "甬哥Github项目  ：github.com/yonggekkk"
    green "甬哥Blogger博客 ：ygkkk.blogspot.com"
    green "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
-   green "Serv00-sb-yg三协议共存：vless-reality、Vmess-ws(Argo)、Hy2"
+   green "${hona}-sb-yg三协议共存：vless-reality、Vmess-ws(Argo)、Hy2"
    green "脚本快捷方式：sb"
    echo   "============================================================"
-   green  "1. 一键安装 Serv00-sb-yg"
+   green  "1. 一键安装 ${hona}-sb-yg"
    echo   "------------------------------------------------------------"
-   red    "2. 卸载删除 Serv00-sb-yg"
+   red    "2. 卸载删除 ${hona}-sb-yg"
    echo   "------------------------------------------------------------"
    green  "3. 重启主进程 (修复节点)"
    echo   "------------------------------------------------------------"
@@ -1350,7 +1350,7 @@ menu() {
    echo   "------------------------------------------------------------"
    red    "0. 退出脚本"
    echo   "============================================================"
-ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
+ym=("$HOSTNAME" "cache$nb.${hona}.com" "web$nb.${hona}.com")
 rm -rf $WORKDIR/ip.txt
 for host in "${ym[@]}"; do
 response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
@@ -1370,7 +1370,7 @@ done
 if [[ ! "$response" =~ (unknown|not|error) ]]; then
 grep ':' $WORKDIR/ip.txt | sort -u -o $WORKDIR/ip.txt
 fi
-green "Serv00服务器名称：${snb}"
+green "${hona}服务器名称：${snb}"
 echo
 green "当前可选择的IP如下："
 cat $WORKDIR/ip.txt
@@ -1390,10 +1390,10 @@ insV=$(cat $WORKDIR/v 2>/dev/null)
 latestV=$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1)
 if [ -f $WORKDIR/v ]; then
 if [ "$insV" = "$latestV" ]; then
-echo -e "当前 Serv00-sb-yg 脚本最新版：${purple}${insV}${re} (已安装)"
+echo -e "当前 ${hona}-sb-yg 脚本最新版：${purple}${insV}${re} (已安装)"
 else
-echo -e "当前 Serv00-sb-yg 脚本版本号：${purple}${insV}${re}"
-echo -e "检测到最新 Serv00-sb-yg 脚本版本号：${yellow}${latestV}${re} (可选择4进行更新)"
+echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${insV}${re}"
+echo -e "检测到最新 ${hona}-sb-yg 脚本版本号：${yellow}${latestV}${re} (可选择4进行更新)"
 echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion)${re}"
 fi
 echo -e "========================================================="
@@ -1421,25 +1421,25 @@ checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argo
 green "Argo固定域名：$argogd $check"
 fi
 green "多功能主页如下 (支持保活、重启、重置端口、节点查询)"
-purple "http://${snb}.${USERNAME}.serv00.net"
-#if ! crontab -l 2>/dev/null | grep -q 'serv00keep'; then
+purple "http://${snb}.${USERNAME}.${hona}.net"
+#if ! crontab -l 2>/dev/null | grep -q '${hona}keep'; then
 #if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
 #else
 #check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
 #fi
-#(crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash serv00keep.sh; fi") | crontab -
-#purple "发现Serv00开大招了，Cron保活被重置清空了"
-#purple "目前Cron保活已修复成功。打开 http://${USERNAME}.${USERNAME}.serv00.net/up 也可实时保活"
+#(crontab -l 2>/dev/null; echo "*/2 * * * * if $check_process; then /bin/bash ${hona}keep.sh; fi") | crontab -
+#purple "发现${hona}开大招了，Cron保活被重置清空了"
+#purple "目前Cron保活已修复成功。打开 http://${USERNAME}.${USERNAME}.${hona}.net/up 也可实时保活"
 #purple "主进程与Argo进程启动中…………1分钟后可再次进入脚本查看"
 #else
-#green "Cron保活运行正常。打开 http://${USERNAME}.${USERNAME}.serv00.net/up 也可实时保活"
+#green "Cron保活运行正常。打开 http://${USERNAME}.${USERNAME}.${hona}.net/up 也可实时保活"
 #fi
 else
-echo -e "当前 Serv00-sb-yg 脚本版本号：${purple}${latestV}${re}"
-yellow "未安装 Serv00-sb-yg 脚本！请选择 1 安装"
+echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${latestV}${re}"
+yellow "未安装 ${hona}-sb-yg 脚本！请选择 1 安装"
 fi
-#curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh -o serv00.sh && chmod +x serv00.sh
+#curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/${hona}.sh -o ${hona}.sh && chmod +x ${hona}.sh
    echo -e "========================================================="
    reading "请输入选择【0-8】: " choice
    echo
