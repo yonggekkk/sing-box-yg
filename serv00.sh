@@ -1223,16 +1223,6 @@ declare -f resallport >> webport.sh
 declare -f check_port >> webport.sh
 echo 'resallport' >> webport.sh
 chmod +x webport.sh
-#if ! crontab -l 2>/dev/null | grep -q '${hona}keep'; then
-#if [ -f "$WORKDIR/boot.log" ] || grep -q "trycloudflare.com" "$WORKDIR/boot.log" 2>/dev/null; then
-#check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [l]ocalhost > /dev/null"
-#else
-#check_process="! ps aux | grep '[c]onfig' > /dev/null || ! ps aux | grep [t]oken > /dev/null"
-#fi
-#(crontab -l 2>/dev/null; echo "*/10 * * * * if $check_process; then /bin/bash ${hona}keep.sh; fi") | crontab -
-#fi
-#green "安装完毕，默认每10分钟执行一次，运行 crontab -e 可自行修改保活执行间隔" && sleep 2
-#echo
 green "开始安装多功能主页，请稍等……"
 devil www del ${snb}.${USERNAME}.${hona}.net > /dev/null 2>&1
 devil www add ${USERNAME}.${hona}.net php > /dev/null 2>&1
