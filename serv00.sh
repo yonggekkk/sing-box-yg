@@ -10,6 +10,7 @@ yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
 reading() { read -p "$(red "$1")" "$2"; }
 USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
+hona=$(hostname | cut -d. -f2)
 HOSTNAME=$(hostname)
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 snb=$(hostname | awk -F '.' '{print $1}')
