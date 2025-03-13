@@ -596,15 +596,15 @@ get_argodomain() {
 get_links(){
 argodomain=$(get_argodomain)
 echo -e "\e[1;32mArgo域名：\e[1;35m${argodomain}\e[0m\n"
-vl_link="vless://$UUID@$IP:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality"
+vl_link="vless://$UUID@$IP:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME"
 echo "$vl_link" > jh.txt
-vmws_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws\", \"add\": \"$IP\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmws_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME\", \"add\": \"$IP\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
 echo "$vmws_link" >> jh.txt
-vmatls_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo\", \"add\": \"icook.hk\", \"port\": \"8443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmatls_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME\", \"add\": \"icook.hk\", \"port\": \"8443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
 echo "$vmatls_link" >> jh.txt
-vma_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo\", \"add\": \"icook.hk\", \"port\": \"8880\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME\", \"add\": \"icook.hk\", \"port\": \"8880\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
 echo "$vma_link" >> jh.txt
-hy2_link="hysteria2://$UUID@$IP:$hy2_port?sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2"
+hy2_link="hysteria2://$UUID@$IP:$hy2_port?sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2-$USERNAME"
 echo "$hy2_link" >> jh.txt
 baseurl=$(base64 -w 0 < jh.txt)
 
@@ -708,16 +708,16 @@ cat > sing_box.json <<EOF
       "default": "auto",
       "outbounds": [
         "auto",
-        "vless-$snb",
-        "vmess-$snb",
-        "hy2-$snb",
-"vmess-tls-argo-$snb",
-"vmess-argo-$snb"
+        "vless-$snb-$USERNAME",
+        "vmess-$snb-$USERNAME",
+        "hy2-$snb-$USERNAME",
+"vmess-tls-argo-$snb-$USERNAME",
+"vmess-argo-$snb-$USERNAME"
       ]
     },
     {
       "type": "vless",
-      "tag": "vless-$snb",
+      "tag": "vless-$snb-$USERNAME",
       "server": "$IP",
       "server_port": $vless_port,
       "uuid": "$UUID",
@@ -740,7 +740,7 @@ cat > sing_box.json <<EOF
 {
             "server": "$IP",
             "server_port": $vmess_port,
-            "tag": "vmess-$snb",
+            "tag": "vmess-$snb-$USERNAME",
             "tls": {
                 "enabled": false,
                 "server_name": "www.bing.com",
@@ -767,7 +767,7 @@ cat > sing_box.json <<EOF
 
     {
         "type": "hysteria2",
-        "tag": "hy2-$snb",
+        "tag": "hy2-$snb-$USERNAME",
         "server": "$IP",
         "server_port": $hy2_port,
         "password": "$UUID",
@@ -783,7 +783,7 @@ cat > sing_box.json <<EOF
 {
             "server": "icook.hk",
             "server_port": 8443,
-            "tag": "vmess-tls-argo-$snb",
+            "tag": "vmess-tls-argo-$snb-$USERNAME",
             "tls": {
                 "enabled": true,
                 "server_name": "$argodomain",
@@ -810,7 +810,7 @@ cat > sing_box.json <<EOF
 {
             "server": "icook.hk",
             "server_port": 8880,
-            "tag": "vmess-argo-$snb",
+            "tag": "vmess-argo-$snb-$USERNAME",
             "tls": {
                 "enabled": false,
                 "server_name": "$argodomain",
@@ -842,11 +842,11 @@ cat > sing_box.json <<EOF
       "tag": "auto",
       "type": "urltest",
       "outbounds": [
-        "vless-$snb",
-        "vmess-$snb",
-        "hy2-$snb",
-"vmess-tls-argo-$snb",
-"vmess-argo-$snb"
+        "vless-$snb-$USERNAME",
+        "vmess-$snb-$USERNAME",
+        "hy2-$snb-$USERNAME",
+"vmess-tls-argo-$snb-$USERNAME",
+"vmess-argo-$snb-$USERNAME"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -962,7 +962,7 @@ dns:
       - 240.0.0.0/4
 
 proxies:
-- name: vless-reality-vision-$snb               
+- name: vless-reality-vision-$snb-$USERNAME               
   type: vless
   server: $IP                           
   port: $vless_port                                
@@ -976,7 +976,7 @@ proxies:
     public-key: $public_key                      
   client-fingerprint: chrome                  
 
-- name: vmess-ws-$snb                         
+- name: vmess-ws-$snb-$USERNAME                         
   type: vmess
   server: $IP                       
   port: $vmess_port                                     
@@ -992,7 +992,7 @@ proxies:
     headers:
       Host: www.bing.com                     
 
-- name: hysteria2-$snb                            
+- name: hysteria2-$snb-$USERNAME                            
   type: hysteria2                                      
   server: $IP                               
   port: $hy2_port                                
@@ -1003,7 +1003,7 @@ proxies:
   skip-cert-verify: true
   fast-open: true
 
-- name: vmess-tls-argo-$snb                         
+- name: vmess-tls-argo-$snb-$USERNAME                         
   type: vmess
   server: icook.hk                        
   port: 8443                                     
@@ -1019,7 +1019,7 @@ proxies:
     headers:
       Host: $argodomain
 
-- name: vmess-argo-$snb                         
+- name: vmess-argo-$snb-$USERNAME                         
   type: vmess
   server: icook.hk                        
   port: 8880                                     
@@ -1042,11 +1042,11 @@ proxy-groups:
   interval: 300
   strategy: round-robin
   proxies:
-    - vless-reality-vision-$snb                              
-    - vmess-ws-$snb
-    - hysteria2-$snb
-    - vmess-tls-argo-$snb
-    - vmess-argo-$snb
+    - vless-reality-vision-$snb-$USERNAME                              
+    - vmess-ws-$snb-$USERNAME
+    - hysteria2-$snb-$USERNAME
+    - vmess-tls-argo-$snb-$USERNAME
+    - vmess-argo-$snb-$USERNAME
 
 - name: Auto
   type: url-test
@@ -1054,11 +1054,11 @@ proxy-groups:
   interval: 300
   tolerance: 50
   proxies:
-    - vless-reality-vision-$snb                             
-    - vmess-ws-$snb
-    - hysteria2-$snb
-    - vmess-tls-argo-$snb
-    - vmess-argo-$snb
+    - vless-reality-vision-$snb-$USERNAME                             
+    - vmess-ws-$snb-$USERNAME
+    - hysteria2-$snb-$USERNAME
+    - vmess-tls-argo-$snb-$USERNAME
+    - vmess-argo-$snb-$USERNAME
     
 - name: Select
   type: select
@@ -1066,11 +1066,11 @@ proxy-groups:
     - Balance                                         
     - Auto
     - DIRECT
-    - vless-reality-vision-$snb                              
-    - vmess-ws-$snb
-    - hysteria2-$snb
-    - vmess-tls-argo-$snb
-    - vmess-argo-$snb
+    - vless-reality-vision-$snb-$USERNAME                              
+    - vmess-ws-$snb-$USERNAME
+    - hysteria2-$snb-$USERNAME
+    - vmess-tls-argo-$snb-$USERNAME
+    - vmess-argo-$snb-$USERNAME
 rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
