@@ -10,16 +10,21 @@ yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
 reading() { read -p "$(red "$1")" "$2"; }
 USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
-hona=$(hostname | cut -d. -f2)
-HOSTNAME=$(hostname)
-WORKDIR="${HOME}/domains/${USERNAME}.${hona}.net/logs"
 snb=$(hostname | awk -F '.' '{print $1}')
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
-devil www add ${USERNAME}.${hona}.net php > /dev/null 2>&1
-FILE_PATH="${HOME}/domains/${USERNAME}.${hona}.net/public_html"
-keep_path="${HOME}/domains/${snb}.${USERNAME}.${hona}.net/public_nodejs"
-[ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
+HOSTNAME=$(hostname)
+hona=$(hostname | cut -d. -f2)
+if [ "$hona" = "serv00" ]; then
+address="serv00.net"
+keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
+else
+address="useruno.com"
+fi
+WORKDIR="${HOME}/domains/${USERNAME}.${address}/logs"
+devil www add ${USERNAME}.${address} php > /dev/null 2>&1
+FILE_PATH="${HOME}/domains/${USERNAME}.${address}/public_html"
+[ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
 devil binexec on >/dev/null 2>&1
@@ -53,7 +58,7 @@ read_reym() {
         yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
         reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
         if [[ -z "$reym" ]]; then
-	    reym=$USERNAME.${hona}.net
+	    reym=$USERNAME.${address}
 	elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
 	    reym=www.speedtest.net
         fi
@@ -83,19 +88,18 @@ sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "54s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "75s/$vlp/$vless_port/g" $WORKDIR/config.json
 sed -i '' "102s/$vmp/$vmess_port/g" $WORKDIR/config.json
+if [ "$hona" = "serv00" ]; then
 sed -i '' -e "17s|'$vlp'|'$vless_port'|" serv00keep.sh
 sed -i '' -e "18s|'$vmp'|'$vmess_port'|" serv00keep.sh
 sed -i '' -e "19s|'$hyp'|'$hy2_port'|" serv00keep.sh
-bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-sleep 1
-curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
-sleep 5
+fi
+resservsb
 green "端口替换完成！"
-ps aux | grep '[r]un -c con' > /dev/null && green "主进程启动成功，单节点用户修改下客户端三协议端口，订阅链接用户更新下订阅即可" || yellow "Sing-box主进程启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
+ps aux | grep '[r]un -c con' > /dev/null && green "主进程启动成功，单节点用户修改下客户端三协议端口" || yellow "Sing-box主进程启动失败"
 if [ -f "$WORKDIR/boot.log" ]; then
-ps aux | grep '[t]unnel --u' > /dev/null && green "Argo临时隧道启动成功，单节点用户在客户端host/sni更换临时域名，订阅链接用户更新下订阅即可" || yellow "Argo临时隧道启动失败，再次重置端口或者多刷几次保活网页，可能会自动恢复"
+ps aux | grep '[t]unnel --u' > /dev/null && green "Argo临时隧道启动成功，单节点用户在客户端host/sni更换临时域名" || yellow "Argo临时隧道启动失败"
 else
-ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道启动成功" || yellow "Argo固定隧道启动失败，请先在CF更改隧道端口：$vmess_port，多刷几次保活网页可能会自动恢复"
+ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道启动成功" || yellow "Argo固定隧道启动失败，请先在CF更改隧道端口：$vmess_port，再重启下Argo隧道"
 fi
 fi
 }
@@ -200,14 +204,16 @@ sleep 2
         fastrun
 	green "创建快捷方式：sb"
 	echo
+        if [ "$hona" = "serv00" ]; then
 	servkeep
+        fi
         cd $WORKDIR
         echo
         get_links
 	cd
         purple "************************************************************"
         purple "${hona}-sb-yg脚本安装结束，退出SHH"
-	purple "再次进入脚本时，请输入快捷方式：sb"
+	purple "请重新连接SSH，再次进入脚本时，输入快捷方式：sb"
 	purple "************************************************************"
         kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
 }
@@ -233,8 +239,8 @@ reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，
   case "$choice" in
     [Yy]) 
     bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-    devil www del ${snb}.${USERNAME}.${hona}.net > /dev/null 2>&1
-    devil www del ${USERNAME}.${hona}.net > /dev/null 2>&1
+    devil www del ${snb}.${USERNAME}.${address} > /dev/null 2>&1
+    devil www del ${USERNAME}.${address} > /dev/null 2>&1
     purple "************************************************************"
     purple "${hona}-sb-yg清理重置完成！"
     purple "欢迎继续使用脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)"
@@ -262,9 +268,12 @@ argo_configure() {
     fi
     if [[ "$argo_choice" == "g" || "$argo_choice" == "G" ]]; then
         reading "请输入argo固定隧道域名: " ARGO_DOMAIN
+	echo "$ARGO_DOMAIN" > gdym.log
         green "你的argo固定隧道域名为: $ARGO_DOMAIN"
         reading "请输入argo固定隧道密钥（当你粘贴Token时，必须以ey开头）: " ARGO_AUTH
+	echo "$ARGO_AUTH" > ARGO_AUTH.log
         green "你的argo固定隧道密钥为: $ARGO_AUTH"
+	rm -rf boot.log
     else
         green "使用Argo临时隧道"
     fi
@@ -330,7 +339,7 @@ public_key=$(echo "${output}" | awk '/PublicKey:/ {print $2}')
 echo "${private_key}" > private_key.txt
 echo "${public_key}" > public_key.txt
 openssl ecparam -genkey -name prime256v1 -out "private.key"
-openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.${hona}.net"
+openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.${address}"
   cat > config.json << EOF
 {
   "log": {
@@ -534,7 +543,6 @@ fi
 if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
    echo "$(basename "${FILE_MAP[bot]}")" > ag.txt
    agg=$(cat ag.txt)
-    rm -rf boot.log
     if [[ $ARGO_AUTH =~ ^[A-Z0-9a-z=]{120,250}$ ]]; then
       #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}"
       args="tunnel --no-autoupdate run --token ${ARGO_AUTH}"
@@ -565,8 +573,8 @@ fi
 sleep 2
 if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
 red "主进程未启动，根据以下情况一一排查"
-yellow "1、选择7重置端口，自动生成随机可用端口（重要）"
-yellow "2、选择8重置"
+yellow "1、选择8重置端口，自动生成随机可用端口（重要）"
+yellow "2、选择9重置"
 yellow "3、当前${hona}服务器炸了？等会再试"
 red "4、以上都试了，哥直接躺平，交给进程保活，过会再来看"
 sleep 6
@@ -575,7 +583,6 @@ fi
 
 get_argodomain() {
   if [[ -n $ARGO_AUTH ]]; then
-    echo "$ARGO_DOMAIN" > gdym.log
     echo "$ARGO_DOMAIN"
   else
     local retry=0
@@ -599,15 +606,15 @@ get_argodomain() {
 get_links(){
 argodomain=$(get_argodomain)
 echo -e "\e[1;32mArgo域名：\e[1;35m${argodomain}\e[0m\n"
-vl_link="vless://$UUID@$IP:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality"
+vl_link="vless://$UUID@$IP:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME"
 echo "$vl_link" > jh.txt
-vmws_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws\", \"add\": \"$IP\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmws_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME\", \"add\": \"$IP\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
 echo "$vmws_link" >> jh.txt
-vmatls_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo\", \"add\": \"icook.hk\", \"port\": \"8443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmatls_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME\", \"add\": \"icook.hk\", \"port\": \"8443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
 echo "$vmatls_link" >> jh.txt
-vma_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo\", \"add\": \"icook.hk\", \"port\": \"8880\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME\", \"add\": \"icook.hk\", \"port\": \"8880\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
 echo "$vma_link" >> jh.txt
-hy2_link="hysteria2://$UUID@$IP:$hy2_port?sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2"
+hy2_link="hysteria2://$UUID@$IP:$hy2_port?sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2-$USERNAME"
 echo "$hy2_link" >> jh.txt
 baseurl=$(base64 -w 0 < jh.txt)
 
@@ -711,16 +718,16 @@ cat > sing_box.json <<EOF
       "default": "auto",
       "outbounds": [
         "auto",
-        "vless-$snb",
-        "vmess-$snb",
-        "hy2-$snb",
-"vmess-tls-argo-$snb",
-"vmess-argo-$snb"
+        "vless-$snb-$USERNAME",
+        "vmess-$snb-$USERNAME",
+        "hy2-$snb-$USERNAME",
+"vmess-tls-argo-$snb-$USERNAME",
+"vmess-argo-$snb-$USERNAME"
       ]
     },
     {
       "type": "vless",
-      "tag": "vless-$snb",
+      "tag": "vless-$snb-$USERNAME",
       "server": "$IP",
       "server_port": $vless_port,
       "uuid": "$UUID",
@@ -743,7 +750,7 @@ cat > sing_box.json <<EOF
 {
             "server": "$IP",
             "server_port": $vmess_port,
-            "tag": "vmess-$snb",
+            "tag": "vmess-$snb-$USERNAME",
             "tls": {
                 "enabled": false,
                 "server_name": "www.bing.com",
@@ -770,7 +777,7 @@ cat > sing_box.json <<EOF
 
     {
         "type": "hysteria2",
-        "tag": "hy2-$snb",
+        "tag": "hy2-$snb-$USERNAME",
         "server": "$IP",
         "server_port": $hy2_port,
         "password": "$UUID",
@@ -786,7 +793,7 @@ cat > sing_box.json <<EOF
 {
             "server": "icook.hk",
             "server_port": 8443,
-            "tag": "vmess-tls-argo-$snb",
+            "tag": "vmess-tls-argo-$snb-$USERNAME",
             "tls": {
                 "enabled": true,
                 "server_name": "$argodomain",
@@ -813,7 +820,7 @@ cat > sing_box.json <<EOF
 {
             "server": "icook.hk",
             "server_port": 8880,
-            "tag": "vmess-argo-$snb",
+            "tag": "vmess-argo-$snb-$USERNAME",
             "tls": {
                 "enabled": false,
                 "server_name": "$argodomain",
@@ -845,11 +852,11 @@ cat > sing_box.json <<EOF
       "tag": "auto",
       "type": "urltest",
       "outbounds": [
-        "vless-$snb",
-        "vmess-$snb",
-        "hy2-$snb",
-        "vmess-tls-argo-$snb",
-        "vmess-argo-$snb"
+        "vless-$snb-$USERNAME",
+        "vmess-$snb-$USERNAME",
+        "hy2-$snb-$USERNAME",
+        "vmess-tls-argo-$snb-$USERNAME",
+        "vmess-argo-$snb-$USERNAME"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -965,7 +972,7 @@ dns:
       - 240.0.0.0/4
 
 proxies:
-- name: vless-reality-vision-$snb               
+- name: vless-reality-vision-$snb-$USERNAME               
   type: vless
   server: $IP                           
   port: $vless_port                                
@@ -979,7 +986,7 @@ proxies:
     public-key: $public_key                      
   client-fingerprint: chrome                  
 
-- name: vmess-ws-$snb                         
+- name: vmess-ws-$snb-$USERNAME                         
   type: vmess
   server: $IP                       
   port: $vmess_port                                     
@@ -995,7 +1002,7 @@ proxies:
     headers:
       Host: www.bing.com                     
 
-- name: hysteria2-$snb                            
+- name: hysteria2-$snb-$USERNAME                            
   type: hysteria2                                      
   server: $IP                               
   port: $hy2_port                                
@@ -1006,7 +1013,7 @@ proxies:
   skip-cert-verify: true
   fast-open: true
 
-- name: vmess-tls-argo-$snb                         
+- name: vmess-tls-argo-$snb-$USERNAME                         
   type: vmess
   server: icook.hk                        
   port: 8443                                     
@@ -1022,7 +1029,7 @@ proxies:
     headers:
       Host: $argodomain
 
-- name: vmess-argo-$snb                         
+- name: vmess-argo-$snb-$USERNAME                         
   type: vmess
   server: icook.hk                        
   port: 8880                                     
@@ -1045,11 +1052,11 @@ proxy-groups:
   interval: 300
   strategy: round-robin
   proxies:
-    - vless-reality-vision-$snb                              
-    - vmess-ws-$snb
-    - hysteria2-$snb
-    - vmess-tls-argo-$snb
-    - vmess-argo-$snb
+    - vless-reality-vision-$snb-$USERNAME                              
+    - vmess-ws-$snb-$USERNAME
+    - hysteria2-$snb-$USERNAME
+    - vmess-tls-argo-$snb-$USERNAME
+    - vmess-argo-$snb-$USERNAME
 
 - name: Auto
   type: url-test
@@ -1057,11 +1064,11 @@ proxy-groups:
   interval: 300
   tolerance: 50
   proxies:
-    - vless-reality-vision-$snb                             
-    - vmess-ws-$snb
-    - hysteria2-$snb
-    - vmess-tls-argo-$snb
-    - vmess-argo-$snb
+    - vless-reality-vision-$snb-$USERNAME                             
+    - vmess-ws-$snb-$USERNAME
+    - hysteria2-$snb-$USERNAME
+    - vmess-tls-argo-$snb-$USERNAME
+    - vmess-argo-$snb-$USERNAME
     
 - name: Select
   type: select
@@ -1069,11 +1076,11 @@ proxy-groups:
     - Balance                                         
     - Auto
     - DIRECT
-    - vless-reality-vision-$snb                              
-    - vmess-ws-$snb
-    - hysteria2-$snb
-    - vmess-tls-argo-$snb
-    - vmess-argo-$snb
+    - vless-reality-vision-$snb-$USERNAME                              
+    - vmess-ws-$snb-$USERNAME
+    - hysteria2-$snb-$USERNAME
+    - vmess-tls-argo-$snb-$USERNAME
+    - vmess-argo-$snb-$USERNAME
 rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
@@ -1086,9 +1093,9 @@ v2sub=$(cat jh.txt)
 echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
-V2rayN_LINK="https://${USERNAME}.${hona}.net/${UUID}_v2sub.txt"
-Clashmeta_LINK="https://${USERNAME}.${hona}.net/${UUID}_clashmeta.txt"
-Singbox_LINK="https://${USERNAME}.${hona}.net/${UUID}_singbox.txt"
+V2rayN_LINK="https://${USERNAME}.${address}/${UUID}_v2sub.txt"
+Clashmeta_LINK="https://${USERNAME}.${address}/${UUID}_clashmeta.txt"
+Singbox_LINK="https://${USERNAME}.${address}/${UUID}_singbox.txt"
 cat > list.txt <<EOF
 =================================================================================================
 
@@ -1273,12 +1280,14 @@ if [[ -e $WORKDIR/config.json ]]; then
       echo "export PATH=\"\$HOME/bin:\$PATH\"" >> "$HOME/.bashrc"
       source "$HOME/.bashrc"
   fi
+if [ "$hona" = "serv00" ]; then
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
 sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
 sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
+fi
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1 > $WORKDIR/v
 else
@@ -1307,6 +1316,72 @@ red "未安装脚本，请选择1进行安装" && exit
 fi
 }
 
+resargo(){
+if [[ -e $WORKDIR/config.json ]]; then
+cd $WORKDIR
+argogdshow(){
+if [ -f ARGO_AUTH.log ]; then
+echo
+argoport=$(jq -r '.inbounds[4].listen_port' config.json)
+purple "如果你想设置原先的Argo固定隧道，请明确以下三点"
+purple "1：已设置Argo固定域名：$(cat gdym.log)"
+purple "2：固定隧道token：$(cat ARGO_AUTH.log)"
+purple "3：检查CF官网的ARGO固定隧道端口：$argoport"
+echo
+fi
+}
+if [ -f boot.log ]; then
+green "当前正在使用Argo临时隧道"
+argogdshow
+else
+green "当前正在使用Argo固定隧道"
+argogdshow
+fi
+argo_configure
+ps aux | grep '[t]unnel --u' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+agg=$(cat ag.txt)
+if [[ ! -f boot.log ]] && [[ "$argo_choice" =~ (G|g) ]]; then
+if [ "$hona" = "serv00" ]; then
+sed -i '' -e "15s|''|'$(cat gdym.log)'|" ~/serv00keep.sh
+sed -i '' -e "16s|''|'$(cat ARGO_AUTH.log)'|" ~/serv00keep.sh
+fi
+args="tunnel --no-autoupdate run --token $(cat ARGO_AUTH.log)"
+else
+rm -rf boot.log
+if [ "$hona" = "serv00" ]; then
+sed -i '' -e "15s|'$(cat gdym.log)'|''|" ~/serv00keep.sh
+sed -i '' -e "16s|'$(cat ARGO_AUTH.log)'|''|" ~/serv00keep.sh
+fi
+args="tunnel --url http://localhost:$argoport --no-autoupdate --logfile boot.log --loglevel info"
+fi
+    nohup ./"$agg" $args >/dev/null 2>&1 &
+    sleep 10
+if pgrep -x "$agg" > /dev/null; then
+    green "$agg Argo进程已启动"
+else
+for ((i=1; i<=5; i++)); do
+    red "$agg Argo进程未启动, 重启中...(尝试次数: $i)"
+    pkill -x "$agg"
+    nohup ./"$agg" "${args}" >/dev/null 2>&1 &
+    sleep 5
+    if pgrep -x "$agg" > /dev/null; then
+        purple "$agg Argo进程已成功重启"
+        break
+    fi
+    if [[ $i -eq 5 ]]; then
+        red "$agg Argo进程重启失败，Argo节点暂不可用，其他节点依旧可用"
+    fi
+done
+fi
+curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
+purple "Argo域名：$(get_argodomain)"
+cd
+else
+red "未安装脚本，请选择1进行安装" && exit
+fi
+}
+
 menu() {
    clear
    echo "============================================================"
@@ -1320,17 +1395,19 @@ menu() {
    echo   "------------------------------------------------------------"
    red    "2. 卸载删除 ${hona}-sb-yg"
    echo   "------------------------------------------------------------"
-   green  "3. 重启主进程 (修复节点)"
+   green  "3. 重启主进程 (修复主节点)"
    echo   "------------------------------------------------------------"
-   green  "4. 更新脚本"
+   green  "4. 切换并重启Argo临时/固定隧道"
    echo   "------------------------------------------------------------"
-   green  "5. 查看各节点分享/sing-box与clash订阅链接/反代IP/ProxyIP"
+   green  "5. 更新脚本"
    echo   "------------------------------------------------------------"
-   green  "6. 查看sing-box与clash配置文件"
+   green  "6. 查看各节点分享/sing-box与clash订阅链接/反代IP/ProxyIP"
    echo   "------------------------------------------------------------"
-   yellow "7. 重置并随机生成新端口 (脚本安装前后都可执行)"
+   green  "7. 查看sing-box与clash配置文件"
    echo   "------------------------------------------------------------"
-   yellow "8. 清理所有服务进程与文件 (系统初始化)"
+   yellow "8. 重置并随机生成新端口 (脚本安装前后都可执行)"
+   echo   "------------------------------------------------------------"
+   yellow "9. 清理所有服务进程与文件 (系统初始化)"
    echo   "------------------------------------------------------------"
    red    "0. 退出脚本"
    echo   "============================================================"
@@ -1377,7 +1454,7 @@ if [ "$insV" = "$latestV" ]; then
 echo -e "当前 ${hona}-sb-yg 脚本最新版：${purple}${insV}${re} (已安装)"
 else
 echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${insV}${re}"
-echo -e "检测到最新 ${hona}-sb-yg 脚本版本号：${yellow}${latestV}${re} (可选择4进行更新)"
+echo -e "检测到最新 ${hona}-sb-yg 脚本版本号：${yellow}${latestV}${re} (可选择5进行更新)"
 echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion)${re}"
 fi
 echo -e "========================================================="
@@ -1387,7 +1464,7 @@ if pgrep -x "$sbb" > /dev/null; then
 green "Sing-box主进程运行正常"
 green "UUID密码：$showuuid" 
 else
-yellow "Sing-box主进程启动失败，尝试运行下保活网页、重启、重置端口"
+yellow "Sing-box主进程启动失败，建议选择8重置端口，再选择9卸载重装"
 fi
 if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log"; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
@@ -1396,7 +1473,7 @@ checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
 green "Argo临时域名：$argosl  $check"
 fi
 if [ -f "$WORKDIR/boot.log" ] && ! grep -q "trycloudflare.com" "$WORKDIR/boot.log"; then
-yellow "Argo临时域名暂时不存在，保活过程中会自动恢复"
+yellow "Argo临时域名暂时不存在"
 fi
 if [ ! -f "$WORKDIR/boot.log" ]; then
 argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
@@ -1404,26 +1481,29 @@ checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argo
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
 green "Argo固定域名：$argogd $check"
 fi
+if [ "$hona" = "serv00" ]; then
 green "多功能主页如下 (支持保活、重启、重置端口、节点查询)"
 purple "http://${snb}.${USERNAME}.${hona}.net"
+fi
 else
 echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${latestV}${re}"
 yellow "未安装 ${hona}-sb-yg 脚本！请选择 1 安装"
 fi
    echo -e "========================================================="
-   reading "请输入选择【0-8】: " choice
+   reading "请输入选择【0-9】: " choice
    echo
     case "${choice}" in
         1) install_singbox ;;
         2) uninstall_singbox ;; 
 	3) resservsb ;;
-	4) fastrun && green "脚本已更新成功" && sleep 2 && sb ;; 
-        5) showlist ;;
-	6) showsbclash ;;
-        7) resallport ;;
-        8) kill_all_tasks ;;
+        4) resargo ;;
+	5) fastrun && green "脚本已更新成功" && sleep 2 && sb ;; 
+        6) showlist ;;
+	7) showsbclash ;;
+        8) resallport ;;
+        9) kill_all_tasks ;;
 	0) exit 0 ;;
-        *) red "无效的选项，请输入 0 到 8" ;;
+        *) red "无效的选项，请输入 0 到 9" ;;
     esac
 }
 menu
