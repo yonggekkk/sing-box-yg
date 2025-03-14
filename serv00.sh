@@ -212,10 +212,9 @@ sleep 2
         get_links
 	cd
         purple "************************************************************"
-        purple "${hona}-sb-yg脚本安装结束，退出SHH"
-	purple "请重新连接SSH，再次进入脚本时，输入快捷方式：sb"
+        purple "${hona}-sb-yg脚本安装结束"
+	purple "再次进入脚本时，输入快捷方式：sb"
 	purple "************************************************************"
-        kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
 }
 
 uninstall_singbox() {
@@ -1276,10 +1275,11 @@ if [[ -e $WORKDIR/config.json ]]; then
   mkdir -p "$HOME/bin"
   curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh > "$SCRIPT_PATH"
   chmod +x "$SCRIPT_PATH"
-  if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
-      echo "export PATH=\"\$HOME/bin:\$PATH\"" >> "$HOME/.bashrc"
-      source "$HOME/.bashrc"
-  fi
+if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
+    echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
+    echo 'source ~/.bashrc' >> ~/.bash_profile
+    source ~/.bashrc
+fi
 if [ "$hona" = "serv00" ]; then
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
