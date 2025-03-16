@@ -47,10 +47,47 @@ WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
-[ -n "$ARGO_DOMAIN" ] && echo "$ARGO_DOMAIN" > $WORKDIR/ARGO_DOMAIN.txt 2>/dev/null || ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.txt 2>/dev/null)
-[ -n "$ARGO_AUTH" ] && echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.txt 2>/dev/null || ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.txt 2>/dev/null)
-[ -n "$UUID" ] && echo "$UUID" > $WORKDIR/UUID.txt 2>/dev/null || UUID=$(<$WORKDIR/UUID.txt 2>/dev/null)
-[ -n "$reym" ] && echo "$reym" > $WORKDIR/reym.txt 2>/dev/null || reym=$(<$WORKDIR/reym.txt 2>/dev/null)
+
+if [[ -z "$ARGO_AUTH" ]] && [[ -f "$WORKDIR/ARGO_AUTH.log" ]]; then
+ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.log)
+elif [[ -z "$ARGO_AUTH" ]] && [[ ! -f "$WORKDIR/ARGO_AUTH.log" ]]; then
+echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.log
+else
+echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.log
+ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.log)
+fi
+if [[ -z "$ARGO_DOMAIN" ]] && [[ -f "$WORKDIR/ARGO_DOMAIN.log" ]]; then
+ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.log)
+elif [[ -z "$ARGO_DOMAIN" ]] && [[ ! -f "$WORKDIR/ARGO_DOMAIN.log" ]]; then
+echo "$ARGO_DOMAIN" > $WORKDIR/ARGO_DOMAIN.log
+else
+echo "$ARGO_DOMAIN" > $WORKDIR/ARGO_DOMAIN.log
+ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.log)
+fi
+
+if [[ -z "$UUID" ]] && [[ -f "$WORKDIR/UUID.txt" ]]; then
+UUID=$(<$WORKDIR/UUID.txt)
+elif [[ -z "$UUID" ]] && [[ ! -f "$WORKDIR/UUID.txt" ]]; then
+UUID=$(uuidgen -r)
+echo "$UUID" > $WORKDIR/UUID.txt
+else
+echo "$UUID" > $WORKDIR/UUID.txt
+UUID=$(<$WORKDIR/UUID.txt)
+fi
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
+sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
+sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
+sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
+if [[ -z "$reym" ]] && [[ -f "$WORKDIR/reym.txt" ]]; then
+reym=$(<$WORKDIR/reym.txt)
+elif [[ -z "$reym" ]] && [[ ! -f "$WORKDIR/reym.txt" ]]; then
+reym=$USERNAME.serv00.net
+echo "$reym" > $WORKDIR/reym.txt
+else
+echo "$reym" > $WORKDIR/reym.txt
+reym=$(<$WORKDIR/reym.txt)
+fi
 
 resallport(){
 portlist=$(devil port list | grep -E '^[0-9]+[[:space:]]+[a-zA-Z]+' | sed 's/^[[:space:]]*//')
@@ -282,21 +319,6 @@ fi
 fi
 fi
 
-if [[ -z "$UUID" ]]; then
-UUID=$(uuidgen -r)
-echo "$UUID" > UUID.txt
-export UUID
-fi
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
-sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
-sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
-if [[ -z "$reym" ]]; then
-reym=$USERNAME.serv00.net
-echo "$reym" > reym.txt
-export reym
-fi
 if [[ -z "$vless_port" ]] || [[ -z "$vmess_port" ]] || [[ -z "$hy2_port" ]]; then
 check_port
 fi
