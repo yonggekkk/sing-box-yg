@@ -135,27 +135,6 @@ okip(){
     echo "$IP"
     }
 
-uuidport(){
-if [[ -z "$UUID" ]]; then
-UUID=$(uuidgen -r)
-echo "$UUID" > UUID.txt
-export UUID
-fi
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
-sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
-sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
-if [[ -z "$reym" ]]; then
-reym=$USERNAME.serv00.net
-echo "$reym" > reym.txt
-export reym
-fi
-if [[ -z "$vless_port" ]] || [[ -z "$vmess_port" ]] || [[ -z "$hy2_port" ]]; then
-check_port
-fi
-}
-
 check_port(){
 port_list=$(devil port list)
 tcp_ports=$(echo "$port_list" | grep -c "tcp")
@@ -231,7 +210,50 @@ export vmess_port=$tcp_port2
 export hy2_port=$udp_port
 }
 
+get_argodomain() {
+  if [[ -n $ARGO_AUTH ]]; then
+    echo "$ARGO_DOMAIN" > gdym.log
+    echo "$ARGO_DOMAIN"
+  else
+    local retry=0
+    local max_retries=6
+    local argodomain=""
+    while [[ $retry -lt $max_retries ]]; do
+    ((retry++)) 
+    argodomain=$(cat boot.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
+      if [[ -n $argodomain ]]; then
+        break
+      fi
+      sleep 2
+    done  
+    if [ -z ${argodomain} ]; then
+    argodomain="Argo临时域名暂时获取失败，Argo节点暂不可用"
+    fi
+    echo "$argodomain"
+  fi
+}
+
 download_and_run_singbox() {
+
+if [[ -z "$UUID" ]]; then
+UUID=$(uuidgen -r)
+echo "$UUID" > UUID.txt
+export UUID
+fi
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
+sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
+sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
+sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
+if [[ -z "$reym" ]]; then
+reym=$USERNAME.serv00.net
+echo "$reym" > reym.txt
+export reym
+fi
+if [[ -z "$vless_port" ]] || [[ -z "$vmess_port" ]] || [[ -z "$hy2_port" ]]; then
+check_port
+fi
+
 if [ ! -s sb.txt ] && [ ! -s ag.txt ]; then
 DOWNLOAD_DIR="." && mkdir -p "$DOWNLOAD_DIR" && FILE_INFO=()
 FILE_INFO=("https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/sb web" "https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/server bot")
@@ -567,32 +589,8 @@ yellow "2、RES选择y运行一次重置系统，再改为n（重要）"
 yellow "3、当前Serv00服务器炸了？等会再试"
 red "4、以上都试了，哥直接躺平，交给进程保活，过会再来看"
 fi
-}
 
-get_argodomain() {
-  if [[ -n $ARGO_AUTH ]]; then
-    echo "$ARGO_DOMAIN" > gdym.log
-    echo "$ARGO_DOMAIN"
-  else
-    local retry=0
-    local max_retries=6
-    local argodomain=""
-    while [[ $retry -lt $max_retries ]]; do
-    ((retry++)) 
-    argodomain=$(cat boot.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
-      if [[ -n $argodomain ]]; then
-        break
-      fi
-      sleep 2
-    done  
-    if [ -z ${argodomain} ]; then
-    argodomain="Argo临时域名暂时获取失败，Argo节点暂不可用"
-    fi
-    echo "$argodomain"
-  fi
-}
 
-get_links(){
 argodomain=$(get_argodomain)
 echo -e "\e[1;32mArgo域名：\e[1;35m${argodomain}\e[0m\n"
 vl_link="vless://$UUID@$IP:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME"
@@ -1218,9 +1216,9 @@ rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
 install_singbox() {
 cd $WORKDIR
 read_ip
-uuidport
+
 download_and_run_singbox
-get_links
+
 cd
 }
 install_singbox
