@@ -139,6 +139,7 @@ uuidport(){
 if [[ -z "$UUID" ]]; then
 UUID=$(uuidgen -r)
 echo "$UUID" > UUID.txt
+export UUID
 fi
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
@@ -148,6 +149,7 @@ sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 if [[ -z "$reym" ]]; then
 reym=$USERNAME.serv00.net
 echo "$reym" > reym.txt
+export reym
 fi
 if [[ -z "$vless_port" ]] || [[ -z "$vmess_port" ]] || [[ -z "$hy2_port" ]]; then
 check_port
