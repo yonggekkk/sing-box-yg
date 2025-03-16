@@ -274,7 +274,7 @@ argo_configure() {
     fi
     if [[ "$argo_choice" == "g" || "$argo_choice" == "G" ]]; then
         reading "请输入argo固定隧道域名: " ARGO_DOMAIN
-	echo "$ARGO_DOMAIN" > gdym.log
+	echo "$ARGO_DOMAIN" > ARGO_DOMAIN.log
         green "你的argo固定隧道域名为: $ARGO_DOMAIN"
         reading "请输入argo固定隧道密钥（当你粘贴Token时，必须以ey开头）: " ARGO_AUTH
 	echo "$ARGO_AUTH" > ARGO_AUTH.log
@@ -1331,7 +1331,7 @@ if [ -f ARGO_AUTH.log ]; then
 echo
 argoport=$(jq -r '.inbounds[4].listen_port' config.json)
 purple "如果你想设置原先的Argo固定隧道，请明确以下三点"
-purple "1：已设置Argo固定域名：$(cat gdym.log)"
+purple "1：已设置Argo固定域名：$(cat ARGO_DOMAIN.log)"
 purple "2：固定隧道token：$(cat ARGO_AUTH.log)"
 purple "3：检查CF官网的ARGO固定隧道端口：$argoport"
 echo
@@ -1350,14 +1350,14 @@ ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2
 agg=$(cat ag.txt)
 if [[ ! -f boot.log ]] && [[ "$argo_choice" =~ (G|g) ]]; then
 if [ "$hona" = "serv00" ]; then
-sed -i '' -e "15s|''|'$(cat gdym.log)'|" ~/serv00keep.sh
+sed -i '' -e "15s|''|'$(cat ARGO_DOMAIN.log)'|" ~/serv00keep.sh
 sed -i '' -e "16s|''|'$(cat ARGO_AUTH.log)'|" ~/serv00keep.sh
 fi
 args="tunnel --no-autoupdate run --token $(cat ARGO_AUTH.log)"
 else
 rm -rf boot.log
 if [ "$hona" = "serv00" ]; then
-sed -i '' -e "15s|'$(cat gdym.log)'|''|" ~/serv00keep.sh
+sed -i '' -e "15s|'$(cat ARGO_DOMAIN.log)'|''|" ~/serv00keep.sh
 sed -i '' -e "16s|'$(cat ARGO_AUTH.log)'|''|" ~/serv00keep.sh
 fi
 args="tunnel --url http://localhost:$argoport --no-autoupdate --logfile boot.log --loglevel info"
@@ -1483,7 +1483,7 @@ if [ -f "$WORKDIR/boot.log" ] && ! grep -q "trycloudflare.com" "$WORKDIR/boot.lo
 yellow "Argo临时域名暂时不存在"
 fi
 if [ ! -f "$WORKDIR/boot.log" ]; then
-argogd=$(cat $WORKDIR/gdym.log 2>/dev/null)
+argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
 green "Argo固定域名：$argogd $check"
