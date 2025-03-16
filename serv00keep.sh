@@ -51,11 +51,6 @@ keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -n "$ARGO_AUTH" ] && echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.txt 2>/dev/null || ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.txt 2>/dev/null)
 [ -n "$UUID" ] && echo "$UUID" > $WORKDIR/UUID.txt 2>/dev/null || UUID=$(<$WORKDIR/UUID.txt 2>/dev/null)
 [ -n "$reym" ] && echo "$reym" > $WORKDIR/reym.txt 2>/dev/null || reym=$(<$WORKDIR/reym.txt 2>/dev/null)
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
-sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
-sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 
 resallport(){
 portlist=$(devil port list | grep -E '^[0-9]+[[:space:]]+[a-zA-Z]+' | sed 's/^[[:space:]]*//')
@@ -145,6 +140,11 @@ if [[ -z "$UUID" ]]; then
 UUID=$(uuidgen -r)
 echo "$UUID" > UUID.txt
 fi
+curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
+sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
+sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
+sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 if [[ -z "$reym" ]]; then
 reym=$USERNAME.serv00.net
 echo "$reym" > reym.txt
