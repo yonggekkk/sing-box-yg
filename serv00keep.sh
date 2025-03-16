@@ -1213,12 +1213,8 @@ fi
 check_port
 fi
 rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
-install_singbox() {
+
 cd $WORKDIR
 read_ip
-
 download_and_run_singbox
-
 cd
-}
-install_singbox
