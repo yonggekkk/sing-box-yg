@@ -28,9 +28,6 @@ HOSTNAME=$(hostname)
 snb=$(hostname | awk -F '.' '{print $1}')
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
 if [[ "$reset" =~ ^[Yy]$ ]]; then
-#crontab -l | grep -v "serv00keep" >rmcron
-#crontab rmcron >/dev/null 2>&1
-#rm rmcron
 bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
 devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
 devil www del ${USERNAME}.serv00.net > /dev/null 2>&1
@@ -50,10 +47,10 @@ WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
 keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
-[ -n "$ARGO_DOMAIN" ] && echo "$ARGO_DOMAIN" > $WORKDIR/ARGO_DOMAIN.txt || ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.txt)
-[ -n "$ARGO_AUTH" ] && echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.txt || ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.txt)
-[ -n "$UUID" ] && echo "$UUID" > $WORKDIR/UUID.txt || UUID=$(<$WORKDIR/UUID.txt)
-[ -n "$reym" ] && echo "$reym" > $WORKDIR/reym.txt || reym=$(<$WORKDIR/reym.txt)
+[ -n "$ARGO_DOMAIN" ] && echo "$ARGO_DOMAIN" > $WORKDIR/ARGO_DOMAIN.txt 2>/dev/null || ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.txt 2>/dev/null)
+[ -n "$ARGO_AUTH" ] && echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.txt 2>/dev/null || ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.txt 2>/dev/null)
+[ -n "$UUID" ] && echo "$UUID" > $WORKDIR/UUID.txt 2>/dev/null || UUID=$(<$WORKDIR/UUID.txt 2>/dev/null)
+[ -n "$reym" ] && echo "$reym" > $WORKDIR/reym.txt 2>/dev/null || reym=$(<$WORKDIR/reym.txt 2>/dev/null)
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
