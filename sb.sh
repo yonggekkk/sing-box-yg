@@ -4909,10 +4909,12 @@ if [[ -n $(ps -e | grep sbwpph) ]]; then
 kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
 fi
 v4v6
-if [[ -z $v4 ]]; then
+if [[ -n $v4 ]]; then
+sw46=4
+else
 red "IPV4不存在，确保安装过WARP-IPV4模式"
-fi 
-[[ -n $v6 ]] && sw46=6 || sw46=4
+sw46=6
+fi
 echo
 readp "设置WARP-plus-Socks5端口（回车跳过端口默认40000）：" port
 if [[ -z $port ]]; then
