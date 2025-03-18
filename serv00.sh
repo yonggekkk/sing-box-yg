@@ -1234,7 +1234,6 @@ snb=$(hostname | awk -F '\''.'\'' '\''{print $1}'\'')
 ' > webport.sh
 declare -f resallport >> webport.sh
 declare -f check_port >> webport.sh
-declare -f resservsb >> webport.sh
 echo 'resallport' >> webport.sh
 chmod +x webport.sh
 green "开始安装多功能主页，请稍等……"
