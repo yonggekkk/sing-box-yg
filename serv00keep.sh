@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # 定义颜色
 re="\033[0m"
@@ -287,7 +286,7 @@ check_port
 fi
 rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
 
-run(){
+cd $WORKDIR
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
 rm -rf ip.txt
 for host in "${ym[@]}"; do
@@ -1240,10 +1239,4 @@ EOF
 cat list.txt
 sleep 2
 rm -rf sb.log core tunnel.yml tunnel.json fake_useragent_0.2.0.json
-}
-serv00run(){
-cd $WORKDIR
-run
 cd
-}
-serv00run
