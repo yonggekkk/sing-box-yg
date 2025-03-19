@@ -1350,7 +1350,7 @@ argo_configure
 ps aux | grep '[t]unnel --u' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 agg=$(cat ag.txt)
-if [[ ! -f boot.log ]] && [[ "$argo_choice" =~ (G|g) ]]; then
+if [[ "$argo_choice" =~ (G|g) ]]; then
 if [ "$hona" = "serv00" ]; then
 sed -i '' -e "15s|''|'$(cat ARGO_DOMAIN.log)'|" ~/serv00keep.sh
 sed -i '' -e "16s|''|'$(cat ARGO_AUTH.log)'|" ~/serv00keep.sh
