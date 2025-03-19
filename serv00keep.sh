@@ -287,7 +287,7 @@ check_port
 fi
 rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
 
-cd $WORKDIR
+run(){
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
 rm -rf ip.txt
 for host in "${ym[@]}"; do
@@ -1240,4 +1240,10 @@ EOF
 cat list.txt
 sleep 2
 rm -rf sb.log core tunnel.yml tunnel.json fake_useragent_0.2.0.json
+}
+serv00run(){
+cd $WORKDIR
+run
 cd
+}
+serv00run
