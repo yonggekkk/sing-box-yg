@@ -19,7 +19,7 @@ address="serv00.net"
 keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 else
-address="hostuno.com"
+address="useruno.com"
 fi
 WORKDIR="${HOME}/domains/${USERNAME}.${address}/logs"
 devil www add ${USERNAME}.${address} php > /dev/null 2>&1
