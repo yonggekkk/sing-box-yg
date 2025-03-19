@@ -1475,19 +1475,16 @@ green "UUID密码：$showuuid"
 else
 yellow "Sing-box主进程启动失败，建议选择8重置端口，再选择9卸载重装"
 fi
-if [ -f "$WORKDIR/boot.log" ] && grep -q "trycloudflare.com" "$WORKDIR/boot.log"; then
+if [ -f "$WORKDIR/boot.log" ]; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
-[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
+[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名无效"
 green "Argo临时域名：$argosl  $check"
-fi
-if [ -f "$WORKDIR/boot.log" ] && ! grep -q "trycloudflare.com" "$WORKDIR/boot.log"; then
-yellow "Argo临时域名暂时不存在"
 fi
 if [ ! -f "$WORKDIR/boot.log" ]; then
 argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
-[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名可能无效"
+[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名无效"
 green "Argo固定域名：$argogd $check"
 fi
 if [ "$hona" = "serv00" ]; then
