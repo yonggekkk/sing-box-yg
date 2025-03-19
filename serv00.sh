@@ -274,14 +274,15 @@ argo_configure() {
     fi
     if [[ "$argo_choice" == "g" || "$argo_choice" == "G" ]]; then
         reading "请输入argo固定隧道域名: " ARGO_DOMAIN
-	echo "$ARGO_DOMAIN" > ARGO_DOMAIN.log
+	echo "$ARGO_DOMAIN" | tee ARGO_DOMAIN.log ARGO_DOMAIN_show.log > /dev/null
         green "你的argo固定隧道域名为: $ARGO_DOMAIN"
         reading "请输入argo固定隧道密钥（当你粘贴Token时，必须以ey开头）: " ARGO_AUTH
-	echo "$ARGO_AUTH" > ARGO_AUTH.log
+	echo "$ARGO_AUTH" | tee ARGO_AUTH.log ARGO_AUTH_show.log > /dev/null
         green "你的argo固定隧道密钥为: $ARGO_AUTH"
 	rm -rf boot.log
     else
         green "使用Argo临时隧道"
+	rm -rf ARGO_AUTH.log ARGO_DOMAIN.log
     fi
     break
 done
@@ -1329,12 +1330,12 @@ resargo(){
 if [[ -e $WORKDIR/config.json ]]; then
 cd $WORKDIR
 argogdshow(){
-if [ -f ARGO_AUTH.log ]; then
+if [ -f ARGO_AUTH_show.log ]; then
 echo
 argoport=$(jq -r '.inbounds[4].listen_port' config.json)
 purple "如果你想设置原先的Argo固定隧道，请明确以下三点"
-purple "1：已设置Argo固定域名：$(cat ARGO_DOMAIN.log)"
-purple "2：固定隧道token：$(cat ARGO_AUTH.log)"
+purple "1：已设置Argo固定域名：$(cat ARGO_DOMAIN_show.log)"
+purple "2：固定隧道token：$(cat ARGO_AUTH_show.log)"
 purple "3：检查CF官网的ARGO固定隧道端口：$argoport"
 echo
 fi
@@ -1352,15 +1353,15 @@ ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2
 agg=$(cat ag.txt)
 if [[ "$argo_choice" =~ (G|g) ]]; then
 if [ "$hona" = "serv00" ]; then
-sed -i '' -e "15s|''|'$(cat ARGO_DOMAIN.log)'|" ~/serv00keep.sh
-sed -i '' -e "16s|''|'$(cat ARGO_AUTH.log)'|" ~/serv00keep.sh
+sed -i '' -e "15s|''|'$(cat ARGO_DOMAIN_show.log)'|" ~/serv00keep.sh
+sed -i '' -e "16s|''|'$(cat ARGO_AUTH_show.log)'|" ~/serv00keep.sh
 fi
-args="tunnel --no-autoupdate run --token $(cat ARGO_AUTH.log)"
+args="tunnel --no-autoupdate run --token $(cat ARGO_AUTH_show.log)"
 else
 rm -rf boot.log
 if [ "$hona" = "serv00" ]; then
-sed -i '' -e "15s|'$(cat ARGO_DOMAIN.log)'|''|" ~/serv00keep.sh
-sed -i '' -e "16s|'$(cat ARGO_AUTH.log)'|''|" ~/serv00keep.sh
+sed -i '' -e "15s|'$(cat ARGO_DOMAIN_show.log)'|''|" ~/serv00keep.sh
+sed -i '' -e "16s|'$(cat ARGO_AUTH_show.log)'|''|" ~/serv00keep.sh
 fi
 args="tunnel --url http://localhost:$argoport --no-autoupdate --logfile boot.log --loglevel info"
 fi
