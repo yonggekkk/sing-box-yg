@@ -1094,7 +1094,6 @@ rules:
   
 EOF
 
-sleep 2
 v2sub=$(cat jh.txt)
 echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
@@ -1102,6 +1101,10 @@ cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
 V2rayN_LINK="https://${USERNAME}.${address}/${UUID}_v2sub.txt"
 Clashmeta_LINK="https://${USERNAME}.${address}/${UUID}_clashmeta.txt"
 Singbox_LINK="https://${USERNAME}.${address}/${UUID}_singbox.txt"
+hyp=$(jq -r '.inbounds[0].listen_port' config.json)
+vlp=$(jq -r '.inbounds[3].listen_port' config.json)
+vmp=$(jq -r '.inbounds[4].listen_port' config.json)
+showuuid=$(jq -r '.inbounds[0].users[0].password' config.json)
 cat > list.txt <<EOF
 =================================================================================================
 
@@ -1110,6 +1113,13 @@ cat > list.txt <<EOF
 $(dig @8.8.8.8 +time=5 +short "web$nb.${hona}.com" | sort -u)
 $(dig @8.8.8.8 +time=5 +short "$HOSTNAME" | sort -u)
 $(dig @8.8.8.8 +time=5 +short "cache$nb.${hona}.com" | sort -u)
+
+当前各协议正在使用的端口如下
+vless-reality端口：$vlp
+Vmess-ws端口(设置Argo固定域名端口)：$vmp
+Hysteria2端口：$hyp
+
+UUID密码：$showuuid
 -------------------------------------------------------------------------------------------------
 
 一、Vless-reality分享链接如下：
