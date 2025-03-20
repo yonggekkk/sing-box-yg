@@ -77,7 +77,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 ```
 
 #### Serv00/Hostuno-sb-yg脚本界面预览图，仅限方案一的SSH端安装脚本（注：仅供围观）
-![0904b4205bf0a45b43ea502c28caea7](https://github.com/user-attachments/assets/e3a56a18-91e1-4da4-afa4-39e6144a0d00)
+![f772aff97286579b3dac97f305d1bc6](https://github.com/user-attachments/assets/58b4b708-8f82-4dfb-85ad-d95d236dbcec)
+
 
 ![a39f5972b1f33b71138fd9b45af6e53](https://github.com/user-attachments/assets/a2e069ea-80cb-4953-b034-3cb518444eb7)
 
