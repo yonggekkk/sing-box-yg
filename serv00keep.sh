@@ -23,7 +23,8 @@ export reset=${reset:-''}
 export resport=${resport:-''}
 
 devil binexec on >/dev/null 2>&1
-USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
+#USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
+USERNAME=$(whoami)
 HOSTNAME=$(hostname)
 snb=$(hostname | cut -d. -f1)
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
