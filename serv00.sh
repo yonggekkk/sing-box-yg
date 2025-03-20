@@ -225,7 +225,7 @@ uninstall_singbox() {
     case "$choice" in
        [Yy])
 	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-          rm -rf domains bin serv00keep.sh webport.sh
+          rm -rf bin serv00keep.sh webport.sh
 	  sed -i '' '/export PATH="\$HOME\/bin:\$PATH"/d' ~/.bashrc
           source ~/.bashrc
           purple "************************************************************"
@@ -239,12 +239,11 @@ uninstall_singbox() {
 }
 
 kill_all_tasks() {
-reading "\n清理所有进程并清空所有安装内容，将退出ssh连接，确定继续清理吗？【y/n】: " choice
+reading "\n注意！！！清理所有进程并清空所有安装内容，将退出ssh连接，确定继续清理吗？【y/n】: " choice
   case "$choice" in
     [Yy]) 
     bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-    devil www del ${snb}.${USERNAME}.${address} > /dev/null 2>&1
-    devil www del ${USERNAME}.${address} > /dev/null 2>&1
+    devil www list | awk 'NR > 1 && NF {print $1}' | xargs -I {} devil www del {} > /dev/null 2>&1
     sed -i '' '/export PATH="\$HOME\/bin:\$PATH"/d' ~/.bashrc
     source ~/.bashrc
     purple "************************************************************"
@@ -1495,6 +1494,7 @@ fi
 else
 echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${latestV}${re}"
 yellow "未安装 ${hona}-sb-yg 脚本！请选择 1 安装"
+yellow "注意，请确保${hona}服务器处于全新环境"
 fi
    echo -e "========================================================="
    reading "请输入选择【0-9】: " choice
