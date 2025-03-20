@@ -1,5 +1,5 @@
 ### 一、Sing-box-yg精装桶一键四协议共存脚本（VPS专用）
-### 二、Serv00-sb-yg多平台一键三协议共存脚本（Serv00专用）
+### 二、Serv00/Hostuno-sb-yg多平台一键三协议共存脚本（Serv00/Hostuno专用）
 
 ### 注：本项目分享订阅节点都为本地化生成，不使用节点转换、订阅器等第三方外链引用，无需担心节点订阅被外链作者查看
 
@@ -44,7 +44,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 -----------------------------------------------------
 
-### 二、Serv00一键三协议共存脚本（Serv00专用）：
+### 二、Serv00/Hostuno一键三协议共存脚本（Serv00/Hostuno专用）：
 
 * 切勿与其他Serv00脚本混用！！！
 
@@ -68,7 +68,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 
 
-### 方案一、Serv00/Hostuno-sb-yg本地SSH专用一键脚本 【同服务器与方案二、方案三都不通用】
+### 方案一、Serv00/Hostuno-sb-yg一键脚本 【本地SSH专用，同服务器与方案二、方案三都不通用】
 
 ### 快捷方式：```sb```
 
@@ -82,12 +82,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 ![a39f5972b1f33b71138fd9b45af6e53](https://github.com/user-attachments/assets/a2e069ea-80cb-4953-b034-3cb518444eb7)
 
 
-### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用，同服务器与方案三通用）
+### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用，不支持Hostuno，同服务器与方案三通用）
 
 * 创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点，做好cron定时或者使用网页保活
 
 
-### 方案三、Serv00多账号自动部署脚本：kp.sh（VPS、软路由专用，同服务器与方案二通用）
+### 方案三、Serv00多账号自动部署脚本：kp.sh（VPS、软路由专用，不支持Hostuno，同服务器与方案二通用）
 
 * 修改kp.sh文件的参数，可在多个平台上自动远程部署且保活单个或多个Serv00账号的节点，不可用在serv00本地上，默认nano编辑形式
 
