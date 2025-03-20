@@ -1494,7 +1494,6 @@ fi
 else
 echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${latestV}${re}"
 yellow "未安装 ${hona}-sb-yg 脚本！请选择 1 安装"
-yellow "注意，请确保${hona}服务器处于全新环境"
 fi
    echo -e "========================================================="
    reading "请输入选择【0-9】: " choice
