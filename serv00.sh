@@ -53,7 +53,7 @@ read_uuid() {
 }
 
 read_reym() {
-	yellow "方式一：(推荐)使用${hona}自带域名，不支持proxyip功能：输入回车"
+	yellow "方式一：(推荐)使用Serv00/Hostuno自带域名，不支持proxyip功能：输入回车"
         yellow "方式二：使用CF域名(www.speedtest.net)，支持proxyip+非标端口反代ip功能：输入s"
         yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
         reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
@@ -82,7 +82,7 @@ if [[ -e $WORKDIR/config.json ]]; then
 hyp=$(jq -r '.inbounds[0].listen_port' $WORKDIR/config.json)
 vlp=$(jq -r '.inbounds[3].listen_port' $WORKDIR/config.json)
 vmp=$(jq -r '.inbounds[4].listen_port' $WORKDIR/config.json)
-purple "检测到${hona}-sb-yg脚本已安装，执行端口替换，请稍等……"
+purple "检测到Serv00/Hostuno-sb-yg脚本已安装，执行端口替换，请稍等……"
 sed -i '' "12s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
 sed -i '' "54s/$hyp/$hy2_port/g" $WORKDIR/config.json
@@ -212,7 +212,7 @@ sleep 2
         get_links
 	cd
         purple "************************************************************"
-        purple "${hona}-sb-yg脚本安装结束"
+        purple "Serv00/Hostuno-sb-yg脚本安装结束"
 	purple "退出SSH"
 	purple "请再次连接SSH，查看主菜单，请输入快捷方式：sb"
 	purple "************************************************************"
@@ -229,7 +229,7 @@ uninstall_singbox() {
 	  sed -i '' '/export PATH="\$HOME\/bin:\$PATH"/d' ~/.bashrc
           source ~/.bashrc
           purple "************************************************************"
-          purple "${hona}-sb-yg卸载完成！"
+          purple "Serv00/Hostuno-sb-yg卸载完成！"
           purple "欢迎继续使用脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)"
           purple "************************************************************"
           ;;
@@ -247,7 +247,7 @@ reading "\n注意！！！清理所有进程并清空所有安装内容，将退
     sed -i '' '/export PATH="\$HOME\/bin:\$PATH"/d' ~/.bashrc
     source ~/.bashrc
     purple "************************************************************"
-    purple "${hona}-sb-yg清理重置完成！"
+    purple "Serv00/Hostuno-sb-yg清理重置完成！"
     purple "欢迎继续使用脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)"
     purple "************************************************************"
     find ~ -type f -exec chmod 644 {} \; 2>/dev/null
@@ -581,7 +581,7 @@ if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
 red "主进程未启动，根据以下情况一一排查"
 yellow "1、选择8重置端口，自动生成随机可用端口（重要）"
 yellow "2、选择9重置"
-yellow "3、当前${hona}服务器炸了？等会再试"
+yellow "3、当前Serv00/Hostuno服务器炸了？等会再试"
 red "4、以上都试了，哥直接躺平，交给进程保活，过会再来看"
 sleep 6
 fi
@@ -1128,8 +1128,8 @@ CF节点落地到CF网站的地区为：$IP所在地区
 CF节点的TLS必须开启
 CF节点落地到非CF网站的地区为：$IP所在地区
 
-注：如果${hona}的IP被墙，proxyip依旧有效，但用于客户端地址与端口的非标端口反代IP将不可用
-注：可能有大佬会扫${hona}的反代IP作为其共享IP库或者出售，请慎重将reality域名设置为CF域名
+注：如果Serv00/Hostuno的IP被墙，proxyip依旧有效，但用于客户端地址与端口的非标端口反代IP将不可用
+注：可能有大佬会扫Serv00/Hostuno的反代IP作为其共享IP库或者出售，请慎重将reality域名设置为CF域名
 -------------------------------------------------------------------------------------------------
 
 
@@ -1397,12 +1397,12 @@ menu() {
    green "甬哥Github项目  ：github.com/yonggekkk"
    green "甬哥Blogger博客 ：ygkkk.blogspot.com"
    green "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
-   green "${hona}-sb-yg三协议共存：vless-reality、Vmess-ws(Argo)、Hy2"
+   green "Serv00/Hostuno三协议共存脚本：vless-reality/Vmess-ws(Argo)/Hy2"
    green "脚本快捷方式：sb"
    echo   "============================================================"
-   green  "1. 一键安装 ${hona}-sb-yg"
+   green  "1. 一键安装 Serv00/Hostuno-sb-yg"
    echo   "------------------------------------------------------------"
-   red    "2. 卸载删除 ${hona}-sb-yg"
+   red    "2. 卸载删除 Serv00/Hostuno-sb-yg"
    echo   "------------------------------------------------------------"
    green  "3. 重启主进程 (修复主节点)"
    echo   "------------------------------------------------------------"
@@ -1460,10 +1460,10 @@ insV=$(cat $WORKDIR/v 2>/dev/null)
 latestV=$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion | awk -F "更新内容" '{print $1}' | head -n 1)
 if [ -f $WORKDIR/v ]; then
 if [ "$insV" = "$latestV" ]; then
-echo -e "当前 ${hona}-sb-yg 脚本最新版：${purple}${insV}${re} (已安装)"
+echo -e "当前 Serv00/Hostuno-sb-yg 脚本最新版：${purple}${insV}${re} (已安装)"
 else
-echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${insV}${re}"
-echo -e "检测到最新 ${hona}-sb-yg 脚本版本号：${yellow}${latestV}${re} (可选择5进行更新)"
+echo -e "当前 Serv00/Hostuno-sb-yg 脚本版本号：${purple}${insV}${re}"
+echo -e "检测到最新 Serv00/Hostuno-sb-yg 脚本版本号：${yellow}${latestV}${re} (可选择5进行更新)"
 echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sversion)${re}"
 fi
 echo -e "========================================================="
@@ -1492,8 +1492,8 @@ green "多功能主页如下 (支持保活、重启、重置端口、节点查�
 purple "http://${snb}.${USERNAME}.${hona}.net"
 fi
 else
-echo -e "当前 ${hona}-sb-yg 脚本版本号：${purple}${latestV}${re}"
-yellow "未安装 ${hona}-sb-yg 脚本！请选择 1 安装"
+echo -e "当前 Serv00/Hostuno-sb-yg 脚本版本号：${purple}${latestV}${re}"
+yellow "未安装 Serv00/Hostuno-sb-yg 脚本！请选择 1 安装"
 fi
    echo -e "========================================================="
    reading "请输入选择【0-9】: " choice
