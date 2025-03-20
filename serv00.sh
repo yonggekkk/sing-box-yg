@@ -1478,10 +1478,8 @@ echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/sing-bo
 fi
 echo -e "========================================================="
 sbb=$(cat $WORKDIR/sb.txt 2>/dev/null)
-showuuid=$(jq -r '.inbounds[0].users[0].password' $WORKDIR/config.json 2>/dev/null)
 if pgrep -x "$sbb" > /dev/null; then
 green "Sing-box主进程运行正常"
-green "UUID密码：$showuuid" 
 else
 yellow "Sing-box主进程启动失败，建议选择8重置端口，再选择9卸载重装"
 fi
