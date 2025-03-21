@@ -30,14 +30,15 @@ snb=$(hostname | cut -d. -f1)
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
 if [[ "$reset" =~ ^[Yy]$ ]]; then
 bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
+devil www del ${USERNAME} > /dev/null 2>&1
 devil www list | awk 'NR > 1 && NF {print $1}' | xargs -I {} devil www del {} > /dev/null 2>&1
 sed -i '/export PATH="\$HOME\/bin:\$PATH"/d' "${HOME}/.bashrc" >/dev/null 2>&1
 source "${HOME}/.bashrc" >/dev/null 2>&1
 find ~ -type f -exec chmod 644 {} \; 2>/dev/null
 find ~ -type d -exec chmod 755 {} \; 2>/dev/null
-find ~ -type f -exec rm -f {} \; 2>/dev/null
-find ~ -type d -empty -exec rmdir {} \; 2>/dev/null
-find ~ -exec rm -rf {} \; 2>/dev/null
+# find ~ -type f -exec rm -f {} \; 2>/dev/null
+# find ~ -type d -empty -exec rmdir {} \; 2>/dev/null
+# find ~ -exec rm -rf {} \; 2>/dev/null
 echo "重置系统完成"
 fi
 devil www add ${USERNAME} php > /dev/null 2>&1
