@@ -1552,8 +1552,7 @@ argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk '
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名无效"
 green "Argo临时域名：$argosl  $check"
-fi
-if [ ! -f "$WORKDIR/boot.log" ]; then
+else
 argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
 [ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名无效"
