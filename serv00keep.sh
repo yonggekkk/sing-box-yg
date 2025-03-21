@@ -49,30 +49,30 @@ keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 
 if [[ -z "$ARGO_AUTH" ]] && [[ -f "$WORKDIR/ARGO_AUTH.log" ]]; then
-ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.log)
+ARGO_AUTH=$(cat "$WORKDIR/ARGO_AUTH.log" 2>/dev/null)
 elif [[ -z "$ARGO_AUTH" ]] && [[ ! -f "$WORKDIR/ARGO_AUTH.log" ]]; then
 echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.log
 else
 echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.log
-ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.log)
+ARGO_AUTH=$(cat "$WORKDIR/ARGO_AUTH.log" 2>/dev/null)
 fi
 if [[ -z "$ARGO_DOMAIN" ]] && [[ -f "$WORKDIR/ARGO_DOMAIN.log" ]]; then
-ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.log)
+ARGO_DOMAIN=$(cat "$WORKDIR/ARGO_DOMAIN.log" 2>/dev/null)
 elif [[ -z "$ARGO_DOMAIN" ]] && [[ ! -f "$WORKDIR/ARGO_DOMAIN.log" ]]; then
 echo "$ARGO_DOMAIN" > $WORKDIR/ARGO_DOMAIN.log
 else
 echo "$ARGO_DOMAIN" > $WORKDIR/ARGO_DOMAIN.log
-ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.log)
+ARGO_DOMAIN=$(cat "$WORKDIR/ARGO_DOMAIN.log" 2>/dev/null)
 fi
 
 if [[ -z "$UUID" ]] && [[ -f "$WORKDIR/UUID.txt" ]]; then
-UUID=$(<$WORKDIR/UUID.txt)
+UUID=$(cat "$WORKDIR/UUID.txt" 2>/dev/null)
 elif [[ -z "$UUID" ]] && [[ ! -f "$WORKDIR/UUID.txt" ]]; then
 UUID=$(uuidgen -r)
 echo "$UUID" > $WORKDIR/UUID.txt
 else
 echo "$UUID" > $WORKDIR/UUID.txt
-UUID=$(<$WORKDIR/UUID.txt)
+UUID=$(cat "$WORKDIR/UUID.txt" 2>/dev/null)
 fi
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
@@ -80,13 +80,13 @@ sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
 sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
 sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 if [[ -z "$reym" ]] && [[ -f "$WORKDIR/reym.txt" ]]; then
-reym=$(<$WORKDIR/reym.txt)
+reym=$(cat "$WORKDIR/reym.txt" 2>/dev/null)
 elif [[ -z "$reym" ]] && [[ ! -f "$WORKDIR/reym.txt" ]]; then
 reym=$USERNAME.serv00.net
 echo "$reym" > $WORKDIR/reym.txt
 else
 echo "$reym" > $WORKDIR/reym.txt
-reym=$(<$WORKDIR/reym.txt)
+reym=$(cat "$WORKDIR/reym.txt" 2>/dev/null)
 fi
 
 resallport(){
@@ -320,7 +320,6 @@ fi
 if [[ -z "$vless_port" ]] || [[ -z "$vmess_port" ]] || [[ -z "$hy2_port" ]]; then
 check_port
 fi
-
 if [ ! -s sb.txt ] && [ ! -s ag.txt ]; then
 DOWNLOAD_DIR="." && mkdir -p "$DOWNLOAD_DIR" && FILE_INFO=()
 FILE_INFO=("https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/sb web" "https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/server bot")
