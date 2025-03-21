@@ -342,6 +342,7 @@ for entry in "${FILE_INFO[@]}"; do
     FILE_MAP[$(echo "$entry" | cut -d ' ' -f 2)]="$NEW_FILENAME"
 done
 wait
+fi
 
 if [ ! -e private_key.txt ]; then
 output=$(./"$(basename ${FILE_MAP[web]})" generate reality-keypair)
