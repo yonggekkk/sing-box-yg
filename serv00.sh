@@ -42,28 +42,34 @@ IP=$(head -n 1 ip.txt | awk -F ':' '{print $1}')
 fi
 fi
 fi
+echo "$IP" > $WORKDIR/ipone.txt
+IP=$(<$WORKDIR/ipone.txt)
 green "你选择的IP为: $IP"
 }
 
 read_uuid() {
-        reading "请输入统一的uuid密码 (建议回车默认随机): " UUID
-        if [[ -z "$UUID" ]]; then
-	   UUID=$(uuidgen -r)
-        fi
-	green "你的uuid为: $UUID"
+reading "请输入统一的uuid密码 (建议回车默认随机): " UUID
+if [[ -z "$UUID" ]]; then
+UUID=$(uuidgen -r)
+fi
+echo "$UUID" > $WORKDIR/UUID.txt
+UUID=$(<$WORKDIR/UUID.txt)
+green "你的uuid为: $UUID"
 }
 
 read_reym() {
-	yellow "方式一：(推荐)使用Serv00/Hostuno自带域名，不支持proxyip功能：输入回车"
-        yellow "方式二：使用CF域名(www.speedtest.net)，支持proxyip+非标端口反代ip功能：输入s"
-        yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
-        reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
-        if [[ -z "$reym" ]]; then
-	    reym=$USERNAME.${address}
-	elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
-	    reym=www.speedtest.net
-        fi
-	green "你的reality域名为: $reym"
+yellow "方式一：(推荐)使用Serv00/Hostuno自带域名，不支持proxyip功能：输入回车"
+yellow "方式二：使用CF域名(www.speedtest.net)，支持proxyip+非标端口反代ip功能：输入s"
+yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
+reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
+if [[ -z "$reym" ]]; then
+reym=$USERNAME.${address}
+elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
+reym=www.speedtest.net
+fi
+echo "$reym" > $WORKDIR/reym.txt
+reym=$(<$WORKDIR/reym.txt)
+green "你的reality域名为: $reym"
 }
 
 resallport(){
@@ -103,13 +109,15 @@ else
 ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道已启动" || yellow "Argo固定隧道启动失败，请先在CF更改隧道端口：$vmess_port，再重启下Argo隧道"
 fi
 fi
+cd $WORKDIR
+showhostunolist
+cd
 }
 
 check_port () {
 port_list=$(devil port list)
 tcp_ports=$(echo "$port_list" | grep -c "tcp")
 udp_ports=$(echo "$port_list" | grep -c "udp")
-
 if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
     red "端口数量不符合要求，正在调整..."
 
@@ -120,7 +128,6 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             green "已删除TCP端口: $port"
         done
     fi
-
     if [[ $udp_ports -gt 1 ]]; then
         udp_to_delete=$((udp_ports - 1))
         echo "$port_list" | awk '/udp/ {print $1, $2}' | head -n $udp_to_delete | while read port type; do
@@ -128,7 +135,6 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             green "已删除UDP端口: $port"
         done
     fi
-
     if [[ $tcp_ports -lt 2 ]]; then
         tcp_ports_to_add=$((2 - tcp_ports))
         tcp_ports_added=0
@@ -148,7 +154,6 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             fi
         done
     fi
-
     if [[ $udp_ports -lt 1 ]]; then
         while true; do
             udp_port=$(shuf -i 10000-65535 -n 1) 
@@ -170,7 +175,6 @@ else
     tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
     tcp_port2=$(echo "$tcp_ports" | sed -n '2p')
     udp_port=$(echo "$port_list" | awk '/udp/ {print $1}')
-
     purple "当前TCP端口: $tcp_port1 和 $tcp_port2"
     purple "当前UDP端口: $udp_port"
 fi
@@ -262,7 +266,6 @@ reading "\n注意！！！清理所有进程并清空所有安装内容，将退
   esac
 }
 
-# Generating argo Config
 argo_configure() {
   while true; do
     yellow "方式一：(推荐)无需域名的Argo临时隧道：输入回车"
@@ -288,8 +291,8 @@ argo_configure() {
 done
 }
 
-# Download Dependency Files
 download_and_run_singbox() {
+if [ ! -s sb.txt ] && [ ! -s ag.txt ]; then
 DOWNLOAD_DIR="." && mkdir -p "$DOWNLOAD_DIR" && FILE_INFO=()
 FILE_INFO=("https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/sb web" "https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/server bot")
 declare -A FILE_MAP
@@ -339,12 +342,17 @@ for entry in "${FILE_INFO[@]}"; do
     FILE_MAP[$(echo "$entry" | cut -d ' ' -f 2)]="$NEW_FILENAME"
 done
 wait
+fi
 
+if [ ! -e private_key.txt ]; then
 output=$(./"$(basename ${FILE_MAP[web]})" generate reality-keypair)
 private_key=$(echo "${output}" | awk '/PrivateKey:/ {print $2}')
 public_key=$(echo "${output}" | awk '/PublicKey:/ {print $2}')
 echo "${private_key}" > private_key.txt
 echo "${public_key}" > public_key.txt
+fi
+private_key=$(<private_key.txt)
+public_key=$(<public_key.txt)
 openssl ecparam -genkey -name prime256v1 -out "private.key"
 openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.${address}"
   cat > config.json << EOF
@@ -524,29 +532,41 @@ else
 EOF
 fi
 
+if ! ps aux | grep '[r]un -c con' > /dev/null; then
+ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 if [ -e "$(basename "${FILE_MAP[web]}")" ]; then
    echo "$(basename "${FILE_MAP[web]}")" > sb.txt
-   sbb=$(cat sb.txt)
+   sbb=$(cat sb.txt)   
     nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
     sleep 5
 if pgrep -x "$sbb" > /dev/null; then
     green "$sbb 主进程已启动"
 else
-for ((i=1; i<=5; i++)); do
-    red "$sbb 主进程未启动, 重启中... (尝试次数: $i)"
+    red "$sbb 主进程未启动, 重启中..."
     pkill -x "$sbb"
     nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
+    sleep 2
+    purple "$sbb 主进程已重启"
+fi
+else
+    sbb=$(cat sb.txt)   
+    nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
     sleep 5
-    if pgrep -x "$sbb" > /dev/null; then
-        purple "$sbb 主进程已成功重启"
-        break
-    fi
-    if [[ $i -eq 5 ]]; then
-        red "$sbb 主进程重启失败"
-    fi
-done
+if pgrep -x "$sbb" > /dev/null; then
+    green "$sbb 主进程已启动"
+else
+    red "$sbb 主进程未启动, 重启中..."
+    pkill -x "$sbb"
+    nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
+    sleep 2
+    purple "$sbb 主进程已重启"
 fi
 fi
+else
+green "主进程已启动"
+fi
+cfgo() {
+rm -rf boot.log
 if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
    echo "$(basename "${FILE_MAP[bot]}")" > ag.txt
    agg=$(cat ag.txt)
@@ -556,26 +576,56 @@ if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
     else
      #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
      args="tunnel --url http://localhost:$vmess_port --no-autoupdate --logfile boot.log --loglevel info"
-    fi    
+    fi
     nohup ./"$agg" $args >/dev/null 2>&1 &
     sleep 10
 if pgrep -x "$agg" > /dev/null; then
-    green "$agg Argo进程已启动"
+    green "$agg Arog进程已启动"
 else
-for ((i=1; i<=5; i++)); do
-    red "$agg Argo进程未启动, 重启中...(尝试次数: $i)"
+    red "$agg Argo进程未启动, 重启中..."
     pkill -x "$agg"
     nohup ./"$agg" "${args}" >/dev/null 2>&1 &
     sleep 5
-    if pgrep -x "$agg" > /dev/null; then
-        purple "$agg Argo进程已成功重启"
-        break
-    fi
-    if [[ $i -eq 5 ]]; then
-        red "$agg Argo进程重启失败，Argo节点暂不可用(保活过程中会自动恢复)，其他节点依旧可用"
-    fi
-done
+    purple "$agg Argo进程已重启"
 fi
+else
+   agg=$(cat ag.txt)
+    if [[ $ARGO_AUTH =~ ^[A-Z0-9a-z=]{120,250}$ ]]; then
+      #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}"
+      args="tunnel --no-autoupdate run --token ${ARGO_AUTH}"
+    else
+     #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
+     args="tunnel --url http://localhost:$vmess_port --no-autoupdate --logfile boot.log --loglevel info"
+    fi
+    nohup ./"$agg" $args >/dev/null 2>&1 &
+    sleep 10
+if pgrep -x "$agg" > /dev/null; then
+    green "$agg Arog进程已启动"
+else
+    red "$agg Argo进程未启动, 重启中..."
+    pkill -x "$agg"
+    nohup ./"$agg" "${args}" >/dev/null 2>&1 &
+    sleep 5
+    purple "$agg Argo进程已重启"
+fi
+fi
+}
+
+if [ -f "$WORKDIR/boot.log" ]; then
+argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
+checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
+else
+argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
+checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
+fi
+if ([ -z "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --u' > /dev/null) || [ "$checkhttp" -ne 404 ]; then
+ps aux | grep '[t]unnel --u' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+cfgo
+elif ([ -n "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --n' > /dev/null) || [ "$checkhttp" -ne 404 ]; then
+ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+cfgo
+else
+green "Arog进程已启动"
 fi
 sleep 2
 if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
@@ -1339,10 +1389,10 @@ fi
 resargo(){
 if [[ -e $WORKDIR/config.json ]]; then
 cd $WORKDIR
+argoport=$(jq -r '.inbounds[4].listen_port' config.json)
 argogdshow(){
 echo
 if [ -f ARGO_AUTH_show.log ]; then
-argoport=$(jq -r '.inbounds[4].listen_port' config.json)
 purple "如果你想设置原先的Argo固定隧道，请明确以下三点"
 purple "1：已设置Argo固定域名：$(cat ARGO_DOMAIN_show.log)"
 purple "2：固定隧道token：$(cat ARGO_AUTH_show.log)"
@@ -1395,10 +1445,23 @@ for ((i=1; i<=5; i++)); do
 done
 fi
 curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
-purple "Argo域名：$(get_argodomain)"
+showhostunolist
 cd
 else
 red "未安装脚本，请选择1进行安装" && exit
+fi
+}
+
+showhostunolist(){
+if [ "$hona" != "serv00" ]; then
+IP=$(<$WORKDIR/ipone.txt)
+UUID=$(<$WORKDIR/UUID.txt)
+reym=$(<$WORKDIR/reym.txt)
+ARGO_DOMAIN=$(cat "$WORKDIR/ARGO_DOMAIN.log" 2>/dev/null)
+ARGO_AUTH=$(cat "$WORKDIR/ARGO_AUTH.log" 2>/dev/null)
+check_port >/dev/null 2>&1
+download_and_run_singbox >/dev/null 2>&1
+get_links
 fi
 }
 
