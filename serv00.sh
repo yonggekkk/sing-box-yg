@@ -46,24 +46,28 @@ green "你选择的IP为: $IP"
 }
 
 read_uuid() {
-        reading "请输入统一的uuid密码 (建议回车默认随机): " UUID
-        if [[ -z "$UUID" ]]; then
-	   UUID=$(uuidgen -r)
-        fi
-	green "你的uuid为: $UUID"
+reading "请输入统一的uuid密码 (建议回车默认随机): " UUID
+if [[ -z "$UUID" ]]; then
+UUID=$(uuidgen -r)
+fi
+echo "$UUID" > $WORKDIR/UUID.txt
+UUID=$(<$WORKDIR/UUID.txt)
+green "你的uuid为: $UUID"
 }
 
 read_reym() {
-	yellow "方式一：(推荐)使用Serv00/Hostuno自带域名，不支持proxyip功能：输入回车"
-        yellow "方式二：使用CF域名(www.speedtest.net)，支持proxyip+非标端口反代ip功能：输入s"
-        yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
-        reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
-        if [[ -z "$reym" ]]; then
-	    reym=$USERNAME.${address}
-	elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
-	    reym=www.speedtest.net
-        fi
-	green "你的reality域名为: $reym"
+yellow "方式一：(推荐)使用Serv00/Hostuno自带域名，不支持proxyip功能：输入回车"
+yellow "方式二：使用CF域名(www.speedtest.net)，支持proxyip+非标端口反代ip功能：输入s"
+yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
+reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
+if [[ -z "$reym" ]]; then
+reym=$USERNAME.${address}
+elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
+reym=www.speedtest.net
+fi
+echo "$reym" > $WORKDIR/reym.txt
+reym=$(<$WORKDIR/reym.txt)
+green "你的reality域名为: $reym"
 }
 
 resallport(){
@@ -109,7 +113,6 @@ check_port () {
 port_list=$(devil port list)
 tcp_ports=$(echo "$port_list" | grep -c "tcp")
 udp_ports=$(echo "$port_list" | grep -c "udp")
-
 if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
     red "端口数量不符合要求，正在调整..."
 
@@ -120,7 +123,6 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             green "已删除TCP端口: $port"
         done
     fi
-
     if [[ $udp_ports -gt 1 ]]; then
         udp_to_delete=$((udp_ports - 1))
         echo "$port_list" | awk '/udp/ {print $1, $2}' | head -n $udp_to_delete | while read port type; do
@@ -128,7 +130,6 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             green "已删除UDP端口: $port"
         done
     fi
-
     if [[ $tcp_ports -lt 2 ]]; then
         tcp_ports_to_add=$((2 - tcp_ports))
         tcp_ports_added=0
@@ -148,7 +149,6 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
             fi
         done
     fi
-
     if [[ $udp_ports -lt 1 ]]; then
         while true; do
             udp_port=$(shuf -i 10000-65535 -n 1) 
@@ -170,7 +170,6 @@ else
     tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
     tcp_port2=$(echo "$tcp_ports" | sed -n '2p')
     udp_port=$(echo "$port_list" | awk '/udp/ {print $1}')
-
     purple "当前TCP端口: $tcp_port1 和 $tcp_port2"
     purple "当前UDP端口: $udp_port"
 fi
