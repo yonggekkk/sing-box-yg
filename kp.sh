@@ -86,7 +86,7 @@ echo "*****************************************************"
             echo "远程命令执行结果：$output"
           else
             echo "🎉恭喜！✅检测到所有进程正常运行中 "
-            SSH_USER_LOWER=$(echo "$SSH_USER")
+            SSH_USER_LOWER=$(echo "$SSH_USER" | tr '[:upper:]' '[:lower:]')
             sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" "
             echo \"配置显示如下：\"
             cat domains/${SSH_USER_LOWER}.serv00.net/logs/list.txt
