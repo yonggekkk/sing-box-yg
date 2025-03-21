@@ -59,8 +59,8 @@ app.get("/rp", (req, res) => {
 app.get("/list/key", (req, res) => {
     const listCommands = `
         USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
-        whoami=$(whoami)
-        FULL_PATH="/home/\${whoami}/domains/\${USERNAME}.serv00.net/logs/list.txt"
+
+        FULL_PATH="/home/\${USERNAME}/domains/\${USERNAME}.serv00.net/logs/list.txt"
         cat "\$FULL_PATH"
     `;
     exec(listCommands, (err, stdout, stderr) => {
