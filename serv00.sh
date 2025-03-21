@@ -1445,7 +1445,6 @@ for ((i=1; i<=5; i++)); do
 done
 fi
 curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
-purple "Argo域名：$(get_argodomain)"
 showhostunolist
 cd
 else
