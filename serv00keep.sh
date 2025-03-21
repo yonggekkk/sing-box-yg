@@ -24,7 +24,7 @@ export resport=${resport:-''}
 
 devil binexec on >/dev/null 2>&1
 #USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
-USERNAME=$(whoami)
+USERNAME=$reym
 HOSTNAME=$(hostname)
 snb=$(hostname | cut -d. -f1)
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
@@ -40,12 +40,12 @@ find ~ -type d -empty -exec rmdir {} \; 2>/dev/null
 find ~ -exec rm -rf {} \; 2>/dev/null
 echo "重置系统完成"
 fi
-devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
-FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
-WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
+devil www add ${USERNAME} php > /dev/null 2>&1
+FILE_PATH="${HOME}/domains/${USERNAME}/public_html"
+WORKDIR="${HOME}/domains/${USERNAME}/logs"
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
+keep_path="${HOME}/domains/${snb}.${USERNAME}/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 
 if [[ -z "$ARGO_AUTH" ]] && [[ -f "$WORKDIR/ARGO_AUTH.log" ]]; then
@@ -74,7 +74,7 @@ else
 echo "$UUID" > $WORKDIR/UUID.txt
 UUID=$(<$WORKDIR/UUID.txt)
 fi
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
+curl -sL https://raw.githubusercontent.com/agentopenai/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
 sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
@@ -82,7 +82,7 @@ sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 if [[ -z "$reym" ]] && [[ -f "$WORKDIR/reym.txt" ]]; then
 reym=$(<$WORKDIR/reym.txt)
 elif [[ -z "$reym" ]] && [[ ! -f "$WORKDIR/reym.txt" ]]; then
-reym=$USERNAME.serv00.net
+reym=$USERNAME
 echo "$reym" > $WORKDIR/reym.txt
 else
 echo "$reym" > $WORKDIR/reym.txt
@@ -115,7 +115,7 @@ sed -i '' -e "18s|'$vmp'|'$vmess_port'|" serv00keep.sh
 sed -i '' -e "19s|'$hyp'|'$hy2_port'|" serv00keep.sh
 ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 sleep 1
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+curl -sk "http://${snb}.${USERNAME}/up" > /dev/null 2>&1
 sleep 5
 }
 
@@ -239,14 +239,14 @@ get_argodomain() {
 }
 
 if [ ! -f serv00keep.sh ]; then
-curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
+curl -sSL https://raw.githubusercontent.com/agentopenai/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
 echo '#!/bin/bash
 red() { echo -e "\e[1;91m$1\033[0m"; }
 green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
 USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
-WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
+WORKDIR="${HOME}/domains/${USERNAME}/logs"
 snb=$(hostname | cut -d. -f1)
 ' > webport.sh
 declare -f resallport >> webport.sh
@@ -254,9 +254,9 @@ declare -f check_port >> webport.sh
 echo 'resallport' >> webport.sh
 chmod +x webport.sh
 green "开始安装多功能主页，请稍等……"
-devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
-devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
-devil www add ${snb}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
+devil www del ${snb}.${USERNAME} > /dev/null 2>&1
+devil www add ${USERNAME} php > /dev/null 2>&1
+devil www add ${snb}.${USERNAME} nodejs /usr/local/bin/node18 > /dev/null 2>&1
 ln -fs /usr/local/bin/node18 ~/bin/node > /dev/null 2>&1
 ln -fs /usr/local/bin/npm18 ~/bin/npm > /dev/null 2>&1
 mkdir -p ~/.npm-global
@@ -265,9 +265,9 @@ echo 'export PATH=~/.npm-global/bin:~/bin:$PATH' >> $HOME/.bash_profile && sourc
 rm -rf $HOME/.npmrc > /dev/null 2>&1
 cd "$keep_path"
 npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
-rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
-devil www restart ${snb}.${USERNAME}.serv00.net
-green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.serv00.net"
+rm $HOME/domains/${snb}.${USERNAME}/public_nodejs/public/index.html > /dev/null 2>&1
+devil www restart ${snb}.${USERNAME}
+green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}"
 fi
 
 if [[ "$resport" =~ ^[Yy]$ ]]; then
@@ -284,7 +284,7 @@ done <<< "$portlist"
 fi
 check_port
 fi
-rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
+rm -rf $HOME/domains/${snb}.${USERNAME}/logs/*
 
 cd $WORKDIR
 ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
@@ -383,7 +383,7 @@ fi
 private_key=$(<private_key.txt)
 public_key=$(<public_key.txt)
 openssl ecparam -genkey -name prime256v1 -out "private.key"
-openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.serv00.net"
+openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME"
   cat > config.json << EOF
 {
   "log": {
@@ -1155,10 +1155,10 @@ v2sub=$(cat jh.txt)
 echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
-V2rayN_LINK="https://${USERNAME}.serv00.net/${UUID}_v2sub.txt"
-Clashmeta_LINK="https://${USERNAME}.serv00.net/${UUID}_clashmeta.txt"
-Singbox_LINK="https://${USERNAME}.serv00.net/${UUID}_singbox.txt"
+curl -sL https://raw.githubusercontent.com/agentopenai/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
+V2rayN_LINK="https://${USERNAME}/${UUID}_v2sub.txt"
+Clashmeta_LINK="https://${USERNAME}/${UUID}_clashmeta.txt"
+Singbox_LINK="https://${USERNAME}/${UUID}_singbox.txt"
 hyp=$(jq -r '.inbounds[0].listen_port' config.json)
 vlp=$(jq -r '.inbounds[3].listen_port' config.json)
 vmp=$(jq -r '.inbounds[4].listen_port' config.json)
@@ -1242,7 +1242,7 @@ Sing-box订阅分享链接：
 $Singbox_LINK
 -------------------------------------------------------------------------------------------------
 
-多功能主页地址：http://${snb}.${USERNAME}.serv00.net
+多功能主页地址：http://${snb}.${USERNAME}
 
 =================================================================================================
 
