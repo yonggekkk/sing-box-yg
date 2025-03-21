@@ -42,6 +42,8 @@ IP=$(head -n 1 ip.txt | awk -F ':' '{print $1}')
 fi
 fi
 fi
+echo "$IP" > $WORKDIR/ipone.txt
+IP=$(<$WORKDIR/ipone.txt)
 green "你选择的IP为: $IP"
 }
 
@@ -107,6 +109,9 @@ else
 ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道已启动" || yellow "Argo固定隧道启动失败，请先在CF更改隧道端口：$vmess_port，再重启下Argo隧道"
 fi
 fi
+cd $WORKDIR
+showhostunolist
+cd
 }
 
 check_port () {
@@ -261,7 +266,6 @@ reading "\n注意！！！清理所有进程并清空所有安装内容，将退
   esac
 }
 
-# Generating argo Config
 argo_configure() {
   while true; do
     yellow "方式一：(推荐)无需域名的Argo临时隧道：输入回车"
@@ -287,8 +291,8 @@ argo_configure() {
 done
 }
 
-# Download Dependency Files
 download_and_run_singbox() {
+if [ ! -s sb.txt ] && [ ! -s ag.txt ]; then
 DOWNLOAD_DIR="." && mkdir -p "$DOWNLOAD_DIR" && FILE_INFO=()
 FILE_INFO=("https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/sb web" "https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/server bot")
 declare -A FILE_MAP
@@ -339,11 +343,15 @@ for entry in "${FILE_INFO[@]}"; do
 done
 wait
 
+if [ ! -e private_key.txt ]; then
 output=$(./"$(basename ${FILE_MAP[web]})" generate reality-keypair)
 private_key=$(echo "${output}" | awk '/PrivateKey:/ {print $2}')
 public_key=$(echo "${output}" | awk '/PublicKey:/ {print $2}')
 echo "${private_key}" > private_key.txt
 echo "${public_key}" > public_key.txt
+fi
+private_key=$(<private_key.txt)
+public_key=$(<public_key.txt)
 openssl ecparam -genkey -name prime256v1 -out "private.key"
 openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.${address}"
   cat > config.json << EOF
@@ -523,29 +531,41 @@ else
 EOF
 fi
 
+if ! ps aux | grep '[r]un -c con' > /dev/null; then
+ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 if [ -e "$(basename "${FILE_MAP[web]}")" ]; then
    echo "$(basename "${FILE_MAP[web]}")" > sb.txt
-   sbb=$(cat sb.txt)
+   sbb=$(cat sb.txt)   
     nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
     sleep 5
 if pgrep -x "$sbb" > /dev/null; then
     green "$sbb 主进程已启动"
 else
-for ((i=1; i<=5; i++)); do
-    red "$sbb 主进程未启动, 重启中... (尝试次数: $i)"
+    red "$sbb 主进程未启动, 重启中..."
     pkill -x "$sbb"
     nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
+    sleep 2
+    purple "$sbb 主进程已重启"
+fi
+else
+    sbb=$(cat sb.txt)   
+    nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
     sleep 5
-    if pgrep -x "$sbb" > /dev/null; then
-        purple "$sbb 主进程已成功重启"
-        break
-    fi
-    if [[ $i -eq 5 ]]; then
-        red "$sbb 主进程重启失败"
-    fi
-done
+if pgrep -x "$sbb" > /dev/null; then
+    green "$sbb 主进程已启动"
+else
+    red "$sbb 主进程未启动, 重启中..."
+    pkill -x "$sbb"
+    nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
+    sleep 2
+    purple "$sbb 主进程已重启"
 fi
 fi
+else
+green "主进程已启动"
+fi
+cfgo() {
+rm -rf boot.log
 if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
    echo "$(basename "${FILE_MAP[bot]}")" > ag.txt
    agg=$(cat ag.txt)
@@ -555,26 +575,56 @@ if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
     else
      #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
      args="tunnel --url http://localhost:$vmess_port --no-autoupdate --logfile boot.log --loglevel info"
-    fi    
+    fi
     nohup ./"$agg" $args >/dev/null 2>&1 &
     sleep 10
 if pgrep -x "$agg" > /dev/null; then
-    green "$agg Argo进程已启动"
+    green "$agg Arog进程已启动"
 else
-for ((i=1; i<=5; i++)); do
-    red "$agg Argo进程未启动, 重启中...(尝试次数: $i)"
+    red "$agg Argo进程未启动, 重启中..."
     pkill -x "$agg"
     nohup ./"$agg" "${args}" >/dev/null 2>&1 &
     sleep 5
-    if pgrep -x "$agg" > /dev/null; then
-        purple "$agg Argo进程已成功重启"
-        break
-    fi
-    if [[ $i -eq 5 ]]; then
-        red "$agg Argo进程重启失败，Argo节点暂不可用(保活过程中会自动恢复)，其他节点依旧可用"
-    fi
-done
+    purple "$agg Argo进程已重启"
 fi
+else
+   agg=$(cat ag.txt)
+    if [[ $ARGO_AUTH =~ ^[A-Z0-9a-z=]{120,250}$ ]]; then
+      #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}"
+      args="tunnel --no-autoupdate run --token ${ARGO_AUTH}"
+    else
+     #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
+     args="tunnel --url http://localhost:$vmess_port --no-autoupdate --logfile boot.log --loglevel info"
+    fi
+    nohup ./"$agg" $args >/dev/null 2>&1 &
+    sleep 10
+if pgrep -x "$agg" > /dev/null; then
+    green "$agg Arog进程已启动"
+else
+    red "$agg Argo进程未启动, 重启中..."
+    pkill -x "$agg"
+    nohup ./"$agg" "${args}" >/dev/null 2>&1 &
+    sleep 5
+    purple "$agg Argo进程已重启"
+fi
+fi
+}
+
+if [ -f "$WORKDIR/boot.log" ]; then
+argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
+checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
+else
+argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
+checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
+fi
+if ([ -z "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --u' > /dev/null) || [ "$checkhttp" -ne 404 ]; then
+ps aux | grep '[t]unnel --u' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+cfgo
+elif ([ -n "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --n' > /dev/null) || [ "$checkhttp" -ne 404 ]; then
+ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+cfgo
+else
+green "Arog进程已启动"
 fi
 sleep 2
 if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
@@ -1395,9 +1445,23 @@ done
 fi
 curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
 purple "Argo域名：$(get_argodomain)"
+showhostunolist
 cd
 else
 red "未安装脚本，请选择1进行安装" && exit
+fi
+}
+
+showhostunolist(){
+if [ "$hona" != "serv00" ]; then
+IP=$(<$WORKDIR/ipone.txt)
+UUID=$(<$WORKDIR/UUID.txt)
+reym=$(<$WORKDIR/reym.txt)
+ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.log)
+ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.log)
+check_port
+download_and_run_singbox
+get_links
 fi
 }
 
