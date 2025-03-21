@@ -17,8 +17,8 @@ jobs:
     # 每行一个{serv00服务器}，一个服务也可，末尾用,间隔，最后一个服务器末尾无需用,间隔
       ACCOUNTS: >
         [
-        {"RES":"n", "REP":"n", "SSH_USER":"你的serv00账号名", "SSH_PASS":"你的serv00账号密码", "REALITY":"你serv00账号名.serv00.net", "SUUID":"自设UUID", "TCP1_PORT":"vless的tcp端口", "TCP2_PORT":"vmess的tcp端口", "UDP_PORT":"hy2的udp端口", "HOST":"s1.serv00.com", "ARGO_DOMAIN":"", "ARGO_AUTH":""},
-        {"RES":"y", "REP":"y", "SSH_USER":"123456", "SSH_PASS":"7890000", "REALITY":"time.is", "SUUID":"73203ee6-b3fa-4a3d-b5df-6bb2f55073ad", "TCP1_PORT":"", "TCP2_PORT":"", "UDP_PORT":"", "HOST":"s16.serv00.com", "ARGO_DOMAIN":"你的argo固定域名", "ARGO_AUTH":"eyJhIjoiOTM3YzFjYWI88552NTFiYTM4ZTY0ZDQzRmlNelF0TkRBd1pUQTRNVEJqTUdVeCJ9"} 
+        {"RES":"y", "REP":"y", "SSH_USER":"fanniubi", "SSH_PASS":"Fb20021117@!", "REALITY":"fanniubi.serv00.net", "SUUID":"e07baef0-e04f-42e6-8755-7190c22eb75f", "TCP1_PORT":"4060", "TCP2_PORT":"29983", "UDP_PORT":"17194", "HOST":"s14.serv00.com", "vmess.608002.xyz":"", "eyJhIjoiNDhlYzJmYWMwMGJiYzk3NjAwNDM3ODAzNGZhODk0M2MiLCJ0IjoiZTY2OTQ1ZmEtMzM1ZC00MTE2LTg1ZWEtMzc1N2FkMTA1MzM4IiwicyI6Ik1UWmxNek5rWkRrdFpHUmxZUzAwTURnMExUbGhOekl0TlRnek5UYzBaVFV4WkRBMSJ9":""},
+        {"RES":"y", "REP":"y", "SSH_USER":"oceanblue", "SSH_PASS":"Fb20021117!@", "REALITY":"time.is", "SUUID":"2837962f-03d6-451e-af14-3212ab39afe4", "TCP1_PORT":"54755", "TCP2_PORT":"60142", "UDP_PORT":"15300", "HOST":"s15.serv00.com", "ARGO_DOMAIN":"你的argo固定域名", "ARGO_AUTH":"eyJhIjoiOTM3YzFjYWI88552NTFiYTM4ZTY0ZDQzRmlNelF0TkRBd1pUQTRNVEJqTUdVeCJ9"} 
         ]
     steps:
       - name: Checkout Repository
