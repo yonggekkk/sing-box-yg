@@ -75,7 +75,7 @@ UUID=$(cat "$WORKDIR/UUID.txt" 2>/dev/null)
 fi
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
-sed -i '' "60s/key/$UUID/g" "$keep_path"/app.js
+sed -i '' "59s/key/$UUID/g" "$keep_path"/app.js
 sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
 sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
 if [[ -z "$reym" ]] && [[ -f "$WORKDIR/reym.txt" ]]; then
