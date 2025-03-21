@@ -89,7 +89,7 @@ echo "*****************************************************"
             SSH_USER_LOWER=$(echo "$SSH_USER" | tr '[:upper:]' '[:lower:]')
             sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no "$SSH_USER@$HOST" "
             echo \"配置显示如下：\"
-            cat $HOME/domains/${SSH_USER_LOWER}.serv00.net/logs/list.txt
+            cat domains/${SSH_USER_LOWER}.serv00.net/logs/list.txt
             echo \"====================================================\""
             fi
            else
