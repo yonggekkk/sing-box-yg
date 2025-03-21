@@ -110,7 +110,7 @@ ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道已启动" ||
 fi
 fi
 cd $WORKDIR
-showhostunolist
+showchangelist
 cd
 }
 
@@ -1445,15 +1445,14 @@ for ((i=1; i<=5; i++)); do
 done
 fi
 curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
-showhostunolist
+showchangelist
 cd
 else
 red "未安装脚本，请选择1进行安装" && exit
 fi
 }
 
-showhostunolist(){
-if [ "$hona" != "serv00" ]; then
+showchangelist(){
 IP=$(<$WORKDIR/ipone.txt)
 UUID=$(<$WORKDIR/UUID.txt)
 reym=$(<$WORKDIR/reym.txt)
@@ -1462,7 +1461,6 @@ ARGO_AUTH=$(cat "$WORKDIR/ARGO_AUTH.log" 2>/dev/null)
 check_port >/dev/null 2>&1
 download_and_run_singbox >/dev/null 2>&1
 get_links
-fi
 }
 
 menu() {
