@@ -1390,13 +1390,14 @@ resargo(){
 if [[ -e $WORKDIR/config.json ]]; then
 cd $WORKDIR
 argoport=$(jq -r '.inbounds[4].listen_port' config.json)
+ARGO_DOMAIN_show=$(cat ARGO_DOMAIN_show.log 2>/dev/null)
+ARGO_AUTH_show=$(cat ARGO_AUTH_show.log 2>/dev/null)
 argogdshow(){
 echo
 if [ -f ARGO_AUTH_show.log ]; then
-purple "如果你想设置原先的Argo固定隧道，请明确以下三点"
-purple "1：已设置Argo固定域名：$(cat ARGO_DOMAIN_show.log 2>/dev/null)"
-purple "2：固定隧道token：$(cat ARGO_AUTH_show.log 2>/dev/null)"
-purple "3：检查CF官网的ARGO固定隧道端口：$argoport"
+purple "上回设置的Argo固定域名：$ARGO_DOMAIN_show"
+purple "上回固定隧道的Token：$ARGO_AUTH_show"
+purple "目前检查CF官网的Argo固定隧道端口：$argoport"
 fi
 echo
 }
