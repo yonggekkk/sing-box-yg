@@ -56,10 +56,10 @@ app.get("/rp", (req, res) => {
    runportCommand();  
    res.type("html").send("<pre>重置三个节点端口完成！请稍等20秒后，主页后缀改为  /list/你的uuid  可查看更新端口后的节点及订阅信息</pre>");
 });
-
 app.get("/list/key", (req, res) => {
     const listCommands = `
         USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
+        whoami=$(whoami)
         FULL_PATH="/home/\${whoami}/domains/\${USERNAME}.serv00.net/logs/list.txt"
         cat "\$FULL_PATH"
     `;
