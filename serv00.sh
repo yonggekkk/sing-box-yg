@@ -1458,10 +1458,10 @@ if [ "$hona" != "serv00" ]; then
 IP=$(<$WORKDIR/ipone.txt)
 UUID=$(<$WORKDIR/UUID.txt)
 reym=$(<$WORKDIR/reym.txt)
-ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.log)
-ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.log)
-check_port
-download_and_run_singbox
+ARGO_DOMAIN=$(<$WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
+ARGO_AUTH=$(<$WORKDIR/ARGO_AUTH.log 2>/dev/null)
+check_port >/dev/null 2>&1
+download_and_run_singbox >/dev/null 2>&1
 get_links
 fi
 }
