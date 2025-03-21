@@ -23,8 +23,7 @@ export reset=${reset:-''}
 export resport=${resport:-''}
 
 devil binexec on >/dev/null 2>&1
-#USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
-USERNAME=$(whoami)
+USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
 snb=$(hostname | cut -d. -f1)
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
@@ -245,8 +244,7 @@ red() { echo -e "\e[1;91m$1\033[0m"; }
 green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
-#USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
-USERNAME=$(whoami)
+USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 snb=$(hostname | cut -d. -f1)
 ' > webport.sh
