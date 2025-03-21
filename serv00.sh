@@ -1390,13 +1390,11 @@ resargo(){
 if [[ -e $WORKDIR/config.json ]]; then
 cd $WORKDIR
 argoport=$(jq -r '.inbounds[4].listen_port' config.json)
-ARGO_DOMAIN_show=$(cat ARGO_DOMAIN_show.log 2>/dev/null)
-ARGO_AUTH_show=$(cat ARGO_AUTH_show.log 2>/dev/null)
 argogdshow(){
 echo
 if [ -f ARGO_AUTH_show.log ]; then
-purple "上回设置的Argo固定域名：$ARGO_DOMAIN_show"
-purple "上回固定隧道的Token：$ARGO_AUTH_show"
+purple "上回设置的Argo固定域名：$(cat ARGO_DOMAIN_show.log 2>/dev/null)"
+purple "上回固定隧道的Token：$(cat ARGO_AUTH_show.log 2>/dev/null)"
 purple "目前检查CF官网的Argo固定隧道端口：$argoport"
 fi
 echo
@@ -1414,15 +1412,15 @@ ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2
 agg=$(cat ag.txt)
 if [[ "$argo_choice" =~ (G|g) ]]; then
 if [ "$hona" = "serv00" ]; then
-sed -i '' -e "15s|''|'$(cat ARGO_DOMAIN_show.log)'|" ~/serv00keep.sh
-sed -i '' -e "16s|''|'$(cat ARGO_AUTH_show.log)'|" ~/serv00keep.sh
+sed -i '' -e "15s|''|'$(cat ARGO_DOMAIN_show.log 2>/dev/null)'|" ~/serv00keep.sh
+sed -i '' -e "16s|''|'$(cat ARGO_AUTH_show.log 2>/dev/null)'|" ~/serv00keep.sh
 fi
 args="tunnel --no-autoupdate run --token $(cat ARGO_AUTH_show.log)"
 else
 rm -rf boot.log
 if [ "$hona" = "serv00" ]; then
-sed -i '' -e "15s|'$(cat ARGO_DOMAIN_show.log)'|''|" ~/serv00keep.sh
-sed -i '' -e "16s|'$(cat ARGO_AUTH_show.log)'|''|" ~/serv00keep.sh
+sed -i '' -e "15s|'$(cat ARGO_DOMAIN_show.log 2>/dev/null)'|''|" ~/serv00keep.sh
+sed -i '' -e "16s|'$(cat ARGO_AUTH_show.log 2>/dev/null)'|''|" ~/serv00keep.sh
 fi
 args="tunnel --url http://localhost:$argoport --no-autoupdate --logfile boot.log --loglevel info"
 fi
