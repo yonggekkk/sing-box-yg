@@ -245,7 +245,8 @@ red() { echo -e "\e[1;91m$1\033[0m"; }
 green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
-USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
+#USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
+USERNAME=$(whoami)
 WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 snb=$(hostname | cut -d. -f1)
 ' > webport.sh
@@ -1177,6 +1178,9 @@ Vmess-ws端口(设置Argo固定域名端口)：$vmp
 Hysteria2端口：$hyp
 
 UUID密码：$showuuid
+
+Argo域名：${argodomain}
+
 -------------------------------------------------------------------------------------------------
 
 一、Vless-reality分享链接如下：
@@ -1205,9 +1209,6 @@ CF节点落地到非CF网站的地区为：$IP所在地区
 1、Vmess-ws主节点分享链接如下：
 (该节点默认不支持CDN，如果设置为CDN回源(需域名)：客户端地址可自行修改优选IP/域名，7个80系端口随便换，被墙依旧能用！)
 $vmws_link
-
-Argo域名：${argodomain}
-如果上面Argo临时域名未生成，以下 2 与 3 的Argo节点将不可用 (打开Argo固定/临时域名网页，显示HTTP ERROR 404说明正常可用)
 
 2、Vmess-ws-tls_Argo分享链接如下： 
 (该节点为CDN优选IP节点，客户端地址可自行修改优选IP/域名，6个443系端口随便换，被墙依旧能用！)
