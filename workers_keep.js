@@ -1,5 +1,5 @@
 addEventListener('scheduled', event => event.waitUntil(handleScheduled()));
-// 配合甬哥的bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)脚本，生成保活网页与重启网页
+// 配合甬哥的serv00的SSH脚本或者Github/VPS/软路由脚本，生成保活网页与重启网页
 // 每个保活/up网页或每个重启/re网页之间用空格或者，或者,间隔开，网页前带http://
 const urlString = 'http://保活或重启网页1 http://保活或重启网页2 http://保活或重启网页3 ………';
 const urls = urlString.split(/[\s,，]+/);
