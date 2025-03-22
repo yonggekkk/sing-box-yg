@@ -84,7 +84,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 
 ### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用，不支持Hostuno，同服务器与方案三通用）
 
-* 创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点，做好cron定时或者使用网页保活
+* 创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点，做好cron定时或者使用网页保活，
+* 切记！！！cron定时与网页保活只能二选一，同时运行可能会造成爆进程
 
 
 ### 方案三、Serv00多账号自动部署脚本：kp.sh（VPS、软路由专用，不支持Hostuno，同服务器与方案二通用）
