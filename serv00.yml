@@ -1,8 +1,8 @@
 name: Keep Servers Alive
 
 on:
-  schedule:
-   - cron: '0 */4 * * *' # 每4小时执行一次（私库每月500分钟运行时长，每天16分钟）
+  #schedule:
+  # - cron: '0 */4 * * *' # 每4小时执行一次（私库每月500分钟运行时长，每天16分钟）
   workflow_dispatch: 
 
 jobs:
