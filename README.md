@@ -54,7 +54,9 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 * 支持多功能网页：1、保活 2、重启 3、重置端口 4、查看订阅节点
 
-* 网页保活与网页重启可在github或workers设置定时运行任务，可参考视频教程三
+* 网页保活或网页重启可在github或workers设置定时运行任务，可参考视频教程三
+  
+* cron与网页保活不要同时使用，可能会造成进程爆满
 
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
 
