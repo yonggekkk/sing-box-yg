@@ -228,7 +228,8 @@ uninstall_singbox() {
     case "$choice" in
        [Yy])
 	  bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
-          rm -rf bin serv00keep.sh webport.sh
+          rm -rf bin domains serv00keep.sh webport.sh
+	  devil www list | awk 'NR > 1 && NF {print $1}' | xargs -I {} devil www del {} > /dev/null 2>&1
 	  sed -i '' '/export PATH="\$HOME\/bin:\$PATH"/d' ~/.bashrc
           source ~/.bashrc
           purple "************************************************************"
