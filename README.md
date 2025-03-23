@@ -68,7 +68,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 
 
-### 方案一、Serv00/Hostuno-sb-yg一键脚本 【本地SSH专用，同服务器与方案二、方案三都不通用】
+### 方案一、Serv00/Hostuno-sb-yg一键脚本 【本地SSH专用，不要同时与方案二、方案三一起安装，造成进程爆满】
 
 ### 快捷方式：```sb```
 
