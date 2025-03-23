@@ -1,5 +1,5 @@
 name: Keep Servers Alive
-
+# 如果你已安装了SSH脚本，不要再运行此github部署了，这样会造成进程爆满，必须二选一！
 on:
   #如使用保活网页或不使用本脚本，请禁用cron，保持下面两行开头的#符号，以防止cron与网页保活重复运行造成进程爆满
   #schedule:
