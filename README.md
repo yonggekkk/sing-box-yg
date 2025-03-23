@@ -53,10 +53,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 * 主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
 
 * 支持多功能网页：1、保活 2、重启 3、重置端口 4、查看订阅节点
-
-* 网页保活或网页重启可在github或workers设置定时运行任务，可参考视频教程三
-  
-* cron与网页保活不要同时使用，可能会造成进程爆满
+* 
 
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
 
@@ -70,9 +67,9 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 
 
-### 方案一、Serv00/Hostuno-sb-yg一键脚本 【本地SSH专用，不要同时与方案二、方案三一起安装，造成进程爆满】
+### 方案一、Serv00/Hostuno-sb-yg一键脚本 
 
-### 快捷方式：```sb```
+* 本地SSH专用，不要同时与方案二、方案三一起安装，容易造成进程爆满
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
@@ -84,23 +81,38 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 ![a39f5972b1f33b71138fd9b45af6e53](https://github.com/user-attachments/assets/a2e069ea-80cb-4953-b034-3cb518444eb7)
 
 
-### 方案二、Serv00多账号自动部署脚本：serv00.yml（github专用，不支持Hostuno，同服务器与方案三通用）
+### 方案二、Serv00多账号自动部署脚本：serv00.yml
 
-* 创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点，做好cron定时或者使用网页保活，
+* github专用，不支持Hostuno，同服务器与方案三通用，不要与方案一同时使用
+* 创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点
 * 切记！！！cron定时与网页保活只能二选一，同时运行可能会造成爆进程
 
 
-### 方案三、Serv00多账号自动部署脚本：kp.sh（VPS、软路由专用，不支持Hostuno，同服务器与方案二通用）
+### 方案三、Serv00多账号自动部署脚本：kp.sh
 
+* VPS、软路由专用，不支持Hostuno，同服务器与方案二通用，不要与方案一同时使用
 * 修改kp.sh文件的参数，可在多个平台上自动远程部署且保活单个或多个Serv00账号的节点，不可用在serv00本地上，默认nano编辑形式
-
 * 也可以手动放在其他目录，做好cron定时或者使用网页保活
 
 ```
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o kp.sh && chmod +x kp.sh && nano kp.sh
 ```
 
-### 注意：方案二serv00.yml与方案三kp.sh在启用cron时，都为"强制保活脚本"，就算Serv00清空你服务器上所有文件(到目前为止从没发生过)，只要让你连接成功，就会自动安装脚本保活，保持不死状态
+### 注意：
+
+* 一、方案二serv00.yml与方案三kp.sh在启用cron时，都为"内射保活脚本"，就算Serv00清空你服务器上所有文件(到目前为止从没发生过)，只要让你连接成功，就会自动安装脚本保活，保持不死状态
+
+* 二、关于VPS/github/软路由部署脚本：
+
+  方式一（cron内射保活）：重置变量RES在重装、更新脚本、变更参数时，选择Y运行一次，后续必须改为N保存
+
+  方式二（网页保活）：每当重装、更新脚本、变更参数时，选择Y运行一次，cron建议加#表示删除，后续只用网页保活
+
+  方式一（cron内射保活）与方式二（网页保活）不建议同时运行，容易引起进程爆满
+
+* 三、切记：方案二serv00.yml、方案三kp.sh与方案一SSH脚本不可以同时运行，因为容易引起进程爆满，两者必须二选一
+
+如要进行两脚本相互变更，务必先终止原先设置的保活平台的运行（cron/workers等平台），SSH脚本必须先执行一次重置服务器选项
 
 
 -----------------------------------------------------
