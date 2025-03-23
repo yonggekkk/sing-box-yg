@@ -1,7 +1,7 @@
 #!/bin/bash
 # 定时设置：*/10 * * * * /bin/bash /root/kp.sh 每10分钟运行一次
 # serv00变量添加规则：
-# 保活？cron与多功能网页，可二选一或一同配合使用
+# 如使用保活网页，请不要启用cron，以防止cron与网页保活重复运行造成进程爆满
 # RES(必填)：n表示每次不重置部署，y表示每次重置部署。REP(必填)：n表示不重置随机端口(三个端口留空)，y表示重置端口(三个端口留空)。SSH_USER(必填)表示serv00账号名。SSH_PASS(必填)表示serv00密码。REALITY表示reality域名(留空表示serv00官方域名：你serv00账号名.serv00.net)。SUUID表示uuid(留空表示随机uuid)。TCP1_PORT表示vless的tcp端口(留空表示随机tcp端口)。TCP2_PORT表示vmess的tcp端口(留空表示随机tcp端口)。UDP_PORT表示hy2的udp端口(留空表示随机udp端口)。HOST(必填)表示登录serv00服务器域名。ARGO_DOMAIN表示argo固定域名(留空表示临时域名)。ARGO_AUTH表示argo固定域名token(留空表示临时域名)。
 # 必填变量：RES、REP、SSH_USER、SSH_PASS、HOST
 # 注意[]"",:这些符号不要乱删，按规律对齐
