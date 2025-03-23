@@ -1440,7 +1440,6 @@ for ((i=1; i<=5; i++)); do
     fi
 done
 fi
-curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
 showchangelist
 cd
 else
