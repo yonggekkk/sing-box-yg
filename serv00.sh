@@ -1427,19 +1427,11 @@ fi
 if pgrep -x "$agg" > /dev/null; then
     green "$agg Argo进程已启动"
 else
-for ((i=1; i<=5; i++)); do
-    red "$agg Argo进程未启动, 重启中...(尝试次数: $i)"
+    red "$agg Argo进程未启动, 重启中..."
     pkill -x "$agg"
     nohup ./"$agg" "${args}" >/dev/null 2>&1 &
     sleep 5
-    if pgrep -x "$agg" > /dev/null; then
-        purple "$agg Argo进程已成功重启"
-        break
-    fi
-    if [[ $i -eq 5 ]]; then
-        red "$agg Argo进程重启失败，Argo节点暂不可用，其他节点依旧可用"
-    fi
-done
+    purple "$agg Argo进程已重启"
 fi
 showchangelist
 cd
