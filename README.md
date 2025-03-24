@@ -53,7 +53,6 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 * 主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
 
 * 支持多功能网页：1、保活 2、重启 3、重置端口 4、查看订阅节点
-* 
 
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
 
@@ -100,17 +99,25 @@ curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o 
 
 ### 注意：
 
-* 一、方案二serv00.yml与方案三kp.sh在启用cron时，都为"内射保活脚本"，就算Serv00清空你服务器上所有文件(到目前为止从没发生过)，只要让你连接成功，就会自动安装脚本保活，保持不死状态
+* 1、目前方案一SSH脚本仅支持网页保活。
+  
+* 2、方案二serv00.yml、方案三kp.sh都支持cron内射保活，也支持网页保活，但不建议同时使用
 
-* 二、关于VPS/github/软路由部署脚本：
+* 3、方案二serv00.yml、方案三kp.sh的cron内射保活，前者通过github的cron定时，后者通过VPS、软路由的cron定时
 
-  方式一（cron内射保活）：重置变量RES在重装、更新脚本、变更参数时，选择Y运行一次，后续必须改为N保存
+* 4、方案一SSH脚本、方案二serv00.yml、方案三kp.sh的网页保活，都可以通过github cron网页保活或者workers网页保活实现，见视频三
 
-  方式二（网页保活）：每当重装、更新脚本、变更参数时，选择Y运行一次，cron建议加#表示删除，后续只用网页保活
+* 5、方案二serv00.yml与方案三kp.sh在启用cron时，都为"内射保活脚本"，就算Serv00清空你服务器上所有文件(到目前为止从没发生过)，只要让你连接成功，就会自动安装脚本保活，保持不死状态
+
+* 6、关于VPS/github/软路由部署脚本 (方案二serv00.yml、方案三kp.sh)：
+
+  方式一（cron内射保活）：重置变量RES在重装、更新脚本、变更参数时，选择Y运行一次，后续必须改为N保存，可以不使用网页保活
+
+  方式二（网页保活）：每当重装、更新脚本、变更参数时，重置变量RES选择Y运行一次。此时cron内射定时建议加#表示删除不使用，后续只用网页保活
 
   方式一（cron内射保活）与方式二（网页保活）不建议同时运行，容易引起进程爆满
 
-* 三、切记：方案二serv00.yml、方案三kp.sh与方案一SSH脚本不可以同时运行，因为容易引起进程爆满，两者必须二选一
+* 7、切记：方案二serv00.yml、方案三kp.sh与方案一SSH脚本不可以同时运行，因为容易引起进程爆满，两者必须二选一
 
 如要进行两脚本相互变更，务必先终止原先设置的保活平台的运行（cron/workers等平台），SSH脚本必须先执行一次重置服务器选项
 
