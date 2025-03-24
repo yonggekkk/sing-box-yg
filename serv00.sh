@@ -106,10 +106,10 @@ ps aux | grep '[t]unnel --u' > /dev/null && green "Argo临时隧道已启动，�
 else
 ps aux | grep '[t]unnel --n' > /dev/null && green "Argo固定隧道已启动" || yellow "Argo固定隧道启动失败，请先在CF更改隧道端口：$vmess_port，再重启下Argo隧道"
 fi
-fi
 cd $WORKDIR
 showchangelist
 cd
+fi
 }
 
 check_port () {
