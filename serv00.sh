@@ -169,6 +169,15 @@ if [[ $tcp_ports -ne 2 || $udp_ports -ne 1 ]]; then
     #devil binexec on >/dev/null 2>&1
     #kill -9 $(ps -o ppid= -p $$) >/dev/null 2>&1
     sleep 3
+    port_list=$(devil port list)
+    tcp_ports=$(echo "$port_list" | grep -c "tcp")
+    udp_ports=$(echo "$port_list" | grep -c "udp")
+    tcp_ports=$(echo "$port_list" | awk '/tcp/ {print $1}')
+    tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
+    tcp_port2=$(echo "$tcp_ports" | sed -n '2p')
+    udp_port=$(echo "$port_list" | awk '/udp/ {print $1}')
+    purple "当前TCP端口: $tcp_port1 和 $tcp_port2"
+    purple "当前UDP端口: $udp_port"
 else
     tcp_ports=$(echo "$port_list" | awk '/tcp/ {print $1}')
     tcp_port1=$(echo "$tcp_ports" | sed -n '1p')
