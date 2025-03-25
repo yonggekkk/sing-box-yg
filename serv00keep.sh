@@ -538,7 +538,7 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
       }
     ],
 EOF
-if [[ "$nb" =~ (14|15|16) ]]; then
+if [[ "$nb" =~ (14|15) ]]; then
 cat >> config.json <<EOF 
     "rules": [
     {
