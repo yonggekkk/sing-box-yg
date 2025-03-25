@@ -1552,7 +1552,7 @@ green "Argo临时域名：$argosl  $check"
 else
 argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
-[ "$checkhttp" -eq 404 ] && check="域名有效" || check="域名无效，检测端口、密钥token是否无效或者过期"
+[ "$checkhttp" -eq 404 ] && check="域名有效" || check="固定域名无效，请检查域名、端口、密钥token是否输入有误"
 green "Argo固定域名：$argogd $check"
 fi
 if [ "$hona" = "serv00" ]; then
