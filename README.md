@@ -120,7 +120,7 @@ curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o 
 
 * 7、切记：方案二serv00.yml、方案三kp.sh，这两个方案千万不要与方案一SSH脚本同时运行，因为容易引起进程爆满，两者必须二选一
 
-* 8、如果进不了SSH，或者报错：bash: fork: retry: Resource temporarily unavailable，请参数[博客教程](https://ygkkk.blogspot.com/2025/01/serv00.html)中的红字说明，清空重置 
+* 8、如果进程爆满、进不了SSH、或者报错：bash: fork: retry: Resource temporarily unavailable，请参数[博客教程](https://ygkkk.blogspot.com/2025/01/serv00.html)中的红字说明，清空重置 
 
 如要进行两脚本相互变更，务必先终止原先设置的保活平台的运行（cron/workers等平台），SSH脚本必须先执行一次重置服务器选项
 
