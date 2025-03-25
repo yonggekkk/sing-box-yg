@@ -1547,12 +1547,12 @@ fi
 if [ -f "$WORKDIR/boot.log" ]; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
-[ "$checkhttp" -eq 404 ] && check="域名有效" || check="临时域名暂时无效，如已启用保活，后续会自动恢复有效"
+[[ "$checkhttp" == 404 || "$checkhttp" == 502 ]] && check="域名有效" || check="临时域名暂时无效，如已启用保活，后续会自动恢复有效"
 green "Argo临时域名：$argosl  $check"
 else
 argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
-[ "$checkhttp" -eq 404 ] && check="域名有效" || check="固定域名无效，请检查域名、端口、密钥token是否输入有误"
+[[ "$checkhttp" == 404 || "$checkhttp" == 502 ]] && check="域名有效" || check="固定域名无效，请检查域名、端口、密钥token是否输入有误"
 green "Argo固定域名：$argogd $check"
 fi
 if [ "$hona" = "serv00" ]; then
