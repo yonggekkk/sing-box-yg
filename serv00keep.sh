@@ -649,14 +649,11 @@ fi
 if [ -f "$WORKDIR/boot.log" ]; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
-else
-argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
-checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
 fi
-if ([ -z "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --u' > /dev/null) || [[ "$checkhttp" == 404 ]]; then
+if ([ -z "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --u' > /dev/null) || [[ "$checkhttp" != 404 ]]; then
 ps aux | grep '[t]unnel --u' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 cfgo
-elif ([ -n "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --n' > /dev/null) || [[ "$checkhttp" == 404 ]]; then
+elif [ -n "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
 ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
 cfgo
 else
