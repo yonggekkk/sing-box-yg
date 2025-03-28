@@ -58,13 +58,13 @@ green "你的uuid为: $UUID"
 
 read_reym() {
 yellow "方式一：(推荐)使用Serv00/Hostuno自带域名，不支持proxyip功能：输入回车"
-yellow "方式二：使用CF域名(www.speedtest.net)，支持proxyip+非标端口反代ip功能：输入s"
+yellow "方式二：使用CF域名(time.is)，支持proxyip+非标端口反代ip功能：输入s"
 yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
 reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
 if [[ -z "$reym" ]]; then
 reym=$USERNAME.${address}
 elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
-reym=www.speedtest.net
+reym=time.is
 fi
 echo "$reym" > $WORKDIR/reym.txt
 reym=$(<$WORKDIR/reym.txt)
