@@ -1379,11 +1379,14 @@ if [[ -e $WORKDIR/config.json ]]; then
 yellow "重启中……请稍后……"
 cd $WORKDIR
 ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+if [ "$hona" = "serv00" ]; then
+curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
+sleep 5
+else
 sbb=$(cat sb.txt)
 nohup ./"$sbb" run -c config.json >/dev/null 2>&1 &
 sleep 1
-curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
-sleep 5
+fi
 if pgrep -x "$sbb" > /dev/null; then
 green "$sbb 主进程重启成功"
 else
