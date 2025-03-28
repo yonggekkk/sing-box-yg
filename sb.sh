@@ -989,7 +989,7 @@ if [[ -n $hy2_ports ]]; then
 hy2ports=$(echo $hy2_ports | sed 's/:/-/g')
 hyps=$hy2_port,$hy2ports
 else
-hyps=$hy2_port
+hyps=
 fi
 ym=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 hy2_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].tls.key_path')
@@ -1097,7 +1097,7 @@ echo
 reshy2(){
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?&alpn=h3&insecure=$ins_hy2&mport=$hyps&sni=$hy2_name#hy2-$hostname"
+hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$ins_hy2&mport=$hyps&sni=$hy2_name#hy2-$hostname"
 echo "$hy2_link" > /etc/s-box/hy2.txt
 red "🚀【 Hysteria-2 】节点信息如下：" && sleep 2
 echo
@@ -4695,9 +4695,9 @@ cat /etc/s-box/vm_ws.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/vm_ws_tls.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/hy2.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/tuic5.txt 2>/dev/null >> /etc/s-box/jhdy.txt
-url=$(cat /etc/s-box/jhdy.txt 2>/dev/null)
-baseurl=$(echo -e "$url" | base64 -w 0)
-echo "$baseurl" > /etc/s-box/jh_sub.txt
+baseurl=$(base64 -w 0 < /etc/s-box/jhdy.txt 2>/dev/null)
+v2sub=$(cat /etc/s-box/jhdy.txt 2>/dev/null)
+echo "$v2sub" > /etc/s-box/jh_sub.txt
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 四合一聚合订阅 】节点信息如下：" && sleep 2
@@ -4909,10 +4909,12 @@ if [[ -n $(ps -e | grep sbwpph) ]]; then
 kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
 fi
 v4v6
-if [[ -z $v4 ]]; then
+if [[ -n $v4 ]]; then
+sw46=4
+else
 red "IPV4不存在，确保安装过WARP-IPV4模式"
-fi 
-[[ -n $v6 ]] && sw46=6 || sw46=4
+sw46=6
+fi
 echo
 readp "设置WARP-plus-Socks5端口（回车跳过端口默认40000）：" port
 if [[ -z $port ]]; then

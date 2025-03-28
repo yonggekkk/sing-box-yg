@@ -25,7 +25,7 @@ jobs:
          echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
          echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
          echo "🎉Github定时运行serv00保活网页🎉"
-         echo "请先确认已成功安装甬哥Serv00本地SSH三协议一键脚本"
+         echo "请先确认已成功安装甬哥的serv00的SSH脚本或者Github/VPS/软路由脚本"
          echo "脚本地址：https://github.com/yonggekkk/sing-box-yg"
          echo "*****************************************************"
         for url in "${http[@]}"; do
@@ -35,7 +35,7 @@ jobs:
           elif [[ "$response" == *"主程序重启成功"* ]]; then
           echo "🎉恭喜！$url ✅运行正常，成功重启一次主程序"
           else
-         echo "💥杯具！$url ❌运行失败，⚠️网页变更是否填写正确？或者Serv00炸了"
+         echo "💥杯具！$url ❌运行失败，⚠️网页变量是否填写正确？或者Serv00炸了"
          fi
         done
         wait
