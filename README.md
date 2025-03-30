@@ -54,8 +54,6 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 * 支持多功能网页：1、保活(主程序与argo双线独立保活) 2、重启 3、重置端口 4、查看订阅节点
 
-* Argo高度自定义：可以重置临时隧道; 可以继续使用上回的固定隧道; 也可以更换固定隧道的域名或token
-
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
 
 #### 视频教程：
@@ -72,7 +70,9 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 ### 方案一、Serv00/Hostuno-sb-yg一键脚本 
 
-* 本地SSH专用，不要同时与方案二、方案三一起安装，容易造成进程爆满
+* 本地SSH专用，不要同时与方案二、方案三一起安装
+
+* Argo高度自定义：可以重置临时隧道; 可以继续使用上回的固定隧道; 也可以更换固定隧道的域名或token
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00.sh)
