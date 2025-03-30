@@ -1402,6 +1402,7 @@ resargo(){
 if [[ -e $WORKDIR/config.json ]]; then
 cd $WORKDIR
 argoport=$(jq -r '.inbounds[4].listen_port' config.json)
+yellow "你可以重置临时隧道; 可以继续使用上回的固定隧道; 也可以更换固定隧道的域名或token"
 argogdshow(){
 echo
 if [ -f ARGO_AUTH_show.log ]; then
