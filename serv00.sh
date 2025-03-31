@@ -1558,7 +1558,7 @@ argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
 checkhttp=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
 if [[ "$checkhttp" == 404 ]]; then
 check="域名有效"
-elif [[ "$argogd" =~ ddns-ip|cloudns ]]; then
+elif [[ "$argogd" =~ ddns|cloudns|dynamic|cloud-ip ]]; then
 check="域名可能有效，请自行检测argo节点是否可用"
 else
 check="固定域名无效，请检查域名、端口、密钥token是否输入有误"
