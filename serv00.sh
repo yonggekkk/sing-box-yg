@@ -1565,7 +1565,7 @@ fi
 green "Argo固定域名：$argogd $check"
 fi
 if [ "$hona" = "serv00" ]; then
-green "多功能主页如下 (支持保活、重启、重置端口、节点查询)"
+green "多功能主页如下 (支持保活、重启、重置端口、进程查看、节点查询)"
 purple "http://${snb}.${USERNAME}.${hona}.net"
 fi
 else
