@@ -52,7 +52,9 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 * 主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
 
-* 支持多功能网页：1、保活(主程序与argo双线独立保活) 2、重启 3、重置端口 4、查看订阅节点
+* 支持多功能网页：1、保活(主程序与argo双线独立保活) 2、重启 3、重置端口 4、查看进程 5、查看订阅节点
+
+* 聚合通用节点分享，支持到22个节点：三协议各自三个IP，argo全覆盖13个端口节点，已添加不死优选IP
 
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
 
