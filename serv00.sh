@@ -9,7 +9,6 @@ green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
 reading() { read -p "$(red "$1")" "$2"; }
-devil binexec on >/dev/null 2>&1
 USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 snb=$(hostname | cut -d. -f1)
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
@@ -27,7 +26,6 @@ devil www add ${USERNAME}.${address} php > /dev/null 2>&1
 FILE_PATH="${HOME}/domains/${USERNAME}.${address}/public_html"
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-curl -sk "http://${snb}.${USERNAME}.${hona}.net/up" > /dev/null 2>&1
 
 read_ip() {
 cat ip.txt
@@ -58,13 +56,13 @@ green "你的uuid为: $UUID"
 
 read_reym() {
 yellow "方式一：(推荐)使用Serv00/Hostuno自带域名，不支持proxyip功能：输入回车"
-yellow "方式二：使用CF域名(time.is)，支持proxyip+非标端口反代ip功能：输入s"
+yellow "方式二：使用CF域名(blog.cloudflare.com)，支持proxyip+非标端口反代ip功能：输入s"
 yellow "方式三：支持其他域名，注意要符合reality域名规则：输入域名"
 reading "请输入reality域名 【请选择 回车 或者 s 或者 输入域名】: " reym
 if [[ -z "$reym" ]]; then
 reym=$USERNAME.${address}
 elif [[ "$reym" == "s" || "$reym" == "S" ]]; then
-reym=time.is
+reym=blog.cloudflare.com
 fi
 echo "$reym" > $WORKDIR/reym.txt
 reym=$(<$WORKDIR/reym.txt)
@@ -673,6 +671,18 @@ get_argodomain() {
 get_links(){
 argodomain=$(get_argodomain)
 echo -e "\e[1;32mArgo域名：\e[1;35m${argodomain}\e[0m\n"
+a=$(dig @8.8.8.8 +time=5 +short "web$nb.${hona}.com" | sort -u)
+b=$(dig @8.8.8.8 +time=5 +short "$HOSTNAME" | sort -u)
+c=$(dig @8.8.8.8 +time=5 +short "cache$nb.${hona}.com" | sort -u)
+if [[ "$IP" == "$a" ]]; then
+CIP1=$b; CIP2=$c
+elif [[ "$IP" == "$b" ]]; then
+CIP1=$a; CIP2=$c
+elif [[ "$IP" == "$c" ]]; then
+CIP1=$a; CIP2=$b
+else
+red "执行出错，请卸载脚本再重装一次"
+fi
 vl_link="vless://$UUID@$IP:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME"
 echo "$vl_link" > jh.txt
 vmws_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME\", \"add\": \"$IP\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
@@ -683,6 +693,42 @@ vma_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME
 echo "$vma_link" >> jh.txt
 hy2_link="hysteria2://$UUID@$IP:$hy2_port?security=tls&sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2-$USERNAME"
 echo "$hy2_link" >> jh.txt
+vl_link1="vless://$UUID@$CIP1:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME-$CIP1"
+echo "$vl_link1" >> jh.txt
+vmws_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME-$CIP1\", \"add\": \"$CIP1\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+echo "$vmws_link1" >> jh.txt
+hy2_link1="hysteria2://$UUID@$CIP1:$hy2_port?security=tls&sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2-$USERNAME-$CIP1"
+echo "$hy2_link1" >> jh.txt
+vl_link2="vless://$UUID@$CIP2:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME-$CIP2"
+echo "$vl_link2" >> jh.txt
+vmws_link2="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME-$CIP2\", \"add\": \"$CIP2\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+echo "$vmws_link2" >> jh.txt
+hy2_link2="hysteria2://$UUID@$CIP2:$hy2_port?security=tls&sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2-$USERNAME-$CIP2"
+echo "$hy2_link2" >> jh.txt
+vmatls_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-443\", \"add\": \"104.16.0.0\", \"port\": \"443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+echo "$vmatls_link1" >> jh.txt
+vmatls_link2="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2053\", \"add\": \"104.17.0.0\", \"port\": \"2053\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+echo "$vmatls_link2" >> jh.txt
+vmatls_link3="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2083\", \"add\": \"104.18.0.0\", \"port\": \"2083\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+echo "$vmatls_link3" >> jh.txt
+vmatls_link4="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2087\", \"add\": \"104.19.0.0\", \"port\": \"2087\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+echo "$vmatls_link4" >> jh.txt
+vmatls_link5="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2096\", \"add\": \"104.20.0.0\", \"port\": \"2096\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+echo "$vmatls_link5" >> jh.txt
+vma_link6="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-80\", \"add\": \"104.21.0.0\", \"port\": \"80\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+echo "$vma_link6" >> jh.txt
+vma_link7="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-8080\", \"add\": \"104.22.0.0\", \"port\": \"8080\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+echo "$vma_link7" >> jh.txt
+vma_link8="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2052\", \"add\": \"104.24.0.0\", \"port\": \"2052\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+echo "$vma_link8" >> jh.txt
+vma_link9="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2082\", \"add\": \"104.25.0.0\", \"port\": \"2082\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+echo "$vma_link9" >> jh.txt
+vma_link10="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2086\", \"add\": \"104.26.0.0\", \"port\": \"2086\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+echo "$vma_link10" >> jh.txt
+vma_link11="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2095\", \"add\": \"104.27.0.0\", \"port\": \"2095\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+echo "$vma_link11" >> jh.txt
+v2sub=$(cat jh.txt)
+echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 baseurl=$(base64 -w 0 < jh.txt)
 
 cat > sing_box.json <<EOF
@@ -1155,8 +1201,6 @@ rules:
   
 EOF
 
-v2sub=$(cat jh.txt)
-echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
 V2rayN_LINK="https://${USERNAME}.${address}/${UUID}_v2sub.txt"
@@ -1171,9 +1215,9 @@ cat > list.txt <<EOF
 
 当前客户端正在使用的IP：$IP
 如默认节点IP被墙，可在客户端地址更换以下其他IP
-$(dig @8.8.8.8 +time=5 +short "web$nb.${hona}.com" | sort -u)
-$(dig @8.8.8.8 +time=5 +short "$HOSTNAME" | sort -u)
-$(dig @8.8.8.8 +time=5 +short "cache$nb.${hona}.com" | sort -u)
+$a
+$b
+$c
 
 当前各协议正在使用的端口如下
 vless-reality端口：$vlp
@@ -1227,10 +1271,14 @@ $hy2_link
 -------------------------------------------------------------------------------------------------
 
 
-四、以上五个节点的聚合通用订阅分享链接如下：
+四、最全22个节点的聚合通用节点：
+3个IP全覆盖：3个reality、3个vmess+ws、3个hy2
+13个argo节点全覆盖 (已添加不死IP)：7个关tls 80系端口节点、6个开tls 443系端口节点
+
+订阅分享链接：
 $V2rayN_LINK
 
-以上五个节点聚合通用分享码：
+剪切分享码：
 $baseurl
 -------------------------------------------------------------------------------------------------
 
@@ -1363,8 +1411,8 @@ if [ "$hona" = "serv00" ]; then
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "59s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "75s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "75s/where/$snb/g" "$keep_path"/app.js
+sed -i '' "90s/name/$USERNAME/g" "$keep_path"/app.js
+sed -i '' "90s/where/$snb/g" "$keep_path"/app.js
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
 fi
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
@@ -1489,7 +1537,7 @@ menu() {
    echo   "------------------------------------------------------------"
    green  "7. 查看sing-box与clash配置文件"
    echo   "------------------------------------------------------------"
-   yellow "8. 重置并随机生成新端口 (脚本安装前后都可执行)"
+   yellow "8. 端口重置并随机生成新端口"
    echo   "------------------------------------------------------------"
    red    "9. 清理所有服务进程与文件 (系统初始化)"
    echo   "------------------------------------------------------------"
@@ -1566,7 +1614,7 @@ fi
 green "Argo固定域名：$argogd $check"
 fi
 if [ "$hona" = "serv00" ]; then
-green "多功能主页如下 (支持保活、重启、重置端口、节点查询)"
+green "多功能主页如下 (支持保活、重启、重置端口、进程查看、节点查询)"
 purple "http://${snb}.${USERNAME}.${hona}.net"
 fi
 else

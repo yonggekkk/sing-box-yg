@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require("express");
-const { exec } = require('child_process');
+const { spawn, exec } = require("child_process");
 const app = express();
 app.use(express.json());
 const commandToRun = "cd ~ && bash serv00keep.sh";
@@ -71,8 +71,23 @@ app.get("/list/key", (req, res) => {
         res.type('text').send(stdout);
     });
 });
+
+app.get("/jc", (req, res) => {
+    const ps = spawn("ps", ["aux"]);
+    res.type("text");
+    ps.stdout.on("data", (data) => res.write(data));
+    ps.stderr.on("data", (data) => res.write(`Error: ${data}`));
+    ps.on("close", (code) => {
+        if (code !== 0) {
+            res.status(500).send(`ps aux 进程退出，错误码: ${code}`);
+        } else {
+            res.end();
+        }
+    });
+});
+
 app.use((req, res) => {
-    res.status(404).send('请在浏览器地址：http://where.name.serv00.net 后面加三种路径功能：/up是保活，/re是重启，/rp是重置节点端口，/list/你的uuid 是节点及订阅信息');
+    res.status(404).send('请在浏览器地址：http://where.name.serv00.net 后面加三种路径功能：/up是保活，/re是重启，/rp是重置节点端口，/jc是查看当前系统进程，/list/你的uuid 是节点及订阅信息');
 });
 setInterval(runCustomCommand, (2 * 60 + 15) * 60 * 1000);
 app.listen(3000, () => {
