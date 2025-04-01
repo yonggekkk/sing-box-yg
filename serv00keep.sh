@@ -671,9 +671,9 @@ fi
 argodomain=$(get_argodomain)
 rm -rf ${FILE_PATH}/*.txt
 echo -e "\e[1;32mArgo域名：\e[1;35m${argodomain}\e[0m\n"
-a=$(dig @8.8.8.8 +time=5 +short "web$nb.${hona}.com" | sort -u)
+a=$(dig @8.8.8.8 +time=5 +short "web$nb.serv00.com" | sort -u)
 b=$(dig @8.8.8.8 +time=5 +short "$HOSTNAME" | sort -u)
-c=$(dig @8.8.8.8 +time=5 +short "cache$nb.${hona}.com" | sort -u)
+c=$(dig @8.8.8.8 +time=5 +short "cache$nb.serv00.com" | sort -u)
 if [[ "$IP" == "$a" ]]; then
 CIP1=$b; CIP2=$c
 elif [[ "$IP" == "$b" ]]; then
