@@ -731,6 +731,8 @@ vma_link10="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNA
 echo "$vma_link10" >> jh.txt
 vma_link11="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2095\", \"add\": \"www.visa.com.hk\", \"port\": \"2095\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
 echo "$vma_link11" >> jh.txt
+v2sub=$(cat jh.txt)
+echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 baseurl=$(base64 -w 0 < jh.txt)
 
 cat > sing_box.json <<EOF
@@ -1203,8 +1205,6 @@ rules:
   
 EOF
 
-v2sub=$(cat jh.txt)
-echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
 V2rayN_LINK="https://${USERNAME}.${address}/${UUID}_v2sub.txt"
