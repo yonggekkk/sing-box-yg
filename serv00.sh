@@ -1602,7 +1602,7 @@ sbb=$(cat $WORKDIR/sb.txt 2>/dev/null)
 if pgrep -x "$sbb" > /dev/null; then
 green "Sing-box主进程运行正常"
 else
-yellow "Sing-box主进程启动失败，建议选择8重置端口，再选择9卸载重装"
+yellow "Sing-box主进程启动失败，建议先选择3重启，依旧失败就选择8重置端口，再选择9卸载重装"
 fi
 if [ -f "$WORKDIR/boot.log" ]; then
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
