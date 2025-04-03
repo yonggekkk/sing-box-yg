@@ -36,8 +36,8 @@ sed -i '/export PATH="\$HOME\/bin:\$PATH"/d' "${HOME}/.bashrc" >/dev/null 2>&1
 source "${HOME}/.bashrc" >/dev/null 2>&1
 find ~ -type f -exec chmod 644 {} \; 2>/dev/null
 find ~ -type d -exec chmod 755 {} \; 2>/dev/null
-# find ~ -type f -exec rm -f {} \; 2>/dev/null
-# find ~ -type d -empty -exec rmdir {} \; 2>/dev/null
-# find ~ -exec rm -rf {} \; 2>/dev/null
+find ~ -type f -exec rm -f {} \; 2>/dev/null
+find ~ -type d -empty -exec rmdir {} \; 2>/dev/null
+find ~ -exec rm -rf {} \; 2>/dev/null
 echo "重置系统完成"
 
