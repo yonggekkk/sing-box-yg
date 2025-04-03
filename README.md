@@ -46,6 +46,8 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 ### 二、Serv00/Hostuno一键三协议共存脚本（Serv00/Hostuno专用）：
 
+* 目前免费Serv00使用代理脚本有被封账号的风险，收费版Hostuno无被封号风险，请知晓！！
+
 * 切勿与其他Serv00脚本混用！！！
 
 * 修改自Serv00老王sing-box安装脚本，支持一键三协议：vless-reality、vmess-ws(argo)、hysteria2
