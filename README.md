@@ -46,7 +46,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 
 ### 二、Serv00/Hostuno一键三协议共存脚本（Serv00/Hostuno专用）：
 
-* 目前免费Serv00使用代理脚本有被封账号的风险，收费版Hostuno无被封号风险，请知晓！！
+* 目前免费Serv00使用代理脚本有被封账号的风险，收费版Hostuno不受影响，可正常使用
 
 * 切勿与其他Serv00脚本混用！！！
 
