@@ -21,7 +21,7 @@ export IP=${IP:-''}
 export reym=${reym:-''}
 export reset=${reset:-''}
 export resport=${resport:-''}
-
+devil binexec on >/dev/null 2>&1
 USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
 snb=$(hostname | cut -d. -f1)
