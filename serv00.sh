@@ -1572,13 +1572,13 @@ done
 if [[ ! "$response" =~ (unknown|not|error) ]]; then
 grep ':' $WORKDIR/ip.txt | sort -u -o $WORKDIR/ip.txt
 fi
+if [ "$hona" = "serv00" ]; then
+red "目前免费Serv00使用代理脚本会有被封账号的风险，请知晓！！！"
+fi
 green "${hona}服务器名称：${snb}"
 echo
 green "当前可选择的IP如下："
 cat $WORKDIR/ip.txt
-if [[ -e $WORKDIR/config.json ]]; then
-echo "如默认节点IP被墙，可在客户端地址更换以上任意一个显示可用的IP"
-fi
 echo
 portlist=$(devil port list | grep -E '^[0-9]+[[:space:]]+[a-zA-Z]+' | sed 's/^[[:space:]]*//')
 if [[ -n $portlist ]]; then
