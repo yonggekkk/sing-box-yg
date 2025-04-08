@@ -29,7 +29,7 @@
 [Sing-box精装桶小白一键脚本（五）：集成oblivion warp免费vpn功能，本地WARP+赛风VPN切换分流(30个国家IP)](https://youtu.be/5Y6NPsYPws0)
 
 ### VPS专用一键脚本如下：快捷方式：```sb```
-### (注意：serv00不可用，请继续往下翻)
+
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 ```
