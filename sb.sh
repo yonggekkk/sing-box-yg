@@ -71,7 +71,7 @@ if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
 if [[ x"${release}" == x"alpine" ]]; then
 apk update
-apk add wget curl tar jq tzdata openssl expect git socat iproute2 iptables
+apk add wget curl tar jq tzdata openssl expect git socat iproute2 iptables grep
 apk add virt-what
 apk add qrencode
 else
