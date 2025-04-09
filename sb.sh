@@ -908,7 +908,7 @@ ipuuid(){
 if [[ -f '/etc/systemd/system/sing-box.service' ]]; then
 v4v6
 if [[ -n $v4 && -n $v6 ]]; then
-green "选择配置输出"
+green "双栈VPS需要选择IP配置输出，一般情况下nat vps建议选择IPV6"
 yellow "1：使用IPV4配置输出 (回车默认) "
 yellow "2：使用IPV6配置输出"
 readp "请选择【1-2】：" menu
@@ -927,7 +927,7 @@ echo "server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$v6"
 fi
 else
-yellow "VPS并不是双栈VPS，不支持配置输出的切换"
+yellow "VPS并不是双栈VPS，不支持IP配置输出的切换"
 serip=$(curl -s4m5 icanhazip.com -k || curl -s6m5 icanhazip.com -k)
 if [[ "$serip" =~ : ]]; then
 sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
@@ -5096,6 +5096,7 @@ green "11. 一键原版BBR+FQ加速"
 green "12. 管理 Acme 申请域名证书"
 green "13. 管理 Warp 查看Netflix/ChatGPT解锁情况"
 green "14. 添加 WARP-plus-Socks5 代理模式 【本地Warp/多地区Psiphon-VPN】"
+green "15. 双栈VPS切换IPV4/IPV4配置输出"
 green " 0. 退出脚本"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 insV=$(cat /etc/s-box/v 2>/dev/null)
@@ -5219,5 +5220,6 @@ case "$Input" in
 12 ) acme;;
 13 ) cfwarp;;
 14 ) inssbwpph;;
+15 ) wgcfgo && sbshare;;
  * ) exit 
 esac
