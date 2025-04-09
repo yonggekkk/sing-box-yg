@@ -905,7 +905,14 @@ fi
 }
 
 ipuuid(){
-if [[ -f '/etc/systemd/system/sing-box.service' ]]; then
+if [[ x"${release}" == x"alpine" ]]; then
+status_cmd="rc-service sing-box status"
+status_pattern="started"
+else
+status_cmd="systemctl status sing-box"
+status_pattern="active"
+fi
+if [[ -n $($status_cmd 2>/dev/null | grep -w "$status_pattern") && -f '/etc/s-box/sb.json' ]]; then
 v4v6
 if [[ -n $v4 && -n $v6 ]]; then
 green "双栈VPS需要选择IP配置输出，一般情况下nat vps建议选择IPV6"
@@ -946,7 +953,7 @@ echo "server_ipcl" > /etc/s-box/server_ipcl.log
 fi
 fi
 else
-red "未安装Sing-box服务" && exit
+red "Sing-box服务未运行" && exit
 fi
 }
 
