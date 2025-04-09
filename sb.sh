@@ -919,7 +919,7 @@ fi
 if [[ -f '/etc/systemd/system/sing-box.service' ]]; then
 v4v6
 if [[ -n $v4 && -n $v6 ]]; then
-green "VPS为双栈VPS，可切换IPV4或IPV6配置输出"
+green "关TLS或使用自签证书的节点，可切换IPV4或IPV6配置输出"
 yellow "1：使用IPV4：$v4 配置输出 (回车默认)"
 yellow "2：使用IPV6：$v6 配置输出"
 readp "请选择【1-2】：" menu
