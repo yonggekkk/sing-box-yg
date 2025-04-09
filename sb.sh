@@ -978,9 +978,9 @@ ym=`bash ~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}'`
 echo $ym > /root/ygkkkca/ca.log
 fi
 rm -rf /etc/s-box/vm_ws_argo.txt /etc/s-box/vm_ws.txt /etc/s-box/vm_ws_tls.txt
-sbdnsip=$(/etc/s-box/sbdnsip.log)
-server_ip=$(/etc/s-box/server_ip.log)
-server_ipcl=$(/etc/s-box/server_ipcl.log)
+sbdnsip=$(cat /etc/s-box/sbdnsip.log)
+server_ip=$(cat /etc/s-box/server_ip.log)
+server_ipcl=$(cat /etc/s-box/server_ipcl.log)
 uuid=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')
 vl_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].listen_port')
 vl_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].tls.server_name')
