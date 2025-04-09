@@ -1102,10 +1102,10 @@ hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$
 echo "$hy2_link" > /etc/s-box/hy2.txt
 red "🚀【 Hysteria-2 】节点信息如下：" && sleep 2
 echo
-echo "分享链接【v2rayn、nekobox、小火箭shadowrocket】"
+echo "分享链接【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
 echo -e "${yellow}$hy2_link${plain}"
 echo
-echo "二维码【v2rayn、nekobox、小火箭shadowrocket】"
+echo "二维码【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/hy2.txt)"
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
