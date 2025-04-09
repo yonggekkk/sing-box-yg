@@ -905,35 +905,45 @@ fi
 }
 
 ipuuid(){
-uuid=$(sed 's://.*::g' /etc/s-box/sb.json 2>/dev/null | jq -r '.inbounds[0].users[0].uuid')
-serip=$(curl -s4m5 icanhazip.com -k || curl -s6m5 icanhazip.com -k)
-if [[ "$serip" =~ : ]]; then
-sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
-server_ip="[$serip]"
-server_ipcl="$serip"
-else
-sbdnsip='tls://8.8.8.8/dns-query'
-server_ip="$serip"
-server_ipcl="$serip"
-fi
 if [[ -f '/etc/systemd/system/sing-box.service' ]]; then
 v4v6
 if [[ -n $v4 && -n $v6 ]]; then
-green "关TLS或使用自签证书的节点，可切换IPV4或IPV6配置输出"
-yellow "1：使用IPV4：$v4 配置输出 (回车默认)"
-yellow "2：使用IPV6：$v6 配置输出"
+green "选择配置输出"
+yellow "1：使用IPV4配置输出 (回车默认) "
+yellow "2：使用IPV6配置输出"
 readp "请选择【1-2】：" menu
-if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
+if [ -z "$menu" ] || [ "$menu" = "1" ]; then
 sbdnsip='tls://8.8.8.8/dns-query'
+echo "sbdnsip" > /etc/s-box/sbdnsip.log
 server_ip="$v4"
+echo "server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$v4"
+echo "server_ipcl" > /etc/s-box/server_ipcl.log
 else
 sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
+echo "sbdnsip" > /etc/s-box/sbdnsip.log
 server_ip="[$v6]"
+echo "server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$v6"
 fi
 else
 yellow "VPS并不是双栈VPS，不支持配置输出的切换"
+serip=$(curl -s4m5 icanhazip.com -k || curl -s6m5 icanhazip.com -k)
+if [[ "$serip" =~ : ]]; then
+sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
+echo "sbdnsip" > /etc/s-box/sbdnsip.log
+server_ip="[$serip]"
+echo "server_ip" > /etc/s-box/server_ip.log
+server_ipcl="$serip"
+echo "server_ipcl" > /etc/s-box/server_ipcl.log
+else
+sbdnsip='tls://8.8.8.8/dns-query'
+echo "sbdnsip" > /etc/s-box/sbdnsip.log
+server_ip="$serip"
+echo "server_ip" > /etc/s-box/server_ip.log
+server_ipcl="$serip"
+echo "server_ipcl" > /etc/s-box/server_ipcl.log
+fi
 fi
 else
 red "未安装Sing-box服务" && exit
@@ -961,7 +971,10 @@ ym=`bash ~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}'`
 echo $ym > /root/ygkkkca/ca.log
 fi
 rm -rf /etc/s-box/vm_ws_argo.txt /etc/s-box/vm_ws.txt /etc/s-box/vm_ws_tls.txt
-wgcfgo
+sbdnsip=$(/etc/s-box/sbdnsip.log)
+server_ip=$(/etc/s-box/server_ip.log)
+server_ipcl=$(/etc/s-box/server_ipcl.log)
+uuid=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')
 vl_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].listen_port')
 vl_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].tls.server_name')
 public_key=$(cat /etc/s-box/public.key)
@@ -3410,6 +3423,7 @@ curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/version | 
 clear
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 lnsb && blue "Sing-box-yg脚本安装成功，脚本快捷方式：sb" && cronsb && sleep 1
+wgcfgo
 sbshare
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 blue "Hysteria2/Tuic5自定义V2rayN配置、Clash-Meta/Sing-box客户端配置及私有订阅链接，请选择9查看"
