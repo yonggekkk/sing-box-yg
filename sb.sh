@@ -905,7 +905,7 @@ fi
 }
 
 ipuuid(){
-uuid=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')
+uuid=$(sed 's://.*::g' /etc/s-box/sb.json 2>/dev/null | jq -r '.inbounds[0].users[0].uuid')
 serip=$(curl -s4m5 icanhazip.com -k || curl -s6m5 icanhazip.com -k)
 if [[ "$serip" =~ : ]]; then
 sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
@@ -915,6 +915,28 @@ else
 sbdnsip='tls://8.8.8.8/dns-query'
 server_ip="$serip"
 server_ipcl="$serip"
+fi
+if [[ -f '/etc/systemd/system/sing-box.service' ]]; then
+v4v6
+if [[ -n $v4 && -n $v6 ]]; then
+green "VPS为双栈VPS，可切换IPV4或IPV6配置输出"
+yellow "1：使用IPV4：$v4 配置输出 (回车默认)"
+yellow "2：使用IPV6：$v6 配置输出"
+readp "请选择【1-2】：" menu
+if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
+sbdnsip='tls://8.8.8.8/dns-query'
+server_ip="$v4"
+server_ipcl="$v4"
+else
+sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
+server_ip="[$v6]"
+server_ipcl="$v6"
+fi
+else
+yellow "VPS并不是双栈VPS，不支持配置输出的切换"
+fi
+else
+red "未安装Sing-box服务" && exit
 fi
 }
 
