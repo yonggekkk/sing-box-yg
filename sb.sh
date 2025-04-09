@@ -71,7 +71,7 @@ if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
 if [[ x"${release}" == x"alpine" ]]; then
 apk update
-apk add wget curl tar jq tzdata openssl expect git socat iproute2 iptables
+apk add wget curl tar jq tzdata openssl expect git socat iproute2 iptables grep
 apk add virt-what
 apk add qrencode
 else
@@ -905,16 +905,56 @@ fi
 }
 
 ipuuid(){
-uuid=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')
+if [[ x"${release}" == x"alpine" ]]; then
+status_cmd="rc-service sing-box status"
+status_pattern="started"
+else
+status_cmd="systemctl status sing-box"
+status_pattern="active"
+fi
+if [[ -n $($status_cmd 2>/dev/null | grep -w "$status_pattern") && -f '/etc/s-box/sb.json' ]]; then
+v4v6
+if [[ -n $v4 && -n $v6 ]]; then
+green "双栈VPS需要选择IP配置输出，一般情况下nat vps建议选择IPV6"
+yellow "1：使用IPV4配置输出 (回车默认) "
+yellow "2：使用IPV6配置输出"
+readp "请选择【1-2】：" menu
+if [ -z "$menu" ] || [ "$menu" = "1" ]; then
+sbdnsip='tls://8.8.8.8/dns-query'
+echo "$sbdnsip" > /etc/s-box/sbdnsip.log
+server_ip="$v4"
+echo "$server_ip" > /etc/s-box/server_ip.log
+server_ipcl="$v4"
+echo "$server_ipcl" > /etc/s-box/server_ipcl.log
+else
+sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
+echo "$sbdnsip" > /etc/s-box/sbdnsip.log
+server_ip="[$v6]"
+echo "$server_ip" > /etc/s-box/server_ip.log
+server_ipcl="$v6"
+echo "$server_ipcl" > /etc/s-box/server_ipcl.log
+fi
+else
+yellow "VPS并不是双栈VPS，不支持IP配置输出的切换"
 serip=$(curl -s4m5 icanhazip.com -k || curl -s6m5 icanhazip.com -k)
 if [[ "$serip" =~ : ]]; then
 sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
+echo "$sbdnsip" > /etc/s-box/sbdnsip.log
 server_ip="[$serip]"
+echo "$server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$serip"
+echo "$server_ipcl" > /etc/s-box/server_ipcl.log
 else
 sbdnsip='tls://8.8.8.8/dns-query'
+echo "$sbdnsip" > /etc/s-box/sbdnsip.log
 server_ip="$serip"
+echo "$server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$serip"
+echo "$server_ipcl" > /etc/s-box/server_ipcl.log
+fi
+fi
+else
+red "Sing-box服务未运行" && exit
 fi
 }
 
@@ -939,7 +979,10 @@ ym=`bash ~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}'`
 echo $ym > /root/ygkkkca/ca.log
 fi
 rm -rf /etc/s-box/vm_ws_argo.txt /etc/s-box/vm_ws.txt /etc/s-box/vm_ws_tls.txt
-wgcfgo
+sbdnsip=$(cat /etc/s-box/sbdnsip.log)
+server_ip=$(cat /etc/s-box/server_ip.log)
+server_ipcl=$(cat /etc/s-box/server_ipcl.log)
+uuid=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')
 vl_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].listen_port')
 vl_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].tls.server_name')
 public_key=$(cat /etc/s-box/public.key)
@@ -1102,10 +1145,10 @@ hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$
 echo "$hy2_link" > /etc/s-box/hy2.txt
 red "🚀【 Hysteria-2 】节点信息如下：" && sleep 2
 echo
-echo "分享链接【v2rayn、nekobox、小火箭shadowrocket】"
+echo "分享链接【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
 echo -e "${yellow}$hy2_link${plain}"
 echo
-echo "二维码【v2rayn、nekobox、小火箭shadowrocket】"
+echo "二维码【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/hy2.txt)"
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
@@ -3388,6 +3431,7 @@ curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/version | 
 clear
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 lnsb && blue "Sing-box-yg脚本安装成功，脚本快捷方式：sb" && cronsb && sleep 1
+wgcfgo
 sbshare
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 blue "Hysteria2/Tuic5自定义V2rayN配置、Clash-Meta/Sing-box客户端配置及私有订阅链接，请选择9查看"
@@ -5060,6 +5104,7 @@ green "11. 一键原版BBR+FQ加速"
 green "12. 管理 Acme 申请域名证书"
 green "13. 管理 Warp 查看Netflix/ChatGPT解锁情况"
 green "14. 添加 WARP-plus-Socks5 代理模式 【本地Warp/多地区Psiphon-VPN】"
+green "15. 双栈VPS切换IPV4/IPV4配置输出"
 green " 0. 退出脚本"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 insV=$(cat /etc/s-box/v 2>/dev/null)
@@ -5167,7 +5212,7 @@ showprotocol
 fi
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
-readp "请输入数字【0-14】:" Input
+readp "请输入数字【0-15】:" Input
 case "$Input" in  
  1 ) instsllsingbox;;
  2 ) unins;;
@@ -5183,5 +5228,6 @@ case "$Input" in
 12 ) acme;;
 13 ) cfwarp;;
 14 ) inssbwpph;;
+15 ) wgcfgo && sbshare;;
  * ) exit 
 esac
