@@ -1071,7 +1071,7 @@ log-level: info
 unified-delay: true
 global-client-fingerprint: chrome
 dns:
-  enable: true
+  enable: false
   listen: :53
   ipv6: true
   enhanced-mode: fake-ip
