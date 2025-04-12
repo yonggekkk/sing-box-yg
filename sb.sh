@@ -5075,7 +5075,7 @@ fi
 
 sbsm(){
 echo
-green "关注甬哥YouTube频道：https://www.youtube.com/@ygkkk，了解最新代理协议与翻墙动态"
+green "关注甬哥YouTube频道：https://www.youtube.com/@ygkkk 了解最新代理协议与翻墙动态"
 echo
 blue "sing-box-yg脚本视频教程：https://www.youtube.com/playlist?list=PLMgly2AulGG_Affv6skQXWnVqw7XWiPwJ"
 echo
@@ -5119,7 +5119,7 @@ green "13. 管理 Warp 查看Netflix/ChatGPT解锁情况"
 green "14. 添加 WARP-plus-Socks5 代理模式 【本地Warp/多地区Psiphon-VPN】"
 green "15. 双栈VPS切换IPV4/IPV6配置输出"
 white "----------------------------------------------------------------------------------"
-green "16. Sing-box-yg脚本使用说明书"
+yellow "16. Sing-box-yg脚本使用说明书"
 white "----------------------------------------------------------------------------------"
 green " 0. 退出脚本"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
