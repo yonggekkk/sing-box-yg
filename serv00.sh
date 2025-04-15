@@ -18,7 +18,7 @@ read_uuid() {
 reading "请输入统一的uuid密码 (建议回车默认随机): " UUID
 if [[ -z "$UUID" ]]; then
 UUID=558d54c7-7d2e-4805-861a-741b281401d6
-if
+fi
 green "你的uuid为: $UUID"
 }
 
