@@ -73,7 +73,7 @@ done
 download_and_run_singbox() {
 if [ ! -s sb.txt ] && [ ! -s ag.txt ]; then
 DOWNLOAD_DIR="." && mkdir -p "$DOWNLOAD_DIR" && FILE_INFO=()
-FILE_INFO=("https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/sb web" "https://github.com/yonggekkk/Cloudflare_vless_trojan/releases/download/serv00/server bot")
+FILE_INFO=("https://github.com/yonggekkk/sing-box-yg/releases/download/singbox/asb web" "https://github.com/yonggekkk/sing-box-yg/releases/download/singbox/acf bot")
 declare -A FILE_MAP
 generate_random_name() {
     local chars=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890
