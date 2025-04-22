@@ -38,7 +38,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb
 bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh)
 ```
 
-更新中的ArgoSB脚本，专为Google IDX vps设计：https://github.com/yonggekkk/ArgoSB
+更新中的ArgoSB脚本，专为Google IDX VPS设计：https://github.com/yonggekkk/ArgoSB
 
 ### Sing-box-yg脚本界面预览图（注：相关参数随意填写，仅供围观）
 
