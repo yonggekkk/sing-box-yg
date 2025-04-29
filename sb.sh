@@ -978,6 +978,15 @@ if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkk
 ym=`bash ~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}'`
 echo $ym > /root/ygkkkca/ca.log
 fi
+
+# 获取节点前缀
+if [ -f "/etc/s-box/prefix.conf" ]; then
+prefix=$(cat /etc/s-box/prefix.conf)
+[[ -n "$prefix" ]] && prefix="$prefix-"
+else
+prefix=""
+fi
+
 rm -rf /etc/s-box/vm_ws_argo.txt /etc/s-box/vm_ws.txt /etc/s-box/vm_ws_tls.txt
 sbdnsip=$(cat /etc/s-box/sbdnsip.log)
 server_ip=$(cat /etc/s-box/server_ip.log)
@@ -1065,12 +1074,36 @@ cl_tu5_ip=$ym
 ins=0
 tu5_ins=false
 fi
+
+# 修改节点名称时添加前缀
+if [[ "$tls" = "false" ]]; then
+vmess_name="${prefix}vm-argo-$hostname"
+else
+vmess_name="${prefix}vm-ws-tls-$hostname"
+fi
+
+# 将修改后的名称应用到相应的配置文件中
+sed -i "s/vm-argo-$hostname/$vmess_name/g" /etc/s-box/vm_ws_argols.txt 2>/dev/null
+
+# 修改其他协议的节点名称
+hy2_name="${prefix}hy2-$hostname"
+tuic5_name="${prefix}tu5-$hostname"
+vless_name="${prefix}vless-reality"
+
+# 将修改后的名称应用到相应的配置文件中
+sed -i "s/hy2-$hostname/$hy2_name/g" /etc/s-box/hy2.txt 2>/dev/null
+sed -i "s/tu5-$hostname/$tuic5_name/g" /etc/s-box/tuic5.txt 2>/dev/null
+sed -i "s/vless-reality/$vless_name/g" /etc/s-box/vl_reality.txt 2>/dev/null
 }
 
 resvless(){
+if [ -f "/etc/s-box/prefix.conf" ]; then
+prefix=$(cat /etc/s-box/prefix.conf)
+[[ -n "$prefix" ]] && prefix="$prefix-"
+fi
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-vl_link="vless://$uuid@$server_ip:$vl_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$vl_name&fp=chrome&pbk=$public_key&sid=$short_id&type=tcp&headerType=none#vl-reality-$hostname"
+vl_link="vless://$uuid@$server_ip:$vl_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$vl_name&fp=chrome&pbk=$public_key&sid=$short_id&type=tcp&headerType=none#${prefix}vless-reality"
 echo "$vl_link" > /etc/s-box/vl_reality.txt
 red "🚀【 vless-reality-vision 】节点信息如下：" && sleep 2
 echo
@@ -1084,6 +1117,10 @@ echo
 }
 
 resvmess(){
+if [ -f "/etc/s-box/prefix.conf" ]; then
+prefix=$(cat /etc/s-box/prefix.conf)
+[[ -n "$prefix" ]] && prefix="$prefix-"
+fi
 if [[ "$tls" = "false" ]]; then
 argopid
 if [[ -n $(ps -e | grep -w $ls 2>/dev/null) ]]; then
@@ -1138,6 +1175,10 @@ echo
 }
 
 reshy2(){
+if [ -f "/etc/s-box/prefix.conf" ]; then
+prefix=$(cat /etc/s-box/prefix.conf)
+[[ -n "$prefix" ]] && prefix="$prefix-"
+fi
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 #hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$ins_hy2&mport=$hyps&sni=$hy2_name#hy2-$hostname"
@@ -1155,6 +1196,10 @@ echo
 }
 
 restu5(){
+if [ -f "/etc/s-box/prefix.conf" ]; then
+prefix=$(cat /etc/s-box/prefix.conf)
+[[ -n "$prefix" ]] && prefix="$prefix-"
+fi
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 tuic5_link="tuic://$uuid:$uuid@$sb_tu5_ip:$tu5_port?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=$tu5_name&allow_insecure=$ins#tu5-$hostname"
@@ -2216,14 +2261,6 @@ proxies:
   sni: $tu5_name                                
   skip-cert-verify: $tu5_ins
 
-
-
-
-
-
-
-
-
 - name: vmess-tls-argo临时-$hostname                         
   type: vmess
   server: $vmadd_argo                        
@@ -2691,7 +2728,7 @@ proxies:
   servername: $vl_name                 
   reality-opts: 
     public-key: $public_key    
-    short-id: $short_id                      
+    short-id: $short_id                    
   client-fingerprint: chrome                  
 
 - name: vmess-ws-$hostname                         
@@ -2741,7 +2778,9 @@ proxies:
 
 
 
-- name: vmess-tls-argo固定-$hostname                         
+
+
+- name: vmess-tls-argo临时-$hostname                         
   type: vmess
   server: $vmadd_argo                        
   port: 8443                                     
@@ -2751,13 +2790,13 @@ proxies:
   udp: true
   tls: true
   network: ws
-  servername: $argogd                    
+  servername: $argo                    
   ws-opts:
     path: "$ws_path"                             
     headers:
-      Host: $argogd
+      Host: $argo
 
-- name: vmess-argo固定-$hostname                         
+- name: vmess-argo临时-$hostname                         
   type: vmess
   server: $vmadd_argo                        
   port: 8880                                     
@@ -2767,11 +2806,11 @@ proxies:
   udp: true
   tls: false
   network: ws
-  servername: $argogd                    
+  servername: $argo                    
   ws-opts:
     path: "$ws_path"                             
     headers:
-      Host: $argogd
+      Host: $argo 
 
 proxy-groups:
 - name: 负载均衡
@@ -2784,8 +2823,8 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-    - vmess-tls-argo固定-$hostname
-    - vmess-argo固定-$hostname
+    - vmess-tls-argo临时-$hostname
+    - vmess-argo临时-$hostname
 
 - name: 自动选择
   type: url-test
@@ -2797,8 +2836,8 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-    - vmess-tls-argo固定-$hostname
-    - vmess-argo固定-$hostname
+    - vmess-tls-argo临时-$hostname
+    - vmess-argo临时-$hostname
     
 - name: 🌍选择代理节点
   type: select
@@ -2810,8 +2849,8 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-    - vmess-tls-argo固定-$hostname
-    - vmess-argo固定-$hostname
+    - vmess-tls-argo临时-$hostname
+    - vmess-argo临时-$hostname
 rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
@@ -3423,6 +3462,12 @@ wget -q -O /root/geosite.db https://github.com/MetaCubeX/meta-rules-dat/releases
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green "五、自动生成warp-wireguard出站账户" && sleep 2
 warpwg
+
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+green "六、设置节点前缀" && sleep 2
+readp "设置节点前缀(回车默认为空):" prefix
+echo "$prefix" > /etc/s-box/prefix.conf
+
 inssbjsonser
 sbservice
 sbactive
@@ -3921,7 +3966,8 @@ changeserv(){
 sbactive
 echo
 green "Sing-box配置变更选择如下:"
-readp "1：更换Reality域名伪装地址、切换自签证书与Acme域名证书、开关TLS\n2：更换全协议UUID(密码)、Vmess-Path路径\n3：设置Argo临时隧道、固定隧道\n4：切换IPV4或IPV6的代理优先级\n5：设置Telegram推送节点通知\n6：更换Warp-wireguard出站账户、自动优选对端IP\n7：设置Gitlab订阅分享链接\n8：设置所有Vmess节点的CDN优选地址\n0：返回上层\n请选择【0-8】：" menu
+readp "1：更换Reality域名伪装地址、切换自签证书与Acme域名证书、开关TLS\n2：更换全协议UUID(密码)、Vmess-Path路径\n3：设置Argo临时隧道、固定隧道\n4：切换IPV4或IPV6的代理优先级\n5：设置Telegram推送节点通知\n6：更换Warp-wireguard出站账户、自动优选对端IP\n7：设置Gitlab订阅分享链接\n8：设置所有Vmess节点的CDN优选地址\n9：修改节点前缀\n0：返回上层\n请选择【0-9】：" menu
+
 if [ "$menu" = "1" ];then
 changeym
 elif [ "$menu" = "2" ];then
@@ -3938,6 +3984,8 @@ elif [ "$menu" = "7" ];then
 gitlabsub
 elif [ "$menu" = "8" ];then
 vmesscfadd
+elif [ "$menu" = "9" ];then
+changeprefix
 else 
 sb
 fi
@@ -4214,6 +4262,28 @@ green "优选完毕，当前使用的对端IP：$nwgip:$nwgpo"
 else
 changeserv
 fi
+}
+
+changeprefix(){
+if [ -f "/etc/s-box/prefix.conf" ]; then
+current_prefix=$(cat /etc/s-box/prefix.conf)
+else
+current_prefix=$hostname
+fi
+
+echo
+yellow "当前节点前缀为: $current_prefix"
+echo
+readp "请输入新的节点前缀(回车保持不变):" new_prefix
+if [ -n "$new_prefix" ]; then
+echo "$new_prefix" > /etc/s-box/prefix.conf
+green "节点前缀已更新为: $new_prefix"
+else
+green "节点前缀保持不变: $current_prefix"
+fi
+echo
+sleep 2
+changeserv
 }
 
 sbymfl(){
