@@ -108,30 +108,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o kp.sh && chmod +x kp.sh && nano kp.sh
 ```
 
-### 注意：
-
-* 1、目前方案一SSH脚本仅支持网页保活。
-  
-* 2、方案二serv00.yml、方案三kp.sh都支持cron内射保活，也支持网页保活，但不建议同时使用
-
-* 3、方案二serv00.yml、方案三kp.sh的cron内射保活，前者通过github的cron定时，后者通过VPS、软路由的cron定时
-
-* 4、方案一SSH脚本、方案二serv00.yml、方案三kp.sh的网页保活，都可以通过github cron网页保活或者workers网页保活实现，见视频三
-
-* 5、方案二serv00.yml与方案三kp.sh在启用cron时，都为"内射保活脚本"，就算Serv00清空你服务器上所有文件(到目前为止从没发生过)，只要让你连接成功，就会自动安装脚本保活，保持不死状态
-
-* 6、关于VPS/github/软路由部署脚本 (方案二serv00.yml、方案三kp.sh)：
-
-  方式一（cron内射保活）：重置变量RES在重装、更新脚本、变更参数时，选择Y运行一次，后续必须改为N保存，可以不使用网页保活
-
-  方式二（网页保活）：每当重装、更新脚本、变更参数时，重置变量RES选择Y运行一次。此时cron内射定时建议加#表示删除不使用，后续只用网页保活
-
-  方式一（cron内射保活）与方式二（网页保活）不建议同时运行，容易引起进程爆满
-
-* 7、切记：方案二serv00.yml、方案三kp.sh，这两个方案千万不要与方案一SSH脚本同时运行，因为容易引起进程爆满，两者必须二选一
-
-* 8、如果进程爆满、进不了SSH、或者报错：bash: fork: retry: Resource temporarily unavailable，请参数[博客教程](https://ygkkk.blogspot.com/2025/01/serv00.html)中的红字说明，清空重置 
-
 -----------------------------------------------------
 ### 感谢支持！微信打赏甬哥侃侃侃ygkkk
 ![41440820a366deeb8109db5610313a1](https://github.com/user-attachments/assets/5cd2d891-ae54-4397-8211-ac4c6d1099c9)
