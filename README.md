@@ -56,8 +56,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.
 
 * 主要增加reality协议默认支持 CF vless/trojan 节点的proxyip以及非标端口的优选反代IP功能
 
-* 支持多功能网页：1、保活(主程序与argo双线独立保活) 2、重启 3、重置端口 4、查看进程 5、查看订阅节点
-
 * 聚合通用节点分享，支持到22个节点：三协议各自三个IP，argo全覆盖13个端口节点，已添加不死优选IP
 
 #### 相关说明及注意点请查看[甬哥博客说明与Serv00视频教程](https://ygkkk.blogspot.com/2025/01/serv00.html)
@@ -74,9 +72,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.
 
 [Serv00免费代理脚本最终教程（五）：Github、VPS、软路由多平台脚本大更新！支持多功能网页，Cron内射保活+网页外射保活，任你选](https://youtu.be/tKaBdbU4G4s)
 
-### 方案一、Serv00/Hostuno-sb-yg一键脚本 
-
-* 本地SSH专用，不要同时与方案二、方案三一起安装
+### Serv00/Hostuno-sb-yg一键脚本 
 
 * Argo高度自定义：可以重置临时隧道; 可以继续使用上回的固定隧道; 也可以更换固定隧道的域名或token
 
@@ -87,26 +83,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/ser
 #### Serv00/Hostuno-sb-yg脚本界面预览图，仅限方案一的SSH端安装脚本（注：仅供围观）
 ![a6b776a094566ab14e88fdcd70ba9e9](https://github.com/user-attachments/assets/90a918ed-aec7-4a1f-8159-97f3acfd0092)
 
-多功能网页预览图(支持所有方案现实)：1、保活 2、重启 3、重置端口 4、查看订阅节点
-![a39f5972b1f33b71138fd9b45af6e53](https://github.com/user-attachments/assets/a2e069ea-80cb-4953-b034-3cb518444eb7)
-
-
-### 方案二、Serv00多账号自动部署脚本：serv00.yml
-
-* github专用，不支持Hostuno，同服务器与方案三通用，不要与方案一同时使用
-* 创建私有库，修改serv00.yml文件的参数，运行github action，自动远程部署且保活单个或多个Serv00账号的节点
-* 切记！！！cron定时与网页保活只能二选一，同时运行可能会造成爆进程
-
-
-### 方案三、Serv00多账号自动部署脚本：kp.sh
-
-* VPS、软路由专用，不支持Hostuno，同服务器与方案二通用，不要与方案一同时使用
-* 修改kp.sh文件的参数，可在多个平台上自动远程部署且保活单个或多个Serv00账号的节点，不可用在serv00本地上，默认nano编辑形式
-* 也可以手动放在其他目录，做好cron定时或者使用网页保活
-
-```
-curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/kp.sh -o kp.sh && chmod +x kp.sh && nano kp.sh
-```
 
 -----------------------------------------------------
 ### 感谢支持！微信打赏甬哥侃侃侃ygkkk
