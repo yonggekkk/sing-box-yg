@@ -1,8 +1,8 @@
 name: Parallel URL Fetch
 
 on:
-  schedule:
-  - cron: '*/10 * * * *' # 每10分钟执行一次（公开库每月2000分钟运行时长，每天64分钟）
+ # schedule:
+#  - cron: '*/10 * * * *' # 每10分钟执行一次（公开库每月2000分钟运行时长，每天64分钟）
   workflow_dispatch: 
 
 jobs:
