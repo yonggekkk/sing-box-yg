@@ -3,7 +3,7 @@
 
 ### 注：本项目分享订阅节点都为本地化生成，不使用节点转换、订阅器等第三方外链引用，无需担心节点订阅被外链作者查看
 
-### 精简可单选多协议的脚本，请移步到[ArgoSB脚本](https://github.com/yonggekkk/ArgoSB)
+### 单选多协议的脚本，请移步到[ArgoSB脚本](https://github.com/yonggekkk/ArgoSB)
 
 ### 交流平台：[甬哥博客地址](https://ygkkk.blogspot.com)、[甬哥YouTube频道](https://www.youtube.com/@ygkkk)、[甬哥TG电报群组](https://t.me/+jZHc6-A-1QQ5ZGVl)、[甬哥TG电报频道](https://t.me/+DkC9ZZUgEFQzMTZl)
 --------------------------------------------------------------
