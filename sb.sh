@@ -4824,7 +4824,8 @@ fi
 }
 
 acme(){
-bash <(curl -Ls https://gitlab.com/rwkgyg/acme-script/raw/main/acme.sh)
+#bash <(curl -Ls https://gitlab.com/rwkgyg/acme-script/raw/main/acme.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/acme-yg/main/acme.sh)
 }
 cfwarp(){
 #bash <(curl -Ls https://gitlab.com/rwkgyg/CFwarp/raw/main/CFwarp.sh)
