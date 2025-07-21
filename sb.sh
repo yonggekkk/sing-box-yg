@@ -1074,10 +1074,10 @@ vl_link="vless://$uuid@$server_ip:$vl_port?encryption=none&flow=xtls-rprx-vision
 echo "$vl_link" > /etc/s-box/vl_reality.txt
 red "🚀【 vless-reality-vision 】节点信息如下：" && sleep 2
 echo
-echo "分享链接【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
+echo "分享链接【nekobox、小火箭shadowrocket】"
 echo -e "${yellow}$vl_link${plain}"
 echo
-echo "二维码【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
+echo "二维码【nekobox、小火箭shadowrocket】"
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/vl_reality.txt)"
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
@@ -3854,7 +3854,7 @@ message_text_m10=$(echo "$m10")
 message_text_m11=$(echo "$m11")
 MODE=HTML
 URL="https://api.telegram.org/bottelegram_token/sendMessage"
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Vless-reality-vision 分享链接 】：支持v2rayng、nekobox "$'"'"'\n\n'"'"'"${message_text_m1}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Vless-reality-vision 分享链接 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m1}")
 if [[ -f /etc/s-box/vm_ws.txt ]]; then
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Vmess-ws 分享链接 】：支持v2rayng、nekobox "$'"'"'\n\n'"'"'"${message_text_m2}")
 fi
@@ -3885,7 +3885,7 @@ else
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Clash-meta 配置文件(2段) 】：支持Clash-meta相关客户端 "$'"'"'\n\n'"'"'"${message_text_m8}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=${message_text_m8_5}")
 fi
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 四合一协议聚合订阅链接 】：支持v2rayng、nekobox "$'"'"'\n\n'"'"'"${message_text_m11}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 四合一协议聚合订阅链接 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m11}")
 
 if [ $? == 124 ];then
 echo TG_api请求超时,请检查网络是否重启完成并是否能够访问TG
@@ -4747,7 +4747,7 @@ echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 四合一聚合订阅 】节点信息如下：" && sleep 2
 echo
-echo "分享链接【v2rayn、v2rayng、nekobox、Karing】"
+echo "分享链接"
 echo -e "${yellow}$baseurl${plain}"
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
