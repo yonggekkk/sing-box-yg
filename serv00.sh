@@ -853,7 +853,6 @@ cat > sing_box.json <<EOF
       "server": "$IP",
       "server_port": $vless_port,
       "uuid": "$UUID",
-      "packet_encoding": "xudp",
       "flow": "xtls-rprx-vision",
       "tls": {
         "enabled": true,
