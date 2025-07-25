@@ -1074,10 +1074,10 @@ vl_link="vless://$uuid@$server_ip:$vl_port?encryption=none&flow=xtls-rprx-vision
 echo "$vl_link" > /etc/s-box/vl_reality.txt
 red "🚀【 vless-reality-vision 】节点信息如下：" && sleep 2
 echo
-echo "分享链接【nekobox、小火箭shadowrocket】"
+echo "分享链接【v2ran(切换singbox内核)、nekobox、小火箭shadowrocket】"
 echo -e "${yellow}$vl_link${plain}"
 echo
-echo "二维码【nekobox、小火箭shadowrocket】"
+echo "二维码【v2ran(切换singbox内核)、nekobox、小火箭shadowrocket】"
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/vl_reality.txt)"
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
