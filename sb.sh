@@ -1290,7 +1290,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "server": "$server_ipcl",
       "server_port": $vl_port,
       "uuid": "$uuid",
-      "packet_encoding": "xudp",
       "flow": "xtls-rprx-vision",
       "tls": {
         "enabled": true,
@@ -1897,7 +1896,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "server": "$server_ipcl",
       "server_port": $vl_port,
       "uuid": "$uuid",
-      "packet_encoding": "xudp",
       "flow": "xtls-rprx-vision",
       "tls": {
         "enabled": true,
@@ -2416,7 +2414,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "server": "$server_ipcl",
       "server_port": $vl_port,
       "uuid": "$uuid",
-      "packet_encoding": "xudp",
       "flow": "xtls-rprx-vision",
       "tls": {
         "enabled": true,
@@ -2931,7 +2928,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "server": "$server_ipcl",
       "server_port": $vl_port,
       "uuid": "$uuid",
-      "packet_encoding": "xudp",
       "flow": "xtls-rprx-vision",
       "tls": {
         "enabled": true,
