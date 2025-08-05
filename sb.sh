@@ -5079,13 +5079,15 @@ fi
 
 sbsm(){
 echo
-green "关注甬哥YouTube频道：https://www.youtube.com/@ygkkk 了解最新代理协议与翻墙动态"
+green "关注甬哥YouTube频道：https://youtube.com/@ygkkk?sub_confirmation=1 了解最新代理协议与翻墙动态"
 echo
 blue "sing-box-yg脚本视频教程：https://www.youtube.com/playlist?list=PLMgly2AulGG_Affv6skQXWnVqw7XWiPwJ"
 echo
 blue "sing-box-yg脚本博客说明：http://ygkkk.blogspot.com/2023/10/sing-box-yg.html"
 echo
-blue "sing-box-yg脚本项目地址：https://github.com/yonggekkk/x-ui-yg"
+blue "sing-box-yg脚本项目地址：https://github.com/yonggekkk/sing-box-yg"
+echo
+blue "推荐：ArgoSB一键无交互小钢炮脚本项目地址：https://github.com/yonggekkk/ArgoSB"
 echo
 }
 
