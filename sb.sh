@@ -163,7 +163,7 @@ else
 ipv=prefer_ipv4
 fi
 if [ -n $(curl -s6m5 icanhazip.com -k) ]; then
-endip=2606:4700:d0::a29f:c101
+endip=2606:4700:d0::a29f:c001
 else
 endip=162.159.192.1
 fi
