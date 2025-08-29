@@ -5085,7 +5085,9 @@ blue "sing-box-yg脚本博客说明：http://ygkkk.blogspot.com/2023/10/sing-box
 echo
 blue "sing-box-yg脚本项目地址：https://github.com/yonggekkk/sing-box-yg"
 echo
-blue "推荐：ArgoSB一键无交互小钢炮脚本项目地址：https://github.com/yonggekkk/ArgoSB"
+blue "推荐甬哥新品：ArgoSB一键无交互小钢炮脚本"
+blue "支持：AnyTLS、Any-reality、Vless-xhttp-reality、Vless-reality-vision、Shadowsocks-2022、Hysteria2、Tuic、Vmess-ws、Argo临时/固定隧道"
+blue "ArgoSB项目地址：https://github.com/yonggekkk/ArgoSB"
 echo
 }
 
