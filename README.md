@@ -3,9 +3,11 @@
 
 ### 注：本项目分享订阅节点都为本地化生成，不使用节点转换、订阅器等第三方外链引用，无需担心节点订阅被外链作者查看
 
-### 单选多协议的脚本，请移步到[ArgoSB脚本](https://github.com/yonggekkk/ArgoSB)
-
 ### 交流平台：[甬哥博客地址](https://ygkkk.blogspot.com)、[甬哥YouTube频道](https://www.youtube.com/@ygkkk)、[甬哥TG电报群组](https://t.me/+jZHc6-A-1QQ5ZGVl)、[甬哥TG电报频道](https://t.me/+DkC9ZZUgEFQzMTZl)
+
+----------------------------------------------------------------
+#### 推荐推广：极简 + 轻量 + 快速的多协议的ArgoSB脚本，已支持：AnyTLS、Any-reality、Vless-xhttp-reality、Vless-reality-vision、Shadowsocks-2022、Vmess-ws、Hysteria2、Tuic、Argo临时/固定隧道，请移步到[ArgoSB脚本](https://github.com/yonggekkk/ArgoSB)
+
 --------------------------------------------------------------
 
 ### 一、Sing-box-yg精装桶小白专享一键四协议共存脚本（VPS专用）
