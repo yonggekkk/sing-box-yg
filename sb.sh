@@ -862,7 +862,7 @@ cat > /etc/s-box/sb11.json <<EOF
 "yg_kkk"
 ],
 "outbound":"warp-out"
-}
+},
 {
 "outbound": "direct",
 "network": "udp,tcp"
