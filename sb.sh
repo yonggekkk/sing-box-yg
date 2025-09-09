@@ -222,7 +222,7 @@ fi
 
 inssb(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-green "使用哪个内核版本？目前：1.10系列正式版内核支持geosite分流，1.10系列之后最新内核不支持geosite分流"
+green "使用哪个内核版本？目前：1.10.7正式版内核支持geosite分流及IP优先设置，1.10系列之后最新内核不支持geosite分流及IP优先设置"
 yellow "1：使用1.10系列之后最新正式版内核 (回车默认)"
 yellow "2：使用1.10.7正式版内核"
 readp "请选择【1-2】：" menu
@@ -254,7 +254,7 @@ ymzs(){
 ym_vl_re=www.amd.com
 echo
 blue "Vless-reality的SNI域名默认为 www.amd.com"
-blue "Vmess-ws将开启TLS，Hysteria-2、Tuic-v5将使用 $(cat /root/ygkkkca/ca.log 2>/dev/null) 证书，并开启SNI证书验证"
+blue "Vmess-ws将开启TLS，Hysteria-2、Tuic-v5将使用 $(cat /root/ygkkkca/ca.log 2>/dev/null) 证书，Anytls？"
 tlsyn=true
 ym_vm_ws=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 certificatec_vmess_ws='/root/ygkkkca/cert.crt'
@@ -263,6 +263,8 @@ certificatec_hy2='/root/ygkkkca/cert.crt'
 certificatep_hy2='/root/ygkkkca/private.key'
 certificatec_tuic='/root/ygkkkca/cert.crt'
 certificatep_tuic='/root/ygkkkca/private.key'
+certificatec_an='/root/ygkkkca/cert.crt'
+certificatep_an='/root/ygkkkca/private.key'
 }
 
 zqzs(){
@@ -278,6 +280,8 @@ certificatec_hy2='/etc/s-box/cert.pem'
 certificatep_hy2='/etc/s-box/private.key'
 certificatec_tuic='/etc/s-box/cert.pem'
 certificatep_tuic='/etc/s-box/private.key'
+certificatec_an='/etc/s-box/cert.pem'
+certificatep_an='/etc/s-box/private.key'
 }
 
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -359,6 +363,11 @@ readp "\n设置Tuic5主端口[1-65535] (回车跳过为10000-65535之间的随�
 chooseport
 port_tu=$port
 }
+anport(){
+readp "\n设置Anytls主端口[1-65535] (回车跳过为10000-65535之间的随机端口)：" port
+chooseport
+port_an=$port
+}
 
 insport(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -368,7 +377,7 @@ yellow "2：自定义每个协议端口"
 readp "请输入【1-2】：" port
 if [ -z "$port" ] || [ "$port" = "1" ] ; then
 ports=()
-for i in {1..4}; do
+for i in {1..5}; do
 while true; do
 port=$(shuf -i 10000-65535 -n 1)
 if ! [[ " ${ports[@]} " =~ " $port " ]] && \
@@ -383,6 +392,7 @@ port_vm_ws=${ports[0]}
 port_vl_re=${ports[1]}
 port_hy2=${ports[2]}
 port_tu=${ports[3]}
+port_an=${ports[4]}
 if [[ $tlsyn == "true" ]]; then
 numbers=("2053" "2083" "2087" "2096" "8443")
 else
@@ -401,7 +411,7 @@ done
 echo
 blue "根据Vmess-ws协议是否启用TLS，随机指定支持CDN优选IP的标准端口：$port_vm_ws"
 else
-vlport && vmport && hy2port && tu5port
+vlport && vmport && hy2port && tu5port && anport
 fi
 echo
 blue "各协议端口确认如下"
@@ -409,6 +419,7 @@ blue "Vless-reality端口：$port_vl_re"
 blue "Vmess-ws端口：$port_vm_ws"
 blue "Hysteria-2端口：$port_hy2"
 blue "Tuic-v5端口：$port_tu"
+blue "Anytls端口：$port_an"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green "四、自动生成各个协议统一的uuid (密码)"
 uuid=$(/etc/s-box/sing-box generate uuid)
@@ -766,6 +777,23 @@ cat > /etc/s-box/sb11.json <<EOF
                 "certificate_path": "$certificatec_tuic",
                 "key_path": "$certificatep_tuic"
             }
+        },
+        {
+            "type":"anytls",
+            "tag":"anytls-sb",
+            "listen":"::",
+            "listen_port":${port_an},
+            "users":[
+                {
+                  "password":"${uuid}"
+                }
+            ],
+            "padding_scheme":[],
+            "tls":{
+                "enabled": true,
+                "certificate_path": "$certificatec_an",
+                "key_path": "$certificatep_an"
+            }
         }
 ],
 "endpoints":[
@@ -794,18 +822,7 @@ cat > /etc/s-box/sb11.json <<EOF
 "outbounds": [
 {
 "type":"direct",
-"tag":"direct",
-"domain_strategy": "$ipv"
-},
-{
-"type":"direct",
-"tag":"vps-outbound-v4", 
-"domain_strategy":"prefer_ipv4"
-},
-{
-"type":"direct",
-"tag":"vps-outbound-v6",
-"domain_strategy":"prefer_ipv6"
+"tag":"direct"
 },
 {
 "type": "socks",
@@ -845,19 +862,7 @@ cat > /etc/s-box/sb11.json <<EOF
 "yg_kkk"
 ],
 "outbound":"warp-out"
-},
-{
-"outbound":"vps-outbound-v4",
-"domain_suffix":[
-"yg_kkk"
-]
-},
-{
-"outbound":"vps-outbound-v6",
-"domain_suffix":[
-"yg_kkk"
-]
-},
+}
 {
 "outbound": "direct",
 "network": "udp,tcp"
