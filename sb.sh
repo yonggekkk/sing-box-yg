@@ -164,11 +164,11 @@ fi
 if [ -n $(curl -s6m5 icanhazip.com -k) ]; then
 endip=2606:4700:d0::a29f:c001
 xsdns="[2001:4860:4860::8888]"
-sbyx='prefer_ipv6'
+sbyx='ipv6_only'
 else
 endip=162.159.192.1
 xsdns="8.8.8.8"
-sbyx='prefer_ipv4'
+sbyx='ipv4_only'
 fi
 }
 warpcheck
