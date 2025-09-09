@@ -152,7 +152,7 @@ wgcfv4=$(curl -s4m5 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cu
 
 v6(){
 v4orv6(){
-if [ -z $(curl -s4m5 icanhazip.com -k) ]; then
+if [ -z "$(curl -s4m5 icanhazip.com -k)" ]; then
 echo
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow "检测到 纯IPV6 VPS，添加NAT64"
@@ -161,7 +161,7 @@ ipv=prefer_ipv6
 else
 ipv=prefer_ipv4
 fi
-if [ -n $(curl -s6m5 icanhazip.com -k) ]; then
+if [ -n "$(curl -s6m5 icanhazip.com -k)" ]; then
 endip=2606:4700:d0::a29f:c001
 else
 endip=162.159.192.1
