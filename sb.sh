@@ -831,7 +831,7 @@ cat > /etc/s-box/sb11.json <<EOF
       }
     ],
     "strategy": "${sbyx}"
-  }
+  },
 "outbounds": [
 {
 "type":"direct",
