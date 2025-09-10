@@ -3957,7 +3957,7 @@ else
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Clash-meta 配置文件(2段) 】：支持Clash-meta相关客户端 "$'"'"'\n\n'"'"'"${message_text_m8}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=${message_text_m8_5}")
 fi
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 聚合订阅链接 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m11}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 聚合节点 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m11}")
 
 if [ $? == 124 ];then
 echo TG_api请求超时,请检查网络是否重启完成并是否能够访问TG
@@ -4153,7 +4153,7 @@ qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/clash_meta_gitlab.txt 2>/dev/null)"
 echo
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
-green "当前聚合订阅节点配置已更新并推送"
+green "当前聚合节点配置已更新并推送"
 green "订阅链接如下："
 blue "$(cat /etc/s-box/jh_sub_gitlab.txt 2>/dev/null)"
 echo
@@ -4788,10 +4788,10 @@ v2sub=$(cat /etc/s-box/jhdy.txt 2>/dev/null)
 echo "$v2sub" > /etc/s-box/jh_sub.txt
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 聚合订阅 】节点信息如下：" && sleep 2
+red "🚀【 聚合节点 】节点信息如下：" && sleep 2
 echo
 echo "分享链接"
-echo -e "${yellow}$baseurl${plain}"
+echo -e "${yellow}$v2sub${plain}"
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 sb_client
@@ -4800,7 +4800,7 @@ sb_client
 clash_sb_share(){
 sbactive
 echo
-yellow "1：刷新并查看各协议分享链接、二维码、四合一聚合订阅"
+yellow "1：刷新并查看各协议分享链接、二维码、聚合节点"
 yellow "2：刷新并查看Clash-Meta、Sing-box客户端SFA/SFI/SFW三合一配置、Gitlab私有订阅链接"
 yellow "3：刷新并查看Hysteria2、Tuic5的V2rayN客户端自定义配置"
 yellow "4：推送最新节点配置信息(选项1+选项2)到Telegram通知"
@@ -4815,7 +4815,7 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "Gitlab订阅链接如下："
 gitlabsubgo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 vless-reality、vmess-ws、Hysteria2、Tuic5 】Clash-Meta配置文件显示如下："
+red "🚀【 vless-reality、vmess-ws、Hysteria2、Tuic5、Anytls】Clash-Meta配置文件显示如下："
 red "文件目录 /etc/s-box/clash_meta_client.yaml ，复制自建以yaml文件格式为准" && sleep 2
 echo
 cat /etc/s-box/clash_meta_client.yaml
@@ -4823,7 +4823,7 @@ echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 vless-reality、vmess-ws、Hysteria2、Tuic5 】SFA/SFI/SFW配置文件显示如下："
+red "🚀【 vless-reality、vmess-ws、Hysteria2、Tuic5、Anytls】SFA/SFI/SFW配置文件显示如下："
 red "安卓SFA、苹果SFI，win电脑官方文件包SFW请到甬哥Github项目自行下载，"
 red "文件目录 /etc/s-box/sing_box_client.json ，复制自建以json文件格式为准" && sleep 2
 echo
@@ -4904,6 +4904,8 @@ hy2_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].tls.key_p
 [[ "$hy2_sniname" = '/etc/s-box/private.key' ]] && hy2_zs="自签证书" || hy2_zs="域名证书"
 tu5_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[3].tls.key_path')
 [[ "$tu5_sniname" = '/etc/s-box/private.key' ]] && tu5_zs="自签证书" || tu5_zs="域名证书"
+an_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[4].tls.key_path')
+[[ "$an_sniname" = '/etc/s-box/private.key' ]] && an_zs="自签证书" || an_zs="域名证书"
 echo -e "Sing-box节点关键信息、已分流域名情况如下："
 echo -e "🚀【 Vless-reality 】${yellow}端口:$vl_port  Reality域名证书伪装地址：$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].tls.server_name')${plain}"
 if [[ "$tls" = "false" ]]; then
@@ -4913,6 +4915,7 @@ echo -e "🚀【 Vmess-ws-tls  】${yellow}端口:$vm_port   证书形式:$vm_zs
 fi
 echo -e "🚀【  Hysteria-2   】${yellow}端口:$hy2_port  证书形式:$hy2_zs  转发多端口: $hy2zfport${plain}"
 echo -e "🚀【    Tuic-v5    】${yellow}端口:$tu5_port  证书形式:$tu5_zs  转发多端口: $tu5zfport${plain}"
+echo -e "🚀【    Anytls     】${yellow}端口:$an_port  证书形式:$an_zs"
 if [ "$argoym" = "已开启" ]; then
 echo -e "Vmess-UUID：${yellow}$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')${plain}"
 echo -e "Vmess-Path：${yellow}$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.path')${plain}"
@@ -5022,8 +5025,7 @@ fi
 s5port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.outbounds[] | select(.type == "socks") | .server_port')
 [[ "$sbnh" == "1.10" ]] && num=10 || num=11
 sed -i "127s/$s5port/$port/g" /etc/s-box/sb10.json
-sed -i "150s/$s5port/$port/g" /etc/s-box/sb11.json
-rm -rf /etc/s-box/sb.json
+sed -i "165s/$s5port/$port/g" /etc/s-box/sb11.json
 cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 restartsb
 }
@@ -5230,18 +5232,8 @@ fi
 if [[ "$v4" == "104.28"* ]]; then
 w4="【WARP】"
 fi
-rpip=$(sed 's://.*::g' /etc/s-box/sb.json 2>/dev/null | jq -r '.outbounds[0].domain_strategy')
 [[ -z $v4 ]] && showv4='IPV4地址丢失，请切换至IPV6或者重装Sing-box' || showv4=$v4$w4
 [[ -z $v6 ]] && showv6='IPV6地址丢失，请切换至IPV4或者重装Sing-box' || showv6=$v6$w6
-if [[ $rpip = 'prefer_ipv6' ]]; then
-v4_6="IPV6优先出站($showv6)"
-elif [[ $rpip = 'prefer_ipv4' ]]; then
-v4_6="IPV4优先出站($showv4)"
-elif [[ $rpip = 'ipv4_only' ]]; then
-v4_6="仅IPV4出站($showv4)"
-elif [[ $rpip = 'ipv6_only' ]]; then
-v4_6="仅IPV6出站($showv6)"
-fi
 if [[ -z $v4 ]]; then
 vps_ipv4='无IPV4'      
 vps_ipv6="$v6"
@@ -5253,7 +5245,17 @@ vps_ipv4="$v4"
 vps_ipv6='无IPV6'
 fi
 echo -e "本地IPV4地址：$blue$vps_ipv4$w4$plain   本地IPV6地址：$blue$vps_ipv6$w6$plain"
-if [[ -n $rpip ]]; then
+if [[ "$sbnh" == "1.10" ]]; then
+rpip=$(sed 's://.*::g' /etc/s-box/sb.json 2>/dev/null | jq -r '.outbounds[0].domain_strategy')
+if [[ $rpip = 'prefer_ipv6' ]]; then
+v4_6="IPV6优先出站($showv6)"
+elif [[ $rpip = 'prefer_ipv4' ]]; then
+v4_6="IPV4优先出站($showv4)"
+elif [[ $rpip = 'ipv4_only' ]]; then
+v4_6="仅IPV4出站($showv4)"
+elif [[ $rpip = 'ipv6_only' ]]; then
+v4_6="仅IPV6出站($showv6)"
+fi
 echo -e "代理IP优先级：$blue$v4_6$plain"
 fi
 if [[ x"${release}" == x"alpine" ]]; then
