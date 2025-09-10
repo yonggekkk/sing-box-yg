@@ -49,15 +49,6 @@ aarch64) cpu=arm64;;
 x86_64) cpu=amd64;;
 *) red "目前脚本不支持$(uname -m)架构" && exit;;
 esac
-#bit=$(uname -m)
-#if [[ $bit = "aarch64" ]]; then
-#cpu="arm64"
-#elif [[ $bit = "x86_64" ]]; then
-#amdv=$(cat /proc/cpuinfo | grep flags | head -n 1 | cut -d: -f2)
-#[[ $amdv == *avx2* && $amdv == *f16c* ]] && cpu="amd64v3" || cpu="amd64"
-#else
-#red "目前脚本不支持 $bit 架构" && exit
-#fi
 if [[ -n $(sysctl net.ipv4.tcp_congestion_control 2>/dev/null | awk -F ' ' '{print $3}') ]]; then
 bbr=`sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}'`
 elif [[ -n $(ping 10.0.0.2 -c 2 | grep ttl) ]]; then
@@ -71,7 +62,7 @@ if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
 if [[ x"${release}" == x"alpine" ]]; then
 apk update
-apk add jq openssl iproute2 iputils coreutils expect git socat iptables grep util-linux dcron tar tzdata 
+apk add jq openssl iproute2 iputils coreutils expect git socat iptables grep tar tzdata dcron util-linux
 apk add virt-what
 else
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
@@ -226,9 +217,9 @@ fi
 
 inssb(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-green "使用哪个内核版本？目前：1.10.7正式版内核支持geosite分流及IP优先设置，1.10系列之后最新内核不支持geosite分流及IP优先设置"
-yellow "1：使用1.10系列之后最新正式版内核 (回车默认)"
-yellow "2：使用1.10.7正式版内核"
+green "使用哪个内核版本？"
+yellow "1：使用目前最新正式版内核 (回车默认)"
+yellow "2：使用之前1.10.7正式版内核"
 readp "请选择【1-2】：" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
 sbcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | grep -Eo '"[0-9.]+",' | sed -n 1p | tr -d '",')
@@ -275,7 +266,7 @@ zqzs(){
 ym_vl_re=www.amd.com
 echo
 blue "Vless-reality的SNI域名默认为 www.amd.com"
-blue "Vmess-ws将关闭TLS，Hysteria-2、Tuic-v5将使用bing自签证书，并关闭SNI证书验证"
+blue "Vmess-ws将关闭TLS，Hysteria-2、Tuic-v5、Anytls将使用bing自签证书，并关闭SNI证书验证"
 tlsyn=false
 ym_vm_ws=www.bing.com
 certificatec_vmess_ws='/etc/s-box/cert.pem'
