@@ -250,7 +250,7 @@ ymzs(){
 ym_vl_re=www.amd.com
 echo
 blue "Vless-reality的SNI域名默认为 www.amd.com"
-blue "Vmess-ws将开启TLS，Hysteria-2、Tuic-v5将使用 $(cat /root/ygkkkca/ca.log 2>/dev/null) 证书，Anytls？"
+blue "Vmess-ws将开启TLS，Hysteria-2、Tuic-v5、Anytls将使用 $(cat /root/ygkkkca/ca.log 2>/dev/null) 证书"
 tlsyn=true
 ym_vm_ws=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 certificatec_vmess_ws='/root/ygkkkca/cert.crt'
@@ -3683,14 +3683,22 @@ green "1：Vless-reality协议 ${yellow}端口:$vl_port${plain}"
 green "2：Vmess-ws协议 ${yellow}端口:$vm_port${plain}"
 green "3：Hysteria2协议 ${yellow}端口:$hy2_port  转发多端口: $hy2zfport${plain}"
 green "4：Tuic5协议 ${yellow}端口:$tu5_port  转发多端口: $tu5zfport${plain}"
+if [[ "$sbnh" != "1.10" ]]; then
 green "5：Anytls协议 ${yellow}端口:$an_port${plain}"
+fi
 green "0：返回上层"
-readp "请选择要变更端口的协议【0-5】：" menu
+readp "请选择要变更端口的协议：" menu
 if [ "$menu" = "1" ]; then
 vlport
 echo $sbfiles | xargs -n1 sed -i "14s/$vl_port/$port_vl_re/"
 restartsb
 blue "Vless-reality端口更改完成，可选择9输出配置信息"
+echo
+elif [ "$menu" = "5" ]; then
+anport
+echo $sbfiles | xargs -n1 sed -i "110s/$an_port/$port_an/"
+restartsb
+blue "Anytls端口更改完成，可选择9输出配置信息"
 echo
 elif [ "$menu" = "2" ]; then
 vmport
@@ -3836,11 +3844,8 @@ changeip(){
 v4v6
 chip(){
 rpip=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.outbounds[0].domain_strategy')
-[[ "$sbnh" == "1.10" ]] && num=10 || num=11
 sed -i "111s/$rpip/$rrpip/g" /etc/s-box/sb10.json
-sed -i "134s/$rpip/$rrpip/g" /etc/s-box/sb11.json
-rm -rf /etc/s-box/sb.json
-cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
+cp /etc/s-box/sb10.json /etc/s-box/sb.json
 restartsb
 }
 readp "1. IPV4优先\n2. IPV6优先\n3. 仅IPV4\n4. 仅IPV6\n请选择：" choose
@@ -3900,6 +3905,7 @@ m8_5=$(cat /etc/s-box/clash_meta_client2.txt 2>/dev/null)
 m9=$(cat /etc/s-box/sing_box_gitlab.txt 2>/dev/null)
 m10=$(cat /etc/s-box/clash_meta_gitlab.txt 2>/dev/null)
 m11=$(cat /etc/s-box/jh_sub.txt 2>/dev/null)
+m12=$(cat /etc/s-box/an.txt 2>/dev/null)
 message_text_m1=$(echo "$m1")
 message_text_m2=$(echo "$m2")
 message_text_m3=$(echo "$m3")
@@ -3916,9 +3922,10 @@ message_text_m8_5=$(echo "$m8_5")
 message_text_m9=$(echo "$m9")
 message_text_m10=$(echo "$m10")
 message_text_m11=$(echo "$m11")
+message_text_m12=$(echo "$m12")
 MODE=HTML
 URL="https://api.telegram.org/bottelegram_token/sendMessage"
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Vless-reality-vision 分享链接 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m1}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Vless-reality-vision 分享链接 】：支持v2rayng、nekobox "$'"'"'\n\n'"'"'"${message_text_m1}")
 if [[ -f /etc/s-box/vm_ws.txt ]]; then
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Vmess-ws 分享链接 】：支持v2rayng、nekobox "$'"'"'\n\n'"'"'"${message_text_m2}")
 fi
@@ -3931,8 +3938,9 @@ fi
 if [[ -f /etc/s-box/vm_ws_tls.txt ]]; then
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Vmess-ws-tls 分享链接 】：支持v2rayng、nekobox "$'"'"'\n\n'"'"'"${message_text_m4}")
 fi
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Hysteria-2 分享链接 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m5}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Hysteria-2 分享链接 】：支持v2rayng、nekobox "$'"'"'\n\n'"'"'"${message_text_m5}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Tuic-v5 分享链接 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m6}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Anytls 分享链接 】：仅最新内核可用 "$'"'"'\n\n'"'"'"${message_text_m12}")
 
 if [[ -f /etc/s-box/sing_box_gitlab.txt ]]; then
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Sing-box 订阅链接 】：支持SFA、SFW、SFI "$'"'"'\n\n'"'"'"${message_text_m9}")
@@ -3949,7 +3957,7 @@ else
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Clash-meta 配置文件(2段) 】：支持Clash-meta相关客户端 "$'"'"'\n\n'"'"'"${message_text_m8}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=${message_text_m8_5}")
 fi
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 四合一协议聚合订阅链接 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m11}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 聚合订阅链接 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m11}")
 
 if [ $? == 124 ];then
 echo TG_api请求超时,请检查网络是否重启完成并是否能够访问TG
@@ -3985,7 +3993,7 @@ changeserv(){
 sbactive
 echo
 green "Sing-box配置变更选择如下:"
-readp "1：更换Reality域名伪装地址、切换自签证书与Acme域名证书、开关TLS\n2：更换全协议UUID(密码)、Vmess-Path路径\n3：设置Argo临时隧道、固定隧道\n4：切换IPV4或IPV6的代理优先级\n5：设置Telegram推送节点通知\n6：更换Warp-wireguard出站账户\n7：设置Gitlab订阅分享链接\n8：设置所有Vmess节点的CDN优选地址\n0：返回上层\n请选择【0-8】：" menu
+readp "1：更换Reality域名伪装地址、切换自签证书与Acme域名证书、开关TLS\n2：更换全协议UUID(密码)、Vmess-Path路径\n3：设置Argo临时隧道、固定隧道\n4：切换IPV4或IPV6的代理优先级 (仅最新内核可用)\n5：设置Telegram推送节点通知\n6：更换Warp-wireguard出站账户\n7：设置Gitlab订阅分享链接\n8：设置所有Vmess节点的CDN优选地址\n0：返回上层\n请选择【0-8】：" menu
 if [ "$menu" = "1" ];then
 changeym
 elif [ "$menu" = "2" ];then
@@ -3993,7 +4001,11 @@ changeuuid
 elif [ "$menu" = "3" ];then
 cfargo_ym
 elif [ "$menu" = "4" ];then
+if [[ "$sbnh" == "1.10" ]]; then
 changeip
+else
+red "仅最新内核可用" && sb
+fi
 elif [ "$menu" = "5" ];then
 tgsbshow
 elif [ "$menu" = "6" ];then
@@ -4211,7 +4223,7 @@ wgpo=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.outbounds[] | select(.type =
 else
 wgipv6=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.endpoints[] | .address[1] | split("/")[0]')
 wgprkey=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.endpoints[] | .private_key')
-wgres=$(sed -n '125s/.*\[\(.*\)\].*/\1/p' /etc/s-box/sb.json)
+wgres=$(sed -n '142s/.*\[\(.*\)\].*/\1/p' /etc/s-box/sb.json)
 wgip=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.endpoints[] | .peers[].address')
 wgpo=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.endpoints[] | .peers[].port')
 fi
@@ -4231,53 +4243,20 @@ warpwg
 echo
 readp "输入自定义Private_key：" menu
 sed -i "163s#$wgprkey#$menu#g" /etc/s-box/sb10.json
-sed -i "115s#$wgprkey#$menu#g" /etc/s-box/sb11.json
+sed -i "132s#$wgprkey#$menu#g" /etc/s-box/sb11.json
 readp "输入自定义IPV6地址：" menu
 sed -i "161s/$wgipv6/$menu/g" /etc/s-box/sb10.json
-sed -i "113s/$wgipv6/$menu/g" /etc/s-box/sb11.json
+sed -i "130s/$wgipv6/$menu/g" /etc/s-box/sb11.json
 readp "输入自定义Reserved值 (格式：数字,数字,数字)，如无值则回车跳过：" menu
 if [ -z "$menu" ]; then
 menu=0,0,0
 fi
 sed -i "165s/$wgres/$menu/g" /etc/s-box/sb10.json
-sed -i "125s/$wgres/$menu/g" /etc/s-box/sb11.json
+sed -i "142s/$wgres/$menu/g" /etc/s-box/sb11.json
 rm -rf /etc/s-box/sb.json
 cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 restartsb
 green "设置结束"
-green "可以先在选项5-1或5-2使用完整域名分流：cloudflare.com"
-green "然后使用任意节点打开网页https://cloudflare.com/cdn-cgi/trace，查看当前WARP账户类型"
-elif  [ "$menu" = "2" ]; then
-green "请稍等……更新中……"
-if [ -z $(curl -s4m5 icanhazip.com -k) ]; then
-curl -sSL https://gitlab.com/rwkgyg/CFwarp/raw/main/point/endip.sh -o endip.sh && chmod +x endip.sh && (echo -e "1\n2\n") | bash endip.sh > /dev/null 2>&1
-nwgip=$(awk -F, 'NR==2 {print $1}' /root/result.csv 2>/dev/null | grep -o '\[.*\]' | tr -d '[]')
-nwgpo=$(awk -F, 'NR==2 {print $1}' /root/result.csv 2>/dev/null | awk -F "]" '{print $2}' | tr -d ':')
-else
-curl -sSL https://gitlab.com/rwkgyg/CFwarp/raw/main/point/endip.sh -o endip.sh && chmod +x endip.sh && (echo -e "1\n1\n") | bash endip.sh > /dev/null 2>&1
-nwgip=$(awk -F, 'NR==2 {print $1}' /root/result.csv 2>/dev/null | awk -F: '{print $1}')
-nwgpo=$(awk -F, 'NR==2 {print $1}' /root/result.csv 2>/dev/null | awk -F: '{print $2}')
-fi
-a=$(cat /root/result.csv 2>/dev/null | awk -F, '$3!="timeout ms" {print} ' | sed -n '2p' | awk -F ',' '{print $2}')
-if [[ -z $a || $a = "100.00%" ]]; then
-if [[ -z $(curl -s4m5 icanhazip.com -k) ]]; then
-nwgip=2606:4700:d0::a29f:c001
-nwgpo=2408
-else
-nwgip=162.159.192.1
-nwgpo=2408
-fi
-fi
-sed -i "157s#$wgip#$nwgip#g" /etc/s-box/sb10.json
-sed -i "158s#$wgpo#$nwgpo#g" /etc/s-box/sb10.json
-sed -i "118s#$wgip#$nwgip#g" /etc/s-box/sb11.json
-sed -i "119s#$wgpo#$nwgpo#g" /etc/s-box/sb11.json
-rm -rf /etc/s-box/sb.json
-cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
-restartsb
-rm -rf /root/result.csv /root/endip.sh 
-echo
-green "优选完毕，当前使用的对端IP：$nwgip:$nwgpo"
 else
 changeserv
 fi
@@ -4422,11 +4401,15 @@ green "1：重置warp-wireguard-ipv4优先分流域名 $wfl4"
 green "2：重置warp-wireguard-ipv6优先分流域名 $wfl6"
 green "3：重置warp-socks5-ipv4优先分流域名 $sfl4"
 green "4：重置warp-socks5-ipv6优先分流域名 $sfl6"
+if [[ "$sbnh" == "1.10" ]]; then
 green "5：重置VPS本地ipv4优先分流域名 $adfl4"
 green "6：重置VPS本地ipv6优先分流域名 $adfl6"
+else
+red "最新内核暂不支持本地IP分流"
+fi
 green "0：返回上层"
 echo
-readp "请选择【0-6】：" menu
+readp "请选择：" menu
 
 if [ "$menu" = "1" ]; then
 if [[ "$sbnh" == "1.10" ]]; then
