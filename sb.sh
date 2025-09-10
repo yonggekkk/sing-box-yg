@@ -5246,7 +5246,7 @@ vps_ipv6='无IPV6'
 fi
 echo -e "本地IPV4地址：$blue$vps_ipv4$w4$plain   本地IPV6地址：$blue$vps_ipv6$w6$plain"
 if [[ "$sbnh" == "1.10" ]]; then
-rpip=$(sed 's://.*::g' /etc/s-box/sb.json 2>/dev/null | jq -r '.outbounds[0].domain_strategy')
+rpip=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.outbounds[0].domain_strategy') 2>/dev/null
 if [[ $rpip = 'prefer_ipv6' ]]; then
 v4_6="IPV6优先出站($showv6)"
 elif [[ $rpip = 'prefer_ipv4' ]]; then
