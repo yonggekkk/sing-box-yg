@@ -259,10 +259,8 @@ certificatec_hy2='/root/ygkkkca/cert.crt'
 certificatep_hy2='/root/ygkkkca/private.key'
 certificatec_tuic='/root/ygkkkca/cert.crt'
 certificatep_tuic='/root/ygkkkca/private.key'
-if [[ "$sbnh" != "1.10" ]]; then
 certificatec_an='/root/ygkkkca/cert.crt'
 certificatep_an='/root/ygkkkca/private.key'
-fi
 }
 
 zqzs(){
@@ -278,10 +276,8 @@ certificatec_hy2='/etc/s-box/cert.pem'
 certificatep_hy2='/etc/s-box/private.key'
 certificatec_tuic='/etc/s-box/cert.pem'
 certificatep_tuic='/etc/s-box/private.key'
-if [[ "$sbnh" != "1.10" ]]; then
 certificatec_an='/etc/s-box/cert.pem'
 certificatep_an='/etc/s-box/private.key'
-fi
 }
 
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
