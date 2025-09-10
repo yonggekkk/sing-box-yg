@@ -4393,20 +4393,13 @@ changef(){
 [[ "$sbnh" == "1.10" ]] && num=10 || num=11
 sbymfl
 echo
-if [[ "$sbnh" != "1.10" ]]; then
-wfl4='暂不支持'
-sfl6='暂不支持'
-fi
+[[ "$sbnh" != "1.10" ]] && wfl4='暂不支持' sfl6='暂不支持' adfl4='暂不支持' adfl6='暂不支持'
 green "1：重置warp-wireguard-ipv4优先分流域名 $wfl4"
 green "2：重置warp-wireguard-ipv6优先分流域名 $wfl6"
 green "3：重置warp-socks5-ipv4优先分流域名 $sfl4"
 green "4：重置warp-socks5-ipv6优先分流域名 $sfl6"
-if [[ "$sbnh" == "1.10" ]]; then
 green "5：重置VPS本地ipv4优先分流域名 $adfl4"
 green "6：重置VPS本地ipv6优先分流域名 $adfl6"
-else
-red "最新内核暂不支持本地IP分流"
-fi
 green "0：返回上层"
 echo
 readp "请选择：" menu
@@ -4454,9 +4447,8 @@ w6flym="$(echo "$w6flym" | sed 's/ /","/g')"
 w6flym="\"$w6flym\""
 fi
 sed -i "193s/.*/$w6flym/" /etc/s-box/sb10.json
-sed -i "169s/.*/$w6flym/" /etc/s-box/sb11.json
-sed -i "181s/.*/$w6flym/" /etc/s-box/sb11.json
-rm -rf /etc/s-box/sb.json
+sed -i "184s/.*/$w6flym/" /etc/s-box/sb11.json
+sed -i "196s/.*/$w6flym/" /etc/s-box/sb11.json
 cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 restartsb
 changef
@@ -4490,9 +4482,8 @@ s4flym="$(echo "$s4flym" | sed 's/ /","/g')"
 s4flym="\"$s4flym\""
 fi
 sed -i "202s/.*/$s4flym/" /etc/s-box/sb10.json
-sed -i "162s/.*/$s4flym/" /etc/s-box/sb11.json
-sed -i "175s/.*/$s4flym/" /etc/s-box/sb11.json
-rm -rf /etc/s-box/sb.json
+sed -i "177s/.*/$s4flym/" /etc/s-box/sb11.json
+sed -i "190s/.*/$s4flym/" /etc/s-box/sb11.json
 cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 restartsb
 changef
@@ -4548,6 +4539,7 @@ yellow "遗憾！当前暂时只支持warp-socks5-ipv4，如需要warp-socks5-ip
 fi
 
 elif [ "$menu" = "5" ]; then
+if [[ "$sbnh" == "1.10" ]]; then
 readp "1：使用完整域名方式\n2：使用geosite方式\n3：返回上层\n请选择：" menu
 if [ "$menu" = "1" ]; then
 readp "每个域名之间留空格，回车跳过表示重置清空VPS本地ipv4的完整域名方式的分流通道：" ad4flym
@@ -4557,10 +4549,7 @@ else
 ad4flym="$(echo "$ad4flym" | sed 's/ /","/g')"
 ad4flym="\"$ad4flym\""
 fi
-sed -i "220s/.*/$ad4flym/" /etc/s-box/sb10.json
-sed -i "188s/.*/$ad4flym/" /etc/s-box/sb11.json
-rm -rf /etc/s-box/sb.json
-cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
+sed -i "220s/.*/$ad4flym/" /etc/s-box/sb10.json /etc/s-box/sb.json
 restartsb
 changef
 elif [ "$menu" = "2" ]; then
@@ -4581,8 +4570,12 @@ fi
 else
 changef
 fi
+else
+yellow "遗憾！如需要VPS本地ipv4分流，请切换1.10系列内核" && exit
+fi
 
 elif [ "$menu" = "6" ]; then
+if [[ "$sbnh" == "1.10" ]]; then
 readp "1：使用完整域名方式\n2：使用geosite方式\n3：返回上层\n请选择：" menu
 if [ "$menu" = "1" ]; then
 readp "每个域名之间留空格，回车跳过表示重置清空VPS本地ipv6的完整域名方式的分流通道：" ad6flym
@@ -4592,10 +4585,7 @@ else
 ad6flym="$(echo "$ad6flym" | sed 's/ /","/g')"
 ad6flym="\"$ad6flym\""
 fi
-sed -i "229s/.*/$ad6flym/" /etc/s-box/sb10.json
-sed -i "194s/.*/$ad6flym/" /etc/s-box/sb11.json
-rm -rf /etc/s-box/sb.json
-cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
+sed -i "229s/.*/$ad6flym/" /etc/s-box/sb10.json /etc/s-box/sb.json
 restartsb
 changef
 elif [ "$menu" = "2" ]; then
@@ -4615,6 +4605,9 @@ yellow "遗憾！当前Sing-box内核不支持geosite分流方式。如要支持
 fi
 else
 changef
+fi
+else
+yellow "遗憾！如需要VPS本地ipv6分流，请切换1.10系列内核" && exit
 fi
 else
 sb
