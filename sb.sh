@@ -236,6 +236,7 @@ if [[ -f '/etc/s-box/sing-box' ]]; then
 chown root:root /etc/s-box/sing-box
 chmod +x /etc/s-box/sing-box
 blue "成功安装 Sing-box 内核版本：$(/etc/s-box/sing-box version | awk '/version/{print $NF}')"
+sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2)
 else
 red "下载 Sing-box 内核不完整，安装失败，请再运行安装一次" && exit
 fi
@@ -258,8 +259,10 @@ certificatec_hy2='/root/ygkkkca/cert.crt'
 certificatep_hy2='/root/ygkkkca/private.key'
 certificatec_tuic='/root/ygkkkca/cert.crt'
 certificatep_tuic='/root/ygkkkca/private.key'
+if [[ "$sbnh" != "1.10" ]]; then
 certificatec_an='/root/ygkkkca/cert.crt'
 certificatep_an='/root/ygkkkca/private.key'
+fi
 }
 
 zqzs(){
@@ -275,8 +278,10 @@ certificatec_hy2='/etc/s-box/cert.pem'
 certificatep_hy2='/etc/s-box/private.key'
 certificatec_tuic='/etc/s-box/cert.pem'
 certificatep_tuic='/etc/s-box/private.key'
+if [[ "$sbnh" != "1.10" ]]; then
 certificatec_an='/etc/s-box/cert.pem'
 certificatep_an='/etc/s-box/private.key'
+fi
 }
 
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -339,27 +344,27 @@ blue "确认的端口：$port" && sleep 2
 }
 
 vlport(){
-readp "\n设置Vless-reality端口[1-65535] (回车跳过为10000-65535之间的随机端口)：" port
+readp "\n设置Vless-reality端口 (回车跳过为10000-65535之间的随机端口)：" port
 chooseport
 port_vl_re=$port
 }
 vmport(){
-readp "\n设置Vmess-ws端口[1-65535] (回车跳过为10000-65535之间的随机端口)：" port
+readp "\n设置Vmess-ws端口 (回车跳过为10000-65535之间的随机端口)：" port
 chooseport
 port_vm_ws=$port
 }
 hy2port(){
-readp "\n设置Hysteria2主端口[1-65535] (回车跳过为10000-65535之间的随机端口)：" port
+readp "\n设置Hysteria2主端口 (回车跳过为10000-65535之间的随机端口)：" port
 chooseport
 port_hy2=$port
 }
 tu5port(){
-readp "\n设置Tuic5主端口[1-65535] (回车跳过为10000-65535之间的随机端口)：" port
+readp "\n设置Tuic5主端口 (回车跳过为10000-65535之间的随机端口)：" port
 chooseport
 port_tu=$port
 }
 anport(){
-readp "\n设置Anytls主端口[1-65535] (回车跳过为10000-65535之间的随机端口)：" port
+readp "\n设置Anytls主端口，最新内核时可用 (回车跳过为10000-65535之间的随机端口)：" port
 chooseport
 port_an=$port
 }
@@ -875,7 +880,6 @@ cat > /etc/s-box/sb11.json <<EOF
 }
 }
 EOF
-sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2)
 [[ "$sbnh" == "1.10" ]] && num=10 || num=11
 cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 }
