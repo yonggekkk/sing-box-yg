@@ -1076,6 +1076,22 @@ cl_tu5_ip=$ym
 ins=0
 tu5_ins=false
 fi
+an_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[4].listen_port')
+ym=$(cat /root/ygkkkca/ca.log 2>/dev/null)
+an_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[4].tls.key_path')
+if [[ "$an_sniname" = '/etc/s-box/private.key' ]]; then
+an_name=www.bing.com
+sb_an_ip=$server_ip
+cl_an_ip=$server_ipcl
+ins=1
+an_ins=true
+else
+an_name=$ym
+sb_an_ip=$ym
+cl_an_ip=$ym
+ins=0
+an_ins=false
+fi
 }
 
 resvless(){
@@ -1177,6 +1193,22 @@ echo -e "${yellow}$tuic5_link${plain}"
 echo
 echo "二维码【v2rayn、nekobox、小火箭shadowrocket】"
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/tuic5.txt)"
+white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+echo
+}
+
+resan(){
+echo
+white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+an_link="anytls://$uuid@$sb_an_ip:$an_port?&sni=$an_name&allowInsecure=$ins#anytls-$hostname"
+echo "$an_link" > /etc/s-box/an.txt
+red "🚀【 Anytls】节点信息如下：" && sleep 2
+echo
+echo "分享链接【v2rayn、小火箭shadowrocket】"
+echo -e "${yellow}$an_link${plain}"
+echo
+echo "二维码【v2rayn、nekobox、小火箭shadowrocket】"
+qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/an.txt)"
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 }
@@ -4741,8 +4773,8 @@ fi
 }
 
 sbshare(){
-rm -rf /etc/s-box/jhdy.txt /etc/s-box/vl_reality.txt /etc/s-box/vm_ws_argols.txt /etc/s-box/vm_ws_argogd.txt /etc/s-box/vm_ws.txt /etc/s-box/vm_ws_tls.txt /etc/s-box/hy2.txt /etc/s-box/tuic5.txt
-result_vl_vm_hy_tu && resvless && resvmess && reshy2 && restu5
+rm -rf /etc/s-box/{jhdy,vl_reality,vm_ws_argols,vm_ws_argogd,vm_ws,vm_ws_tls,hy2,tuic5,an}.txt
+result_vl_vm_hy_tu && resvless && resvmess && reshy2 && restu5 && resan
 cat /etc/s-box/vl_reality.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/vm_ws_argols.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/vm_ws_argogd.txt 2>/dev/null >> /etc/s-box/jhdy.txt
@@ -4750,12 +4782,12 @@ cat /etc/s-box/vm_ws.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/vm_ws_tls.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/hy2.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/tuic5.txt 2>/dev/null >> /etc/s-box/jhdy.txt
-baseurl=$(base64 -w 0 < /etc/s-box/jhdy.txt 2>/dev/null)
+cat /etc/s-box/an.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 v2sub=$(cat /etc/s-box/jhdy.txt 2>/dev/null)
 echo "$v2sub" > /etc/s-box/jh_sub.txt
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 四合一聚合订阅 】节点信息如下：" && sleep 2
+red "🚀【 聚合订阅 】节点信息如下：" && sleep 2
 echo
 echo "分享链接"
 echo -e "${yellow}$baseurl${plain}"
