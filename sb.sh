@@ -4265,8 +4265,8 @@ fi
 sbymfl(){
 sbport=$(cat /etc/s-box/sbwpph.log 2>/dev/null | awk '{print $3}' | awk -F":" '{print $NF}') 
 sbport=${sbport:-'40000'}
-resv1=$(curl -s --socks5 localhost:$sbport icanhazip.com)
-resv2=$(curl -sx socks5h://localhost:$sbport icanhazip.com)
+resv1=$(curl -sm3 --socks5 localhost:$sbport icanhazip.com)
+resv2=$(curl -sm3 -x socks5h://localhost:$sbport icanhazip.com)
 if [[ -z $resv1 && -z $resv2 ]]; then
 warp_s4_ip='Socks5-IPV4未启动，黑名单模式'
 warp_s6_ip='Socks5-IPV6未启动，黑名单模式'
@@ -5047,8 +5047,8 @@ if [ "$menu" = "1" ]; then
 ins
 nohup setsid /etc/s-box/sbwpph -b 127.0.0.1:$port --gool -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 & echo "$!" > /etc/s-box/sbwpphid.log
 green "申请IP中……请稍等……" && sleep 20
-resv1=$(curl -s --socks5 localhost:$port icanhazip.com)
-resv2=$(curl -sx socks5h://localhost:$port icanhazip.com)
+resv1=$(curl -sm3 --socks5 localhost:$port icanhazip.com)
+resv2=$(curl -sm3 -x socks5h://localhost:$port icanhazip.com)
 if [[ -z $resv1 && -z $resv2 ]]; then
 red "WARP-plus-Socks5的IP获取失败" && unins && exit
 else
@@ -5099,8 +5099,8 @@ echo '
 readp "可选择国家地区（输入末尾两个大写字母，如美国，则输入US）：" guojia
 nohup setsid /etc/s-box/sbwpph -b 127.0.0.1:$port --cfon --country $guojia -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 & echo "$!" > /etc/s-box/sbwpphid.log
 green "申请IP中……请稍等……" && sleep 20
-resv1=$(curl -s --socks5 localhost:$port icanhazip.com)
-resv2=$(curl -sx socks5h://localhost:$port icanhazip.com)
+resv1=$(curl -sm3 --socks5 localhost:$port icanhazip.com)
+resv2=$(curl -sm3 -x socks5h://localhost:$port icanhazip.com)
 if [[ -z $resv1 && -z $resv2 ]]; then
 red "WARP-plus-Socks5的IP获取失败，尝试换个国家地区吧" && unins && exit
 else
