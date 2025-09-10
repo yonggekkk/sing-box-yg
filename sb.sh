@@ -3496,7 +3496,9 @@ if [[ -f /root/ygkkkca/ca.log ]]; then
 green "2：vmess-ws协议，$vm_na"
 green "3：Hysteria2协议，$hy2_na"
 green "4：Tuic5协议，$tu5_na"
+if [[ "$sbnh" != "1.10" ]]; then
 green "5：Anytls协议，$na_na"
+fi
 else
 red "仅支持选项1 (vless-reality)。因未申请域名证书，vmess-ws、Hysteria-2、Tuic-v5、Anytls的证书切换选项暂不予显示"
 fi
@@ -3578,6 +3580,24 @@ blue "设置完毕，请回到主菜单进入选项9更新节点配置"
 else
 red "当前未申请域名证书，不可切换。主菜单选择12，执行Acme证书申请" && sleep 2 && sb
 fi
+elif [ "$menu" = "5" ]; then
+if [ -f /root/ygkkkca/ca.log ]; then
+c=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[4].tls.certificate_path')
+d=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[4].tls.key_path')
+if [ "$d" = '/etc/s-box/private.key' ]; then
+c_c='/root/ygkkkca/cert.crt'
+d_d='/root/ygkkkca/private.key'
+else
+c_c='/etc/s-box/cert.pem'
+d_d='/etc/s-box/private.key'
+fi
+echo $sbfiles | xargs -n1 sed -i "119s#$c#$c_c#"
+echo $sbfiles | xargs -n1 sed -i "120s#$d#$d_d#"
+restartsb
+blue "设置完毕，请回到主菜单进入选项9更新节点配置"
+else
+red "当前未申请域名证书，不可切换。主菜单选择12，执行Acme证书申请" && sleep 2 && sb
+fi
 else
 sb
 fi
@@ -3588,6 +3608,7 @@ vl_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].listen_port')
 vm_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')
 hy2_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].listen_port')
 tu5_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[3].listen_port')
+an_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[4].listen_port')
 hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$hy2_port" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
 tu5_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$tu5_port" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
 [[ -n $hy2_ports ]] && hy2zfport="$hy2_ports" || hy2zfport="未添加"
@@ -3654,7 +3675,7 @@ service iptables save >/dev/null 2>&1
 }
 
 allports
-green "Vless-reality与Vmess-ws仅能更改唯一的端口，vmess-ws注意Argo端口重置"
+green "Vless-reality、Vmess-ws、Anytls仅能更改唯一的端口，vmess-ws注意Argo端口重置"
 green "Hysteria2与Tuic5支持更改主端口，也支持增删多个转发端口"
 green "Hysteria2支持端口跳跃，且与Tuic5都支持多端口复用"
 echo
@@ -3662,8 +3683,9 @@ green "1：Vless-reality协议 ${yellow}端口:$vl_port${plain}"
 green "2：Vmess-ws协议 ${yellow}端口:$vm_port${plain}"
 green "3：Hysteria2协议 ${yellow}端口:$hy2_port  转发多端口: $hy2zfport${plain}"
 green "4：Tuic5协议 ${yellow}端口:$tu5_port  转发多端口: $tu5zfport${plain}"
+green "5：Anytls协议 ${yellow}端口:$an_port${plain}"
 green "0：返回上层"
-readp "请选择要变更端口的协议【0-4】：" menu
+readp "请选择要变更端口的协议【0-5】：" menu
 if [ "$menu" = "1" ]; then
 vlport
 echo $sbfiles | xargs -n1 sed -i "14s/$vl_port/$port_vl_re/"
