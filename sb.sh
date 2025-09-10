@@ -3841,6 +3841,7 @@ fi
 }
 
 changeip(){
+if [[ "$sbnh" == "1.10" ]]; then
 v4v6
 chip(){
 rpip=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.outbounds[0].domain_strategy')
@@ -3861,6 +3862,9 @@ else
 red "当前不存在你选择的IPV4/IPV6地址，或者输入错误" && changeip
 fi
 blue "当前已更换的IP优先级：${v4_6}" && sb
+else
+red "仅支持1.10.7内核可用" && exit
+fi
 }
 
 tgsbshow(){
@@ -3993,7 +3997,7 @@ changeserv(){
 sbactive
 echo
 green "Sing-box配置变更选择如下:"
-readp "1：更换Reality域名伪装地址、切换自签证书与Acme域名证书、开关TLS\n2：更换全协议UUID(密码)、Vmess-Path路径\n3：设置Argo临时隧道、固定隧道\n4：切换IPV4或IPV6的代理优先级 (仅最新内核可用)\n5：设置Telegram推送节点通知\n6：更换Warp-wireguard出站账户\n7：设置Gitlab订阅分享链接\n8：设置所有Vmess节点的CDN优选地址\n0：返回上层\n请选择【0-8】：" menu
+readp "1：更换Reality域名伪装地址、切换自签证书与Acme域名证书、开关TLS\n2：更换全协议UUID(密码)、Vmess-Path路径\n3：设置Argo临时隧道、固定隧道\n4：切换IPV4或IPV6的代理优先级 (仅 1.10.7 内核可用)\n5：设置Telegram推送节点通知\n6：更换Warp-wireguard出站账户\n7：设置Gitlab订阅分享链接\n8：设置所有Vmess节点的CDN优选地址\n0：返回上层\n请选择【0-8】：" menu
 if [ "$menu" = "1" ];then
 changeym
 elif [ "$menu" = "2" ];then
@@ -4001,11 +4005,7 @@ changeuuid
 elif [ "$menu" = "3" ];then
 cfargo_ym
 elif [ "$menu" = "4" ];then
-if [[ "$sbnh" == "1.10" ]]; then
 changeip
-else
-red "仅最新内核可用" && sb
-fi
 elif [ "$menu" = "5" ];then
 tgsbshow
 elif [ "$menu" = "6" ];then
