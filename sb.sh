@@ -1330,7 +1330,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "inbounds": [
     {
       "type": "tun",
-           "tag": "tun-in",
+      "tag": "tun-in",
 	  "address": [
       "172.19.0.1/30",
 	  "fd00::1/126"
@@ -1353,6 +1353,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
+        "anytls-$hostname",
 "vmess-tls-argo固定-$hostname",
 "vmess-argo固定-$hostname",
 "vmess-tls-argo临时-$hostname",
@@ -1444,6 +1445,21 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 ]
             }
         },
+		{
+            "type": "anytls",
+            "tag": "anytls-$hostname",
+            "server": "$sb_an_ip",
+            "server_port": $an_port,
+            "password": "$uuid",
+            "idle_session_check_interval": "30s",
+            "idle_session_timeout": "30s",
+            "min_idle_session": 5,
+            "tls": {
+                "enabled": true,
+                "insecure": $an_ins,
+                "server_name": "$an_name"
+              }
+      },
 {
             "server": "$vmadd_argo",
             "server_port": 8443,
@@ -1564,6 +1580,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
+		"anytls-$hostname",
 "vmess-tls-argo固定-$hostname",
 "vmess-argo固定-$hostname",
 "vmess-tls-argo临时-$hostname",
@@ -1739,6 +1756,18 @@ proxies:
   sni: $tu5_name                                
   skip-cert-verify: $tu5_ins
 
+- name: anytls-$hostname 
+  type: anytls
+  server: $cl_an_ip
+  port: $an_port
+  password: ${uuid}
+  client-fingerprint: chrome
+  udp: true
+  idle-session-check-interval: 30
+  idle-session-timeout: 30
+  sni: $an_name 
+  skip-cert-verify: $an_ins
+
 - name: vmess-tls-argo固定-$hostname                         
   type: vmess
   server: $vmadd_argo                        
@@ -1815,6 +1844,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
     - vmess-tls-argo临时-$hostname
@@ -1830,6 +1860,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
     - vmess-tls-argo临时-$hostname
@@ -1845,6 +1876,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
     - vmess-tls-argo临时-$hostname
@@ -1961,6 +1993,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
+		"anytls-$hostname",
 "vmess-tls-argo临时-$hostname",
 "vmess-argo临时-$hostname"
       ]
@@ -2050,6 +2083,21 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 ]
             }
         },
+		{
+            "type": "anytls",
+            "tag": "anytls-$hostname",
+            "server": "$sb_an_ip",
+            "server_port": $an_port,
+            "password": "$uuid",
+            "idle_session_check_interval": "30s",
+            "idle_session_timeout": "30s",
+            "min_idle_session": 5,
+            "tls": {
+                "enabled": true,
+                "insecure": $an_ins,
+                "server_name": "$an_name"
+              }
+      },
 {
             "server": "$vmadd_argo",
             "server_port": 8443,
@@ -2116,6 +2164,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
+		"anytls-$hostname",
 "vmess-tls-argo临时-$hostname",
 "vmess-argo临时-$hostname"
       ],
@@ -2296,6 +2345,17 @@ proxies:
 
 
 
+- name: anytls-$hostname 
+  type: anytls
+  server: $cl_an_ip
+  port: $an_port
+  password: ${uuid}
+  client-fingerprint: chrome
+  udp: true
+  idle-session-check-interval: 30
+  idle-session-timeout: 30
+  sni: $an_name 
+  skip-cert-verify: $an_ins
 
 - name: vmess-tls-argo临时-$hostname                         
   type: vmess
@@ -2340,6 +2400,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo临时-$hostname
     - vmess-argo临时-$hostname
 
@@ -2353,6 +2414,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo临时-$hostname
     - vmess-argo临时-$hostname
     
@@ -2366,6 +2428,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo临时-$hostname
     - vmess-argo临时-$hostname
 rules:
@@ -2479,6 +2542,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
+		"anytls-$hostname",
 "vmess-tls-argo固定-$hostname",
 "vmess-argo固定-$hostname"
       ]
@@ -2568,6 +2632,21 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 ]
             }
         },
+		{
+            "type": "anytls",
+            "tag": "anytls-$hostname",
+            "server": "$sb_an_ip",
+            "server_port": $an_port,
+            "password": "$uuid",
+            "idle_session_check_interval": "30s",
+            "idle_session_timeout": "30s",
+            "min_idle_session": 5,
+            "tls": {
+                "enabled": true,
+                "insecure": $an_ins,
+                "server_name": "$an_name"
+              }
+      },
 {
             "server": "$vmadd_argo",
             "server_port": 8443,
@@ -2634,6 +2713,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
+		"anytls-$hostname",
 "vmess-tls-argo固定-$hostname",
 "vmess-argo固定-$hostname"
       ],
@@ -2812,6 +2892,17 @@ proxies:
 
 
 
+- name: anytls-$hostname 
+  type: anytls
+  server: $cl_an_ip
+  port: $an_port
+  password: ${uuid}
+  client-fingerprint: chrome
+  udp: true
+  idle-session-check-interval: 30
+  idle-session-timeout: 30
+  sni: $an_name 
+  skip-cert-verify: $an_ins
 
 - name: vmess-tls-argo固定-$hostname                         
   type: vmess
@@ -2856,6 +2947,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
 
@@ -2869,6 +2961,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
     
@@ -2882,6 +2975,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
 rules:
@@ -2994,7 +3088,8 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vless-$hostname",
         "vmess-$hostname",
         "hy2-$hostname",
-        "tuic5-$hostname"
+        "tuic5-$hostname",
+		"anytls-$hostname"
       ]
     },
     {
@@ -3082,6 +3177,21 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 ]
             }
         },
+		{
+            "type": "anytls",
+            "tag": "anytls-$hostname",
+            "server": "$sb_an_ip",
+            "server_port": $an_port,
+            "password": "$uuid",
+            "idle_session_check_interval": "30s",
+            "idle_session_timeout": "30s",
+            "min_idle_session": 5,
+            "tls": {
+                "enabled": true,
+                "insecure": $an_ins,
+                "server_name": "$an_name"
+              }
+      },
     {
       "tag": "direct",
       "type": "direct"
@@ -3093,7 +3203,8 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vless-$hostname",
         "vmess-$hostname",
         "hy2-$hostname",
-        "tuic5-$hostname"
+        "tuic5-$hostname",
+		"anytls-$hostname"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -3269,6 +3380,18 @@ proxies:
   sni: $tu5_name                                
   skip-cert-verify: $tu5_ins
 
+- name: anytls-$hostname 
+  type: anytls
+  server: $cl_an_ip
+  port: $an_port
+  password: ${uuid}
+  client-fingerprint: chrome
+  udp: true
+  idle-session-check-interval: 30
+  idle-session-timeout: 30
+  sni: $an_name 
+  skip-cert-verify: $an_ins
+
 proxy-groups:
 - name: 负载均衡
   type: load-balance
@@ -3280,6 +3403,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
 
 - name: 自动选择
   type: url-test
@@ -3291,6 +3415,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
     
 - name: 🌍选择代理节点
   type: select
@@ -3302,6 +3427,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
+	- anytls-$hostname
 rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
