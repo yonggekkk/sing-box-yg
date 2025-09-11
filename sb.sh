@@ -1214,37 +1214,6 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 }
 
-
--name: "$ygkkk"
-type: anytls
-server: $cl_an_ip
-port: $an_port
-password: ${uuid}
-client-fingerprint: chrome
-udp: true
-idle-session-check-interval: 30
-idle-session-timeout: 30
-sni: $an_name 
-skip-cert-verify: $an_ins
-
-{
-  "type": "anytls",
-  "tag": "$ygkkk",
-  "server": "$sb_an_ip",
-  "server_port": $an_port,
-  "password": "$uuid",
-  "idle_session_check_interval": "30s",
-  "idle_session_timeout": "30s",
-  "min_idle_session": 5,
-  "tls": {
-    "enabled": true,
-    "insecure": $an_ins,
-    "server_name": "$an_name"
-  }
-}
-
-
-
 sb_client(){
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 argopid
