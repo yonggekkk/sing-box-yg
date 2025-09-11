@@ -3631,7 +3631,7 @@ echo
 wgcfgo
 sbshare
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-blue "Hysteria2/Tuic5自定义V2rayN配置、Clash-Meta/Sing-box客户端配置及私有订阅链接，请选择9查看"
+blue "Hysteria2/Tuic5自定义V2rayN配置、Mihomo/Sing-box客户端配置及私有订阅链接，请选择9查看"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 }
@@ -4114,9 +4114,9 @@ res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${M
 fi
 
 if [[ -f /etc/s-box/clash_meta_gitlab.txt ]]; then
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Clash-meta 订阅链接 】：支持Clash-meta相关客户端 "$'"'"'\n\n'"'"'"${message_text_m10}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Mihomo 订阅链接 】：支持Mihomo相关客户端 "$'"'"'\n\n'"'"'"${message_text_m10}")
 else
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Clash-meta 配置文件(2段) 】：支持Clash-meta相关客户端 "$'"'"'\n\n'"'"'"${message_text_m8}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Mihomo 配置文件(2段) 】：支持Mihomo相关客户端 "$'"'"'\n\n'"'"'"${message_text_m8}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=${message_text_m8_5}")
 fi
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 聚合节点 】：支持nekobox "$'"'"'\n\n'"'"'"${message_text_m11}")
@@ -4302,11 +4302,11 @@ qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/sing_box_gitlab.txt 2>/dev/null)"
 echo
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
-green "当前Clash-meta节点配置已更新并推送"
-green "Clash-meta订阅链接如下："
+green "当前Mihomo节点配置已更新并推送"
+green "Mihomo订阅链接如下："
 blue "$(cat /etc/s-box/clash_meta_gitlab.txt 2>/dev/null)"
 echo
-green "Clash-meta订阅链接二维码如下："
+green "Mihomo订阅链接二维码如下："
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/clash_meta_gitlab.txt 2>/dev/null)"
 echo
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -4959,7 +4959,7 @@ clash_sb_share(){
 sbactive
 echo
 yellow "1：刷新并查看各协议分享链接、二维码、聚合节点"
-yellow "2：刷新并查看Clash-Meta、Sing-box客户端SFA/SFI/SFW三合一配置、Gitlab私有订阅链接"
+yellow "2：刷新并查看Mihomo、Sing-box客户端SFA/SFI/SFW三合一配置、Gitlab私有订阅链接"
 yellow "3：刷新并查看Hysteria2、Tuic5的V2rayN客户端自定义配置"
 yellow "4：推送最新节点配置信息(选项1+选项2)到Telegram通知"
 yellow "0：返回上层"
@@ -4973,7 +4973,7 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "Gitlab订阅链接如下："
 gitlabsubgo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 vless-reality、vmess-ws、Hysteria2、Tuic5、Anytls】Clash-Meta配置文件显示如下："
+red "🚀【 vless-reality、vmess-ws、Hysteria2、Tuic5、Anytls】Mihomo配置文件显示如下："
 red "文件目录 /etc/s-box/clash_meta_client.yaml ，复制自建以yaml文件格式为准" && sleep 2
 echo
 cat /etc/s-box/clash_meta_client.yaml
@@ -5321,7 +5321,7 @@ green " 6. 关闭/重启 Sing-box"
 green " 7. 更新 Sing-box-yg 脚本"
 green " 8. 更新/切换/指定 Sing-box 内核版本"
 white "----------------------------------------------------------------------------------"
-green " 9. 刷新并查看节点 【Clash-Meta/SFA+SFI+SFW三合一配置/订阅链接/推送TG通知】"
+green " 9. 刷新并查看节点 【Mihomo/SFA+SFI+SFW三合一配置/订阅链接/推送TG通知】"
 green "10. 查看 Sing-box 运行日志"
 green "11. 一键原版BBR+FQ加速"
 green "12. 管理 Acme 申请域名证书"
