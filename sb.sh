@@ -1323,10 +1323,10 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "hy2-$hostname",
         "tuic5-$hostname",
         "anytls-$hostname",
-"vmess-tls-argo固定-$hostname",
-"vmess-argo固定-$hostname",
-"vmess-tls-argo临时-$hostname",
-"vmess-argo临时-$hostname"
+        "vmess-tls-argo固定-$hostname",
+        "vmess-argo固定-$hostname",
+        "vmess-tls-argo临时-$hostname",
+        "vmess-argo临时-$hostname"
       ]
     },
     {
@@ -1414,7 +1414,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 ]
             }
         },
-		{
+         {
             "type": "anytls",
             "tag": "anytls-$hostname",
             "server": "$sb_an_ip",
@@ -1549,11 +1549,11 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-		"anytls-$hostname",
-"vmess-tls-argo固定-$hostname",
-"vmess-argo固定-$hostname",
-"vmess-tls-argo临时-$hostname",
-"vmess-argo临时-$hostname"
+        "anytls-$hostname",
+        "vmess-tls-argo固定-$hostname",
+        "vmess-argo固定-$hostname",
+        "vmess-tls-argo临时-$hostname",
+        "vmess-argo临时-$hostname"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -1813,7 +1813,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
     - vmess-tls-argo临时-$hostname
@@ -1829,7 +1829,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
     - vmess-tls-argo临时-$hostname
@@ -1845,7 +1845,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
     - vmess-tls-argo临时-$hostname
@@ -1962,9 +1962,9 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-		"anytls-$hostname",
-"vmess-tls-argo临时-$hostname",
-"vmess-argo临时-$hostname"
+        "anytls-$hostname",
+        "vmess-tls-argo临时-$hostname",
+        "vmess-argo临时-$hostname"
       ]
     },
     {
@@ -2052,7 +2052,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 ]
             }
         },
-		{
+         {
             "type": "anytls",
             "tag": "anytls-$hostname",
             "server": "$sb_an_ip",
@@ -2133,9 +2133,9 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-		"anytls-$hostname",
-"vmess-tls-argo临时-$hostname",
-"vmess-argo临时-$hostname"
+        "anytls-$hostname",
+        "vmess-tls-argo临时-$hostname",
+        "vmess-argo临时-$hostname"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -2369,7 +2369,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo临时-$hostname
     - vmess-argo临时-$hostname
 
@@ -2383,7 +2383,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo临时-$hostname
     - vmess-argo临时-$hostname
     
@@ -2397,7 +2397,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo临时-$hostname
     - vmess-argo临时-$hostname
 rules:
@@ -2511,9 +2511,9 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-		"anytls-$hostname",
-"vmess-tls-argo固定-$hostname",
-"vmess-argo固定-$hostname"
+        "anytls-$hostname",
+        "vmess-tls-argo固定-$hostname",
+        "vmess-argo固定-$hostname"
       ]
     },
     {
@@ -2601,7 +2601,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 ]
             }
         },
-		{
+         {
             "type": "anytls",
             "tag": "anytls-$hostname",
             "server": "$sb_an_ip",
@@ -2682,9 +2682,9 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-		"anytls-$hostname",
-"vmess-tls-argo固定-$hostname",
-"vmess-argo固定-$hostname"
+        "anytls-$hostname",
+        "vmess-tls-argo固定-$hostname",
+        "vmess-argo固定-$hostname"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -2916,7 +2916,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
 
@@ -2930,7 +2930,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
     
@@ -2944,7 +2944,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     - vmess-tls-argo固定-$hostname
     - vmess-argo固定-$hostname
 rules:
@@ -3058,7 +3058,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-		"anytls-$hostname"
+        "anytls-$hostname"
       ]
     },
     {
@@ -3146,7 +3146,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 ]
             }
         },
-		{
+        {
             "type": "anytls",
             "tag": "anytls-$hostname",
             "server": "$sb_an_ip",
@@ -3173,7 +3173,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-		"anytls-$hostname"
+        "anytls-$hostname"
       ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "1m",
@@ -3372,7 +3372,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
 
 - name: 自动选择
   type: url-test
@@ -3384,7 +3384,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
     
 - name: 🌍选择代理节点
   type: select
@@ -3396,7 +3396,7 @@ proxy-groups:
     - vmess-ws-$hostname
     - hysteria2-$hostname
     - tuic5-$hostname
-	- anytls-$hostname
+    - anytls-$hostname
 rules:
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
