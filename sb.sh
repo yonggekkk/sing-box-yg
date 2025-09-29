@@ -3496,16 +3496,53 @@ kill -15 $(cat /etc/s-box/sbargoympid.log 2>/dev/null) >/dev/null 2>&1
 fi
 echo
 if [[ -n "${argotoken}" && -n "${argoym}" ]]; then
+if pidof systemd >/dev/null 2>&1; then
+cat > /etc/systemd/system/argo.service <<EOF
+[Unit]
+Description=argo service
+After=network.target
+[Service]
+Type=simple
+NoNewPrivileges=yes
+TimeoutStartSec=0
+ExecStart=/root/agsbx/cloudflared tunnel --no-autoupdate --edge-ip-version auto --protocol http2 run --token "${argotoken}"
+Restart=on-failure
+RestartSec=5s
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload >/dev/null 2>&1
+systemctl enable argo >/dev/null 2>&1
+systemctl start argo >/dev/null 2>&1
+elif command -v rc-service >/dev/null 2>&1; then
+cat > /etc/init.d/argo <<EOF
+#!/sbin/openrc-run
+description="argo service"
+command="/etc/s-box/cloudflared tunnel"
+command_args="--no-autoupdate --edge-ip-version auto --protocol http2 run --token ${argotoken}"
+pidfile="/run/argo.pid"
+command_background="yes"
+depend() {
+need net
+}
+EOF
+chmod +x /etc/init.d/argo >/dev/null 2>&1
+rc-update add argo default >/dev/null 2>&1
+rc-service argo start >/dev/null 2>&1
+else
 nohup setsid /etc/s-box/cloudflared tunnel --no-autoupdate --edge-ip-version auto --protocol http2 run --token ${argotoken} >/dev/null 2>&1 & echo "$!" > /etc/s-box/sbargoympid.log
 sleep 20
 fi
+fi
 echo ${argoym} > /etc/s-box/sbargoym.log
 echo ${argotoken} > /etc/s-box/sbargotoken.log
+if ! pidof systemd >/dev/null 2>&1 && ! command -v rc-service >/dev/null 2>&1; then
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargoympid/d' /tmp/crontab.tmp
 echo '@reboot /bin/bash -c "nohup setsid /etc/s-box/cloudflared tunnel --no-autoupdate --edge-ip-version auto --protocol http2 run --token $(cat /etc/s-box/sbargotoken.log 2>/dev/null) >/dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/sbargoympid.log"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp
 rm /tmp/crontab.tmp
+fi
 argo=$(cat /etc/s-box/sbargoym.log 2>/dev/null)
 blue "Argo固定隧道设置完成，固定域名：$argo"
 elif [ "$menu" = "2" ]; then
@@ -3514,6 +3551,15 @@ crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargoympid/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp
 rm /tmp/crontab.tmp
+if pidof systemd >/dev/null 2>&1; then
+systemctl stop argo >/dev/null 2>&1
+systemctl disable argo >/dev/null 2>&1
+rm -rf /etc/systemd/system/argo.service
+elif command -v rc-service >/dev/null 2>&1; then
+rc-service argo stop >/dev/null 2>&1
+rc-update del argo default >/dev/null 2>&1
+rm -rf /etc/init.d/argo
+fi
 rm -rf /etc/s-box/vm_ws_argogd.txt
 green "Argo固定隧道已停止"
 else
