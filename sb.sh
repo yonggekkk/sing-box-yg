@@ -4909,13 +4909,17 @@ fi
 
 unins(){
 if [[ x"${release}" == x"alpine" ]]; then
-rc-service sing-box stop
-rc-update del sing-box default
-rm /etc/init.d/sing-box -f
+for svc in sing-box argo; do
+rc-service "$svc" stop >/dev/null 2>&1
+rc-update del "$svc" default >/dev/null 2>&1
+done
+rm -rf /etc/init.d/{sing-box,argo}
 else
-systemctl stop sing-box >/dev/null 2>&1
-systemctl disable sing-box >/dev/null 2>&1
-rm -f /etc/systemd/system/sing-box.service
+for svc in sing-box argo; do
+systemctl stop "$svc" >/dev/null 2>&1
+systemctl disable "$svc" >/dev/null 2>&1
+done
+rm -rf /etc/systemd/system/{sing-box.service,argo.service}
 fi
 kill -15 $(cat /etc/s-box/sbargopid.log 2>/dev/null) >/dev/null 2>&1
 kill -15 $(cat /etc/s-box/sbargoympid.log 2>/dev/null) >/dev/null 2>&1
