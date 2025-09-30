@@ -3540,7 +3540,7 @@ if ! pidof systemd >/dev/null 2>&1 && ! command -v rc-service >/dev/null 2>&1; t
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargoympid/d' /tmp/crontab.tmp
 echo '@reboot /bin/bash -c "nohup setsid /etc/s-box/cloudflared tunnel --no-autoupdate --edge-ip-version auto --protocol http2 run --token $(cat /etc/s-box/sbargotoken.log 2>/dev/null) >/dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/sbargoympid.log"' >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 fi
 argo=$(cat /etc/s-box/sbargoym.log 2>/dev/null)
@@ -3549,7 +3549,7 @@ elif [ "$menu" = "2" ]; then
 kill -15 $(cat /etc/s-box/sbargoympid.log 2>/dev/null) >/dev/null 2>&1
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargoympid/d' /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 if pidof systemd >/dev/null 2>&1; then
 systemctl stop argo >/dev/null 2>&1
@@ -3597,13 +3597,13 @@ done
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargopid/d' /tmp/crontab.tmp
 echo '@reboot /bin/bash -c "nohup setsid /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 & pid=\$! && echo \$pid > /etc/s-box/sbargopid.log"' >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 elif [ "$menu" = "2" ]; then
 kill -15 $(cat /etc/s-box/sbargopid.log 2>/dev/null) >/dev/null 2>&1
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargopid/d' /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 rm -rf /etc/s-box/vm_ws_argols.txt
 green "Argo临时隧道已停止"
@@ -4823,7 +4823,7 @@ cronsb(){
 uncronsb
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 echo "0 1 * * * systemctl restart sing-box;rc-service sing-box restart" >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 }
 uncronsb(){
@@ -4832,7 +4832,7 @@ sed -i '/sing-box/d' /tmp/crontab.tmp
 sed -i '/sbargopid/d' /tmp/crontab.tmp
 sed -i '/sbargoympid/d' /tmp/crontab.tmp
 sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 }
 
@@ -5213,7 +5213,7 @@ kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
 rm -rf /etc/s-box/sbwpph.log /etc/s-box/sbwpphid.log
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 }
 echo
@@ -5235,7 +5235,7 @@ echo "/etc/s-box/sbwpph -b 127.0.0.1:$port --gool -$sw46 --endpoint 162.159.192.
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
 echo '@reboot /bin/bash -c "nohup setsid $(cat /etc/s-box/sbwpph.log 2>/dev/null) & pid=\$! && echo \$pid > /etc/s-box/sbwpphid.log"' >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 green "WARP-plus-Socks5的IP获取成功，可进行Socks5代理分流"
 fi
@@ -5287,7 +5287,7 @@ echo "/etc/s-box/sbwpph -b 127.0.0.1:$port --cfon --country $guojia -$sw46 --end
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
 echo '@reboot /bin/bash -c "nohup setsid $(cat /etc/s-box/sbwpph.log 2>/dev/null) & pid=\$! && echo \$pid > /etc/s-box/sbwpphid.log"' >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 green "WARP-plus-Socks5的IP获取成功，可进行Socks5代理分流"
 fi
