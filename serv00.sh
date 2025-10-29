@@ -503,15 +503,6 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
     }
   ],
    "route": {
-       "rule_set": [
-      {
-        "tag": "google-gemini",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google-gemini.srs",
-        "download_detour": "direct"
-      }
-    ],
 EOF
 if [[ "$nb" =~ 14|15 ]]; then
 cat >> config.json <<EOF 
@@ -521,13 +512,7 @@ cat >> config.json <<EOF
      "jnn-pa.googleapis.com"
       ],
      "outbound": "wg"
-     },
-     {
-     "rule_set":[
-     "google-gemini"
-     ],
-     "outbound": "wg"
-    }
+     }
     ],
     "final": "direct"
     }  
