@@ -3403,44 +3403,6 @@ rules:
   - MATCH,🌍选择代理节点
 EOF
 fi
-
-cat > /etc/s-box/v2rayn_hy2.yaml <<EOF
-server: $sb_hy2_ip:$hy2_port
-auth: $uuid
-tls:
-  sni: $hy2_name
-  insecure: $hy2_ins
-fastOpen: true
-socks5:
-  listen: 127.0.0.1:50000
-lazy: true
-transport:
-  udp:
-    hopInterval: 30s
-EOF
-
-cat > /etc/s-box/v2rayn_tu5.json <<EOF
-{
-    "relay": {
-        "server": "$sb_tu5_ip:$tu5_port",
-        "uuid": "$uuid",
-        "password": "$uuid",
-        "congestion_control": "bbr",
-        "alpn": ["h3", "spdy/3.1"]
-    },
-    "local": {
-        "server": "127.0.0.1:55555"
-    },
-    "log_level": "info"
-}
-EOF
-if [[ -n $hy2_ports ]]; then
-hy2_ports=",$hy2_ports"
-hy2_ports=$(echo $hy2_ports | sed 's/:/-/g')
-a=$hy2_ports
-sed -i "/server:/ s/$/$a/" /etc/s-box/v2rayn_hy2.yaml
-fi
-sed -i 's/server: \(.*\)/server: "\1"/' /etc/s-box/v2rayn_hy2.yaml
 }
 
 cfargo_ym(){
@@ -4980,10 +4942,9 @@ sbactive
 echo
 yellow "1：刷新并查看各协议分享链接、二维码、聚合节点"
 yellow "2：刷新并查看Mihomo、Sing-box客户端SFA/SFI/SFW三合一配置、Gitlab私有订阅链接"
-yellow "3：刷新并查看Hysteria2、Tuic5的V2rayN客户端自定义配置"
-yellow "4：推送最新节点配置信息(选项1+选项2)到Telegram通知"
+yellow "3：推送最新节点配置信息(选项1+选项2)到Telegram通知"
 yellow "0：返回上层"
-readp "请选择【0-4】：" menu
+readp "请选择【0-3】：" menu
 if [ "$menu" = "1" ]; then
 sbshare
 elif  [ "$menu" = "2" ]; then
@@ -5009,35 +4970,7 @@ cat /etc/s-box/sing_box_client.json
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
-elif  [ "$menu" = "3" ]; then
-green "请稍等……"
-sbshare > /dev/null 2>&1
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 Hysteria-2 】自定义V2rayN配置文件显示如下："
-red "文件目录 /etc/s-box/v2rayn_hy2.yaml ，复制自建以yaml文件格式为准" && sleep 2
-echo
-cat /etc/s-box/v2rayn_hy2.yaml
-echo
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo
-tu5_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[3].tls.key_path')
-if [[ "$tu5_sniname" = '/etc/s-box/private.key' ]]; then
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo
-red "注意：V2rayN客户端使用自定义Tuic5官方客户端核心时，不支持Tuic5自签证书，仅支持域名证书" && sleep 2
-echo
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-else
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 Tuic-v5 】自定义V2rayN配置文件显示如下："
-red "文件目录 /etc/s-box/v2rayn_tu5.json ，复制自建以json文件格式为准" && sleep 2
-echo
-cat /etc/s-box/v2rayn_tu5.json
-echo
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo
-fi
-elif [ "$menu" = "4" ]; then
+elif [ "$menu" = "3" ]; then
 tgnotice
 else
 sb
