@@ -1666,7 +1666,7 @@ log-level: info
 unified-delay: true
 global-client-fingerprint: chrome
 dns:
-  enable: false
+  enable: true
   listen: :53
   ipv6: true
   enhanced-mode: fake-ip
@@ -2205,7 +2205,7 @@ log-level: info
 unified-delay: true
 global-client-fingerprint: chrome
 dns:
-  enable: false
+  enable: true
   listen: :53
   ipv6: true
   enhanced-mode: fake-ip
@@ -2711,7 +2711,7 @@ log-level: info
 unified-delay: true
 global-client-fingerprint: chrome
 dns:
-  enable: false
+  enable: true
   listen: :53
   ipv6: true
   enhanced-mode: fake-ip
@@ -3157,7 +3157,7 @@ log-level: info
 unified-delay: true
 global-client-fingerprint: chrome
 dns:
-  enable: false
+  enable: true
   listen: :53
   ipv6: true
   enhanced-mode: fake-ip
