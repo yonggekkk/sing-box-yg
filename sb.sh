@@ -1271,115 +1271,156 @@ argopid
 if [[ -n $(ps -e | grep -w $ym 2>/dev/null) && -n $(ps -e | grep -w $ls 2>/dev/null) && "$tls" = "false" ]]; then
 cat > /etc/s-box/sing_box_client.json <<EOF
 {
-  "log": {
-    "disabled": false,
-    "level": "info",
-    "timestamp": true
-  },
-  "experimental": {
-    "clash_api": {
-      "external_controller": "127.0.0.1:9090",
-      "external_ui": "ui",
-      "external_ui_download_url": "",
-      "external_ui_download_detour": "",
-      "secret": "",
-      "default_mode": "Rule"
-       },
-      "cache_file": {
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    },
+    "experimental": {
+        "cache_file": {
             "enabled": true,
-            "path": "cache.db",
+            "path": "./cache.db",
             "store_fakeip": true
+        },
+        "clash_api": {
+            "external_controller": "127.0.0.1:9090",
+            "external_ui": "ui",
+            "default_mode": "Rule"
         }
     },
     "dns": {
         "servers": [
             {
-                "tag": "proxydns",
-                "address": "$sbdnsip",
-                "detour": "select"
+                "tag": "aliDns",
+                "type": "https",
+                "server": "dns.alidns.com",
+                "path": "/dns-query",
+                "domain_resolver": "local"
             },
             {
-                "tag": "localdns",
-                "address": "h3://223.5.5.5/dns-query",
-                "detour": "direct"
+                "tag": "local",
+                "type": "udp",
+                "server": "223.5.5.5"
             },
             {
-                "tag": "dns_fakeip",
-                "address": "fakeip"
-            }
+                "tag": "proxyDns",
+                "type": "https",
+                "server": "dns.google",
+                "path": "/dns-query",
+	            "domain_resolver": "aliDns",
+                "detour": "proxy"
+            },
+           {
+        "type": "fakeip",
+        "tag": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
+      }
         ],
         "rules": [
             {
-                "outbound": "any",
-                "server": "localdns",
-                "disable_cache": true
-            },
-            {
-                "clash_mode": "Global",
-                "server": "proxydns"
+                "rule_set": "geosite-cn",
+                "clash_mode": "Rule",
+                "server": "aliDns"
             },
             {
                 "clash_mode": "Direct",
-                "server": "localdns"
+                "server": "local"
             },
             {
-                "rule_set": "geosite-cn",
-                "server": "localdns"
+                "clash_mode": "Global",
+                "server": "proxyDns"
             },
             {
-                 "rule_set": "geosite-geolocation-!cn",
-                 "server": "proxydns"
-            },
-             {
-                "rule_set": "geosite-geolocation-!cn",         
-                "query_type": [
-                    "A",
-                    "AAAA"
-                ],
-                "server": "dns_fakeip"
-            }
-          ],
-           "fakeip": {
-           "enabled": true,
-           "inet4_range": "198.18.0.0/15",
-           "inet6_range": "fc00::/18"
-         },
-          "independent_cache": true,
-          "final": "proxydns"
-        },
-      "inbounds": [
-    {
-      "type": "tun",
-      "tag": "tun-in",
-	  "address": [
-      "172.19.0.1/30",
-	  "fd00::1/126"
-      ],
-      "auto_route": true,
-      "strict_route": true,
-      "sniff": true,
-      "sniff_override_destination": true,
-      "domain_strategy": "prefer_ipv4"
-    }
-  ],
-  "outbounds": [
-    {
-      "tag": "select",
-      "type": "selector",
-      "default": "auto",
-      "outbounds": [
-        "auto",
-        "vless-$hostname",
-        "vmess-$hostname",
-        "hy2-$hostname",
-        "tuic5-$hostname",
-        $(sbany1)
-        "vmess-tls-argo固定-$hostname",
-        "vmess-argo固定-$hostname",
-        "vmess-tls-argo临时-$hostname",
-        "vmess-argo临时-$hostname"
-      ]
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "fakeip"
+      }
+        ],
+        "final": "proxyDns",
+        "strategy": "ipv4_only",
+        "independent_cache": true
     },
+    "inbounds": [
+        {
+            "type": "tun",
+            "tag": "tun-in",
+            "address": [
+                "172.19.0.1/30",
+                "fd00::1/126"
+            ],
+            "auto_route": true,
+            "strict_route": true
+        }
+    ],
+    "route": {
+        "rules": [
+            {
+	           "inbound": "tun-in",
+                "action": "sniff"
+            },
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "port": 53
+                    },
+                    {
+                        "protocol": "dns"
+                    }
+                ],
+                "action": "hijack-dns"
+            },
+         {
+          "clash_mode": "Global",
+          "outbound": "proxy"
+         },
+        {
+        "rule_set": "geosite-cn",
+        "clash_mode": "Rule",
+        "outbound": "direct"
+       },
+     {
+    "rule_set": "geoip-cn",
+    "clash_mode": "Rule",
+    "outbound": "direct"
+      },
+     {
+    "ip_is_private": true,
+    "clash_mode": "Rule",
+    "outbound": "direct"
+    },
+     {
+      "clash_mode": "Direct",
+      "outbound": "direct"
+     }		
+        ],
+        "rule_set": [
+            {
+                "tag": "geosite-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "geoip-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
+                "download_detour": "direct"
+            }
+        ],
+        "final": "proxy",
+        "auto_detect_interface": true,
+        "default_domain_resolver": {
+            "server": "aliDns"
+        }
+    },
+  "outbounds": [
     {
       "type": "vless",
       "tag": "vless-$hostname",
@@ -1574,14 +1615,12 @@ $(sbany2)
             "security": "auto",
             "uuid": "$uuid"
         },
-    {
-      "tag": "direct",
-      "type": "direct"
-    },
-    {
-      "tag": "auto",
-      "type": "urltest",
-      "outbounds": [
+        {
+            "tag": "proxy",
+            "type": "selector",
+			"default": "auto",
+            "outbounds": [
+        "auto",
         "vless-$hostname",
         "vmess-$hostname",
         "hy2-$hostname",
@@ -1591,89 +1630,31 @@ $(sbany2)
         "vmess-argo固定-$hostname",
         "vmess-tls-argo临时-$hostname",
         "vmess-argo临时-$hostname"
-      ],
-      "url": "https://www.gstatic.com/generate_204",
-      "interval": "1m",
-      "tolerance": 50,
-      "interrupt_exist_connections": false
-    }
-  ],
-  "route": {
-      "rule_set": [
-            {
-                "tag": "geosite-geolocation-!cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            },
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            },
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            }
-        ],
-    "auto_detect_interface": true,
-    "final": "select",
-    "rules": [
-      {
-      "inbound": "tun-in",
-      "action": "sniff"
-      },
-      {
-      "protocol": "dns",
-      "action": "hijack-dns"
-      },
-      {
-      "port": 443,
-      "network": "udp",
-      "action": "reject"
-      },
-      {
-        "clash_mode": "Direct",
-        "outbound": "direct"
-      },
-      {
-        "clash_mode": "Global",
-        "outbound": "select"
-      },
-      {
-        "rule_set": "geoip-cn",
-        "outbound": "direct"
-      },
-      {
-        "rule_set": "geosite-cn",
-        "outbound": "direct"
-      },
-      {
-      "ip_is_private": true,
-      "outbound": "direct"
-      },
-      {
-        "rule_set": "geosite-geolocation-!cn",
-        "outbound": "select"
-      }
+            ]
+        },
+        {
+            "tag": "auto",
+            "type": "urltest",
+            "outbounds": [
+        "vless-$hostname",
+        "vmess-$hostname",
+        "hy2-$hostname",
+        "tuic5-$hostname",
+        $(sbany1)
+        "vmess-tls-argo固定-$hostname",
+        "vmess-argo固定-$hostname",
+        "vmess-tls-argo临时-$hostname",
+        "vmess-argo临时-$hostname"
+            ],
+            "url": "http://www.gstatic.com/generate_204",
+            "interval": "10m",
+            "tolerance": 50
+        },
+        {
+            "type": "direct",
+            "tag": "direct"
+        }
     ]
-  },
-    "ntp": {
-    "enabled": true,
-    "server": "time.apple.com",
-    "server_port": 123,
-    "interval": "30m",
-    "detour": "direct"
-  }
 }
 EOF
 
@@ -1887,113 +1868,156 @@ EOF
 elif [[ ! -n $(ps -e | grep -w $ym 2>/dev/null) && -n $(ps -e | grep -w $ls 2>/dev/null) && "$tls" = "false" ]]; then
 cat > /etc/s-box/sing_box_client.json <<EOF
 {
-  "log": {
-    "disabled": false,
-    "level": "info",
-    "timestamp": true
-  },
-  "experimental": {
-    "clash_api": {
-      "external_controller": "127.0.0.1:9090",
-      "external_ui": "ui",
-      "external_ui_download_url": "",
-      "external_ui_download_detour": "",
-      "secret": "",
-      "default_mode": "Rule"
-       },
-      "cache_file": {
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    },
+    "experimental": {
+        "cache_file": {
             "enabled": true,
-            "path": "cache.db",
+            "path": "./cache.db",
             "store_fakeip": true
+        },
+        "clash_api": {
+            "external_controller": "127.0.0.1:9090",
+            "external_ui": "ui",
+            "default_mode": "Rule"
         }
     },
     "dns": {
         "servers": [
             {
-                "tag": "proxydns",
-                "address": "$sbdnsip",
-                "detour": "select"
+                "tag": "aliDns",
+                "type": "https",
+                "server": "dns.alidns.com",
+                "path": "/dns-query",
+                "domain_resolver": "local"
             },
             {
-                "tag": "localdns",
-                "address": "h3://223.5.5.5/dns-query",
-                "detour": "direct"
+                "tag": "local",
+                "type": "udp",
+                "server": "223.5.5.5"
             },
             {
-                "tag": "dns_fakeip",
-                "address": "fakeip"
-            }
+                "tag": "proxyDns",
+                "type": "https",
+                "server": "dns.google",
+                "path": "/dns-query",
+	            "domain_resolver": "aliDns",
+                "detour": "proxy"
+            },
+           {
+        "type": "fakeip",
+        "tag": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
+      }
         ],
         "rules": [
             {
-                "outbound": "any",
-                "server": "localdns",
-                "disable_cache": true
-            },
-            {
-                "clash_mode": "Global",
-                "server": "proxydns"
+                "rule_set": "geosite-cn",
+                "clash_mode": "Rule",
+                "server": "aliDns"
             },
             {
                 "clash_mode": "Direct",
-                "server": "localdns"
+                "server": "local"
             },
             {
-                "rule_set": "geosite-cn",
-                "server": "localdns"
+                "clash_mode": "Global",
+                "server": "proxyDns"
             },
             {
-                 "rule_set": "geosite-geolocation-!cn",
-                 "server": "proxydns"
-            },
-             {
-                "rule_set": "geosite-geolocation-!cn",         
-                "query_type": [
-                    "A",
-                    "AAAA"
-                ],
-                "server": "dns_fakeip"
-            }
-          ],
-           "fakeip": {
-           "enabled": true,
-           "inet4_range": "198.18.0.0/15",
-           "inet6_range": "fc00::/18"
-         },
-          "independent_cache": true,
-          "final": "proxydns"
-        },
-      "inbounds": [
-    {
-      "type": "tun",
-           "tag": "tun-in",
-	  "address": [
-      "172.19.0.1/30",
-	  "fd00::1/126"
-      ],
-      "auto_route": true,
-      "strict_route": true,
-      "sniff": true,
-      "sniff_override_destination": true,
-      "domain_strategy": "prefer_ipv4"
-    }
-  ],
-  "outbounds": [
-    {
-      "tag": "select",
-      "type": "selector",
-      "default": "auto",
-      "outbounds": [
-        "auto",
-        "vless-$hostname",
-        "vmess-$hostname",
-        "hy2-$hostname",
-        "tuic5-$hostname",
-        $(sbany1)
-        "vmess-tls-argo临时-$hostname",
-        "vmess-argo临时-$hostname"
-      ]
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "fakeip"
+      }
+        ],
+        "final": "proxyDns",
+        "strategy": "ipv4_only",
+        "independent_cache": true
     },
+    "inbounds": [
+        {
+            "type": "tun",
+            "tag": "tun-in",
+            "address": [
+                "172.19.0.1/30",
+                "fd00::1/126"
+            ],
+            "auto_route": true,
+            "strict_route": true
+        }
+    ],
+    "route": {
+        "rules": [
+            {
+	           "inbound": "tun-in",
+                "action": "sniff"
+            },
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "port": 53
+                    },
+                    {
+                        "protocol": "dns"
+                    }
+                ],
+                "action": "hijack-dns"
+            },
+         {
+          "clash_mode": "Global",
+          "outbound": "proxy"
+         },
+        {
+        "rule_set": "geosite-cn",
+        "clash_mode": "Rule",
+        "outbound": "direct"
+       },
+     {
+    "rule_set": "geoip-cn",
+    "clash_mode": "Rule",
+    "outbound": "direct"
+      },
+     {
+    "ip_is_private": true,
+    "clash_mode": "Rule",
+    "outbound": "direct"
+    },
+     {
+      "clash_mode": "Direct",
+      "outbound": "direct"
+     }		
+        ],
+        "rule_set": [
+            {
+                "tag": "geosite-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "geoip-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
+                "download_detour": "direct"
+            }
+        ],
+        "final": "proxy",
+        "auto_detect_interface": true,
+        "default_domain_resolver": {
+            "server": "aliDns"
+        }
+    },
+  "outbounds": [
     {
       "type": "vless",
       "tag": "vless-$hostname",
@@ -2134,14 +2158,12 @@ $(sbany2)
             "security": "auto",
             "uuid": "$uuid"
         },
-    {
-      "tag": "direct",
-      "type": "direct"
-    },
-    {
-      "tag": "auto",
-      "type": "urltest",
-      "outbounds": [
+        {
+            "tag": "proxy",
+            "type": "selector",
+			"default": "auto",
+            "outbounds": [
+        "auto",
         "vless-$hostname",
         "vmess-$hostname",
         "hy2-$hostname",
@@ -2149,89 +2171,29 @@ $(sbany2)
         $(sbany1)
         "vmess-tls-argo临时-$hostname",
         "vmess-argo临时-$hostname"
-      ],
-      "url": "https://www.gstatic.com/generate_204",
-      "interval": "1m",
-      "tolerance": 50,
-      "interrupt_exist_connections": false
-    }
-  ],
-  "route": {
-      "rule_set": [
-            {
-                "tag": "geosite-geolocation-!cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            },
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            },
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            }
-        ],
-    "auto_detect_interface": true,
-    "final": "select",
-    "rules": [
-      {
-      "inbound": "tun-in",
-      "action": "sniff"
-      },
-      {
-      "protocol": "dns",
-      "action": "hijack-dns"
-      },
-      {
-      "port": 443,
-      "network": "udp",
-      "action": "reject"
-      },
-      {
-        "clash_mode": "Direct",
-        "outbound": "direct"
-      },
-      {
-        "clash_mode": "Global",
-        "outbound": "select"
-      },
-      {
-        "rule_set": "geoip-cn",
-        "outbound": "direct"
-      },
-      {
-        "rule_set": "geosite-cn",
-        "outbound": "direct"
-      },
-      {
-      "ip_is_private": true,
-      "outbound": "direct"
-      },
-      {
-        "rule_set": "geosite-geolocation-!cn",
-        "outbound": "select"
-      }
+            ]
+        },
+        {
+            "tag": "auto",
+            "type": "urltest",
+            "outbounds": [
+        "vless-$hostname",
+        "vmess-$hostname",
+        "hy2-$hostname",
+        "tuic5-$hostname",
+        $(sbany1)
+        "vmess-tls-argo临时-$hostname",
+        "vmess-argo临时-$hostname"
+            ],
+            "url": "http://www.gstatic.com/generate_204",
+            "interval": "10m",
+            "tolerance": 50
+        },
+        {
+            "type": "direct",
+            "tag": "direct"
+        }
     ]
-  },
-    "ntp": {
-    "enabled": true,
-    "server": "time.apple.com",
-    "server_port": 123,
-    "interval": "30m",
-    "detour": "direct"
-  }
 }
 EOF
 
@@ -2412,113 +2374,156 @@ EOF
 elif [[ -n $(ps -e | grep -w $ym 2>/dev/null) && ! -n $(ps -e | grep -w $ls 2>/dev/null) && "$tls" = "false" ]]; then
 cat > /etc/s-box/sing_box_client.json <<EOF
 {
-  "log": {
-    "disabled": false,
-    "level": "info",
-    "timestamp": true
-  },
-  "experimental": {
-    "clash_api": {
-      "external_controller": "127.0.0.1:9090",
-      "external_ui": "ui",
-      "external_ui_download_url": "",
-      "external_ui_download_detour": "",
-      "secret": "",
-      "default_mode": "Rule"
-       },
-      "cache_file": {
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    },
+    "experimental": {
+        "cache_file": {
             "enabled": true,
-            "path": "cache.db",
+            "path": "./cache.db",
             "store_fakeip": true
+        },
+        "clash_api": {
+            "external_controller": "127.0.0.1:9090",
+            "external_ui": "ui",
+            "default_mode": "Rule"
         }
     },
     "dns": {
         "servers": [
             {
-                "tag": "proxydns",
-                "address": "$sbdnsip",
-                "detour": "select"
+                "tag": "aliDns",
+                "type": "https",
+                "server": "dns.alidns.com",
+                "path": "/dns-query",
+                "domain_resolver": "local"
             },
             {
-                "tag": "localdns",
-                "address": "h3://223.5.5.5/dns-query",
-                "detour": "direct"
+                "tag": "local",
+                "type": "udp",
+                "server": "223.5.5.5"
             },
             {
-                "tag": "dns_fakeip",
-                "address": "fakeip"
-            }
+                "tag": "proxyDns",
+                "type": "https",
+                "server": "dns.google",
+                "path": "/dns-query",
+	            "domain_resolver": "aliDns",
+                "detour": "proxy"
+            },
+           {
+        "type": "fakeip",
+        "tag": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
+      }
         ],
         "rules": [
             {
-                "outbound": "any",
-                "server": "localdns",
-                "disable_cache": true
-            },
-            {
-                "clash_mode": "Global",
-                "server": "proxydns"
+                "rule_set": "geosite-cn",
+                "clash_mode": "Rule",
+                "server": "aliDns"
             },
             {
                 "clash_mode": "Direct",
-                "server": "localdns"
+                "server": "local"
             },
             {
-                "rule_set": "geosite-cn",
-                "server": "localdns"
+                "clash_mode": "Global",
+                "server": "proxyDns"
             },
             {
-                 "rule_set": "geosite-geolocation-!cn",
-                 "server": "proxydns"
-            },
-             {
-                "rule_set": "geosite-geolocation-!cn",         
-                "query_type": [
-                    "A",
-                    "AAAA"
-                ],
-                "server": "dns_fakeip"
-            }
-          ],
-           "fakeip": {
-           "enabled": true,
-           "inet4_range": "198.18.0.0/15",
-           "inet6_range": "fc00::/18"
-         },
-          "independent_cache": true,
-          "final": "proxydns"
-        },
-      "inbounds": [
-    {
-      "type": "tun",
-     "tag": "tun-in",
-	  "address": [
-      "172.19.0.1/30",
-	  "fd00::1/126"
-      ],
-      "auto_route": true,
-      "strict_route": true,
-      "sniff": true,
-      "sniff_override_destination": true,
-      "domain_strategy": "prefer_ipv4"
-    }
-  ],
-  "outbounds": [
-    {
-      "tag": "select",
-      "type": "selector",
-      "default": "auto",
-      "outbounds": [
-        "auto",
-        "vless-$hostname",
-        "vmess-$hostname",
-        "hy2-$hostname",
-        "tuic5-$hostname",
-        $(sbany1)
-        "vmess-tls-argo固定-$hostname",
-        "vmess-argo固定-$hostname"
-      ]
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "fakeip"
+      }
+        ],
+        "final": "proxyDns",
+        "strategy": "ipv4_only",
+        "independent_cache": true
     },
+    "inbounds": [
+        {
+            "type": "tun",
+            "tag": "tun-in",
+            "address": [
+                "172.19.0.1/30",
+                "fd00::1/126"
+            ],
+            "auto_route": true,
+            "strict_route": true
+        }
+    ],
+    "route": {
+        "rules": [
+            {
+	           "inbound": "tun-in",
+                "action": "sniff"
+            },
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "port": 53
+                    },
+                    {
+                        "protocol": "dns"
+                    }
+                ],
+                "action": "hijack-dns"
+            },
+         {
+          "clash_mode": "Global",
+          "outbound": "proxy"
+         },
+        {
+        "rule_set": "geosite-cn",
+        "clash_mode": "Rule",
+        "outbound": "direct"
+       },
+     {
+    "rule_set": "geoip-cn",
+    "clash_mode": "Rule",
+    "outbound": "direct"
+      },
+     {
+    "ip_is_private": true,
+    "clash_mode": "Rule",
+    "outbound": "direct"
+    },
+     {
+      "clash_mode": "Direct",
+      "outbound": "direct"
+     }		
+        ],
+        "rule_set": [
+            {
+                "tag": "geosite-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "geoip-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
+                "download_detour": "direct"
+            }
+        ],
+        "final": "proxy",
+        "auto_detect_interface": true,
+        "default_domain_resolver": {
+            "server": "aliDns"
+        }
+    },
+  "outbounds": [
     {
       "type": "vless",
       "tag": "vless-$hostname",
@@ -2659,14 +2664,12 @@ $(sbany2)
             "security": "auto",
             "uuid": "$uuid"
         },
-    {
-      "tag": "direct",
-      "type": "direct"
-    },
-    {
-      "tag": "auto",
-      "type": "urltest",
-      "outbounds": [
+        {
+            "tag": "proxy",
+            "type": "selector",
+			"default": "auto",
+            "outbounds": [
+        "auto",
         "vless-$hostname",
         "vmess-$hostname",
         "hy2-$hostname",
@@ -2674,89 +2677,29 @@ $(sbany2)
         $(sbany1)
         "vmess-tls-argo固定-$hostname",
         "vmess-argo固定-$hostname"
-      ],
-      "url": "https://www.gstatic.com/generate_204",
-      "interval": "1m",
-      "tolerance": 50,
-      "interrupt_exist_connections": false
-    }
-  ],
-  "route": {
-      "rule_set": [
-            {
-                "tag": "geosite-geolocation-!cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            },
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            },
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            }
-        ],
-    "auto_detect_interface": true,
-    "final": "select",
-    "rules": [
-      {
-      "inbound": "tun-in",
-      "action": "sniff"
-      },
-      {
-      "protocol": "dns",
-      "action": "hijack-dns"
-      },
-      {
-      "port": 443,
-      "network": "udp",
-      "action": "reject"
-      },
-      {
-        "clash_mode": "Direct",
-        "outbound": "direct"
-      },
-      {
-        "clash_mode": "Global",
-        "outbound": "select"
-      },
-      {
-        "rule_set": "geoip-cn",
-        "outbound": "direct"
-      },
-      {
-        "rule_set": "geosite-cn",
-        "outbound": "direct"
-      },
-      {
-      "ip_is_private": true,
-      "outbound": "direct"
-      },
-      {
-        "rule_set": "geosite-geolocation-!cn",
-        "outbound": "select"
-      }
+            ]
+        },
+        {
+            "tag": "auto",
+            "type": "urltest",
+            "outbounds": [
+        "vless-$hostname",
+        "vmess-$hostname",
+        "hy2-$hostname",
+        "tuic5-$hostname",
+        $(sbany1)
+        "vmess-tls-argo固定-$hostname",
+        "vmess-argo固定-$hostname"
+            ],
+            "url": "http://www.gstatic.com/generate_204",
+            "interval": "10m",
+            "tolerance": 50
+        },
+        {
+            "type": "direct",
+            "tag": "direct"
+        }
     ]
-  },
-    "ntp": {
-    "enabled": true,
-    "server": "time.apple.com",
-    "server_port": 123,
-    "interval": "30m",
-    "detour": "direct"
-  }
 }
 EOF
 
@@ -2935,111 +2878,156 @@ EOF
 else
 cat > /etc/s-box/sing_box_client.json <<EOF
 {
-  "log": {
-    "disabled": false,
-    "level": "info",
-    "timestamp": true
-  },
-  "experimental": {
-    "clash_api": {
-      "external_controller": "127.0.0.1:9090",
-      "external_ui": "ui",
-      "external_ui_download_url": "",
-      "external_ui_download_detour": "",
-      "secret": "",
-      "default_mode": "Rule"
-       },
-      "cache_file": {
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    },
+    "experimental": {
+        "cache_file": {
             "enabled": true,
-            "path": "cache.db",
+            "path": "./cache.db",
             "store_fakeip": true
+        },
+        "clash_api": {
+            "external_controller": "127.0.0.1:9090",
+            "external_ui": "ui",
+            "default_mode": "Rule"
         }
     },
     "dns": {
         "servers": [
             {
-                "tag": "proxydns",
-                "address": "$sbdnsip",
-                "detour": "select"
+                "tag": "aliDns",
+                "type": "https",
+                "server": "dns.alidns.com",
+                "path": "/dns-query",
+                "domain_resolver": "local"
             },
             {
-                "tag": "localdns",
-                "address": "h3://223.5.5.5/dns-query",
-                "detour": "direct"
+                "tag": "local",
+                "type": "udp",
+                "server": "223.5.5.5"
             },
             {
-                "tag": "dns_fakeip",
-                "address": "fakeip"
-            }
+                "tag": "proxyDns",
+                "type": "https",
+                "server": "dns.google",
+                "path": "/dns-query",
+	            "domain_resolver": "aliDns",
+                "detour": "proxy"
+            },
+           {
+        "type": "fakeip",
+        "tag": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
+      }
         ],
         "rules": [
             {
-                "outbound": "any",
-                "server": "localdns",
-                "disable_cache": true
-            },
-            {
-                "clash_mode": "Global",
-                "server": "proxydns"
+                "rule_set": "geosite-cn",
+                "clash_mode": "Rule",
+                "server": "aliDns"
             },
             {
                 "clash_mode": "Direct",
-                "server": "localdns"
+                "server": "local"
             },
             {
-                "rule_set": "geosite-cn",
-                "server": "localdns"
+                "clash_mode": "Global",
+                "server": "proxyDns"
             },
             {
-                 "rule_set": "geosite-geolocation-!cn",
-                 "server": "proxydns"
-            },
-             {
-                "rule_set": "geosite-geolocation-!cn",         
-                "query_type": [
-                    "A",
-                    "AAAA"
-                ],
-                "server": "dns_fakeip"
-            }
-          ],
-           "fakeip": {
-           "enabled": true,
-           "inet4_range": "198.18.0.0/15",
-           "inet6_range": "fc00::/18"
-         },
-          "independent_cache": true,
-          "final": "proxydns"
-        },
-      "inbounds": [
-    {
-      "type": "tun",
-     "tag": "tun-in",
-	  "address": [
-      "172.19.0.1/30",
-	  "fd00::1/126"
-      ],
-      "auto_route": true,
-      "strict_route": true,
-      "sniff": true,
-      "sniff_override_destination": true,
-      "domain_strategy": "prefer_ipv4"
-    }
-  ],
-  "outbounds": [
-    {
-      "tag": "select",
-      "type": "selector",
-      "default": "auto",
-      "outbounds": [
-        "auto",
-        "vless-$hostname",
-		$(sbany1)
-        "vmess-$hostname",
-        "hy2-$hostname",
-        "tuic5-$hostname"
-      ]
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "fakeip"
+      }
+        ],
+        "final": "proxyDns",
+        "strategy": "ipv4_only",
+        "independent_cache": true
     },
+    "inbounds": [
+        {
+            "type": "tun",
+            "tag": "tun-in",
+            "address": [
+                "172.19.0.1/30",
+                "fd00::1/126"
+            ],
+            "auto_route": true,
+            "strict_route": true
+        }
+    ],
+    "route": {
+        "rules": [
+            {
+	           "inbound": "tun-in",
+                "action": "sniff"
+            },
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "port": 53
+                    },
+                    {
+                        "protocol": "dns"
+                    }
+                ],
+                "action": "hijack-dns"
+            },
+         {
+          "clash_mode": "Global",
+          "outbound": "proxy"
+         },
+        {
+        "rule_set": "geosite-cn",
+        "clash_mode": "Rule",
+        "outbound": "direct"
+       },
+     {
+    "rule_set": "geoip-cn",
+    "clash_mode": "Rule",
+    "outbound": "direct"
+      },
+     {
+    "ip_is_private": true,
+    "clash_mode": "Rule",
+    "outbound": "direct"
+    },
+     {
+      "clash_mode": "Direct",
+      "outbound": "direct"
+     }		
+        ],
+        "rule_set": [
+            {
+                "tag": "geosite-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "geoip-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
+                "download_detour": "direct"
+            }
+        ],
+        "final": "proxy",
+        "auto_detect_interface": true,
+        "default_domain_resolver": {
+            "server": "aliDns"
+        }
+    },
+  "outbounds": [
     {
       "type": "vless",
       "tag": "vless-$hostname",
@@ -3126,103 +3114,38 @@ cat > /etc/s-box/sing_box_client.json <<EOF
             }
         },
 $(sbany2)
-    {
-      "tag": "direct",
-      "type": "direct"
-    },
-    {
-      "tag": "auto",
-      "type": "urltest",
-      "outbounds": [
+        {
+            "tag": "proxy",
+            "type": "selector",
+			"default": "auto",
+            "outbounds": [
+        "auto",
         "vless-$hostname",
 		$(sbany1)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname"
-        
-      ],
-      "url": "https://www.gstatic.com/generate_204",
-      "interval": "1m",
-      "tolerance": 50,
-      "interrupt_exist_connections": false
-    }
-  ],
-  "route": {
-      "rule_set": [
-            {
-                "tag": "geosite-geolocation-!cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            },
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            },
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
-                "download_detour": "select",
-                "update_interval": "1d"
-            }
-        ],
-    "auto_detect_interface": true,
-    "final": "select",
-    "rules": [
-      {
-      "inbound": "tun-in",
-      "action": "sniff"
-      },
-      {
-      "protocol": "dns",
-      "action": "hijack-dns"
-      },
-      {
-      "port": 443,
-      "network": "udp",
-      "action": "reject"
-      },
-      {
-        "clash_mode": "Direct",
-        "outbound": "direct"
-      },
-      {
-        "clash_mode": "Global",
-        "outbound": "select"
-      },
-      {
-        "rule_set": "geoip-cn",
-        "outbound": "direct"
-      },
-      {
-        "rule_set": "geosite-cn",
-        "outbound": "direct"
-      },
-      {
-      "ip_is_private": true,
-      "outbound": "direct"
-      },
-      {
-        "rule_set": "geosite-geolocation-!cn",
-        "outbound": "select"
-      }
+            ]
+        },
+        {
+            "tag": "auto",
+            "type": "urltest",
+            "outbounds": [
+        "vless-$hostname",
+		$(sbany1)
+        "vmess-$hostname",
+        "hy2-$hostname",
+        "tuic5-$hostname"
+            ],
+            "url": "http://www.gstatic.com/generate_204",
+            "interval": "10m",
+            "tolerance": 50
+        },
+        {
+            "type": "direct",
+            "tag": "direct"
+        }
     ]
-  },
-    "ntp": {
-    "enabled": true,
-    "server": "time.apple.com",
-    "server_port": 123,
-    "interval": "30m",
-    "detour": "direct"
-  }
 }
 EOF
 
