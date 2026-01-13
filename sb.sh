@@ -4918,7 +4918,10 @@ fi
 
 sbshare(){
 rm -rf /etc/s-box/{jhdy,vl_reality,vm_ws_argols,vm_ws_argogd,vm_ws,vm_ws_tls,hy2,tuic5,an}.txt
-result_vl_vm_hy_tu && resvless && resvmess && reshy2 && restu5 && resan
+result_vl_vm_hy_tu && resvless && resvmess && reshy2 && restu5
+if [[ "$sbnh" != "1.10" ]]; then
+resan
+fi
 cat /etc/s-box/vl_reality.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/vm_ws_argols.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/vm_ws_argogd.txt 2>/dev/null >> /etc/s-box/jhdy.txt
@@ -4957,7 +4960,7 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "Gitlab订阅链接如下："
 gitlabsubgo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 vless-reality、vmess-ws、Hysteria2、Tuic5、Anytls】Mihomo配置文件显示如下："
+red "🚀Mihomo配置文件显示如下："
 red "文件目录 /etc/s-box/clash_meta_client.yaml ，复制自建以yaml文件格式为准" && sleep 2
 echo
 cat /etc/s-box/clash_meta_client.yaml
@@ -4965,7 +4968,7 @@ echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 vless-reality、vmess-ws、Hysteria2、Tuic5、Anytls】SFA/SFI/SFW配置文件显示如下："
+red "🚀SFA/SFI/SFW配置文件显示如下："
 red "安卓SFA、苹果SFI，win电脑官方文件包SFW请到甬哥Github项目自行下载，"
 red "文件目录 /etc/s-box/sing_box_client.json ，复制自建以json文件格式为准" && sleep 2
 echo
