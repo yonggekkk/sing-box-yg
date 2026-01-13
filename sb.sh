@@ -930,9 +930,9 @@ fi
 if [[ -n $($status_cmd 2>/dev/null | grep -w "$status_pattern") && -f '/etc/s-box/sb.json' ]]; then
 v4v6
 if [[ -n $v4 && -n $v6 ]]; then
-green "双栈VPS需要选择IP配置输出，一般情况下nat vps建议选择IPV6"
-yellow "1：使用IPV4配置输出 (回车默认) "
-yellow "2：使用IPV6配置输出"
+green "调整IPv4/IPV6配置输出"
+yellow "1：刷新本地IP，使用IPV4配置输出 (回车默认) "
+yellow "2：刷新本地IP，使用IPV6配置输出"
 readp "请选择【1-2】：" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ]; then
 sbdnsip='tls://8.8.8.8/dns-query'
@@ -5240,7 +5240,7 @@ green "11. 一键原版BBR+FQ加速"
 green "12. 管理 Acme 申请域名证书"
 green "13. 管理 Warp 查看Netflix/ChatGPT解锁情况"
 green "14. 添加 WARP-plus-Socks5 代理模式 【本地Warp/多地区Psiphon-VPN】"
-green "15. 刷新本地IP、切换IPV4/IPV6配置输出"
+green "15. 刷新本地IP、调整IPV4/IPV6配置输出"
 white "----------------------------------------------------------------------------------"
 green "16. Sing-box-yg脚本使用说明书"
 white "----------------------------------------------------------------------------------"
