@@ -251,7 +251,6 @@ ymzs(){
 ym_vl_re=apple.com
 echo
 blue "Vless-reality的SNI域名默认为 apple.com"
-blue "Vmess-ws将开启TLS，Hysteria-2、Tuic-v5、Anytls将使用 $(cat /root/ygkkkca/ca.log 2>/dev/null) 证书"
 tlsyn=true
 ym_vm_ws=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 certificatec_vmess_ws='/root/ygkkkca/cert.crt'
@@ -268,7 +267,6 @@ zqzs(){
 ym_vl_re=apple.com
 echo
 blue "Vless-reality的SNI域名默认为 apple.com"
-blue "Vmess-ws将关闭TLS，Hysteria-2、Tuic-v5、Anytls将使用bing自签证书，并关闭SNI证书验证"
 tlsyn=false
 ym_vm_ws=www.bing.com
 certificatec_vmess_ws='/etc/s-box/cert.pem'
@@ -408,7 +406,10 @@ done
 echo
 blue "根据Vmess-ws协议是否启用TLS，随机指定支持CDN优选IP的标准端口：$port_vm_ws"
 else
-vlport && vmport && hy2port && tu5port && anport
+vlport && vmport && hy2port && tu5port
+if [[ "$sbnh" != "1.10" ]]; then
+anport
+fi
 fi
 echo
 blue "各协议端口确认如下"
@@ -416,7 +417,9 @@ blue "Vless-reality端口：$port_vl_re"
 blue "Vmess-ws端口：$port_vm_ws"
 blue "Hysteria-2端口：$port_hy2"
 blue "Tuic-v5端口：$port_tu"
+if [[ "$sbnh" != "1.10" ]]; then
 blue "Anytls端口：$port_an"
+fi
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green "四、自动生成各个协议统一的uuid (密码)"
 uuid=$(/etc/s-box/sing-box generate uuid)
