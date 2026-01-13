@@ -1219,18 +1219,19 @@ echo
 
 sb_client(){
 sbany1(){
-if [[ "$sbnh" != "1.10" ]]; then
-echo '"anytls-$hostname",'
-fi
+  if [[ "$sbnh" != "1.10" ]]; then
+    echo "\"anytls-$hostname\","
+  fi
 }
 clany1(){
-if [[ "$sbnh" != "1.10" ]]; then
-echo '- anytls-$hostname'
-fi
+  if [[ "$sbnh" != "1.10" ]]; then
+    echo "- anytls-$hostname"
+  fi
 }
 sbany2(){
-if [[ "$sbnh" != "1.10" ]]; then
-echo '         {
+  if [[ "$sbnh" != "1.10" ]]; then
+    cat <<EOF
+         {
             "type": "anytls",
             "tag": "anytls-$hostname",
             "server": "$sb_an_ip",
@@ -1243,24 +1244,27 @@ echo '         {
                 "enabled": true,
                 "insecure": $an_ins,
                 "server_name": "$an_name"
-              }
-      },'
-fi
+            }
+         },
+EOF
+  fi
 }
 clany2(){
-if [[ "$sbnh" != "1.10" ]]; then
-echo '- name: anytls-$hostname 
+  if [[ "$sbnh" != "1.10" ]]; then
+    cat <<EOF
+- name: anytls-$hostname
   type: anytls
   server: $cl_an_ip
   port: $an_port
-  password: ${uuid}
+  password: $uuid
   client-fingerprint: chrome
   udp: true
   idle-session-check-interval: 30
   idle-session-timeout: 30
-  sni: $an_name 
-  skip-cert-verify: $an_ins'
-fi
+  sni: $an_name
+  skip-cert-verify: $an_ins
+EOF
+  fi
 }
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 argopid
