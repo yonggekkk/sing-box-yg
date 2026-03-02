@@ -9,8 +9,8 @@ v26.3.2更新内容：
 如当前运行正常，不建议卸载重装
 
 更新内容：
-1、支持最新1.30系内核，适配mihomo与singbox客户端配置
-2、支持Anytls协议，自签证书与域名证书都可应用到Anytls
+1、支持最新1.30系内核，适配mihomo与singbox订阅客户端配置
+2、支持Anytls协议，自签证书或域名证书都可应用到Anytls
 3、1.10系内核继续保留原来所有特性，1.30系内核继续更新，两内核模式可无缝切换
 
 详见：https://ygkkk.blogspot.com/2023/10/sing-box-yg.html
