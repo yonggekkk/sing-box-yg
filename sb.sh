@@ -1887,7 +1887,7 @@ rules:
   - MATCH,🌍选择代理节点
 EOF
 
-elif ! ps -ef | grep -q '[c]loudflared.*run' && ps -e | grep -qw "$ls" 2>/dev/null && [ "$tls" = "false" ]; then echo ok; fi
+elif ! ps -ef | grep -q '[c]loudflared.*run' && ps -e | grep -qw "$ls" 2>/dev/null && [ "$tls" = "false" ]; then
 cat > /etc/s-box/sing_box_client.json <<EOF
 $(sball)
 $(sbany2)
