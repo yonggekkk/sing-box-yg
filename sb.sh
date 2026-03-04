@@ -58,7 +58,6 @@ bbr="Openvz/Lxc"
 fi
 hostname=$(hostname)
 
-touch sbyg_update
 if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
 if [[ x"${release}" == x"alpine" ]]; then
