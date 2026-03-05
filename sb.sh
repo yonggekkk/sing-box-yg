@@ -2389,7 +2389,7 @@ green "当前Argo固定隧道域名：$(cat /etc/s-box/sbargoym.log 2>/dev/null)
 green "当前Argo固定隧道Token：$(cat /etc/s-box/sbargotoken.log 2>/dev/null)"
 fi
 echo
-green "请确保Cloudflare官网 --- Zero Trust --- Networks --- Tunnels已设置完成"
+green "请进入Cloudflare官网 --- Zero Trust --- 网络 --- 连接器，创建固定隧道"
 yellow "1：重置/设置Argo固定隧道域名"
 yellow "2：停止Argo固定隧道"
 yellow "0：返回上层"
