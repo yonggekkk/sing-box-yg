@@ -4309,7 +4309,7 @@ if [[ x"${release}" == x"alpine" ]]; then
 status_cmd="rc-service sing-box status"
 status_pattern="started"
 else
-status_cmd="systemctl status sing-box"
+status_cmd="systemctl is-active sing-box"
 status_pattern="active"
 fi
 if [[ -n $($status_cmd 2>/dev/null | grep -w "$status_pattern") && -f '/etc/s-box/sb.json' ]]; then
