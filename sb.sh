@@ -1509,7 +1509,6 @@ allow-lan: true
 mode: rule
 log-level: info
 unified-delay: true
-global-client-fingerprint: chrome
 dns:
   enable: true 
   listen: "0.0.0.0:1053"
