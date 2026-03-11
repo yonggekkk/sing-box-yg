@@ -2971,7 +2971,7 @@ m8=$(cat /etc/s-box/clash_meta_client1.txt 2>/dev/null)
 m8_5=$(cat /etc/s-box/clash_meta_client2.txt 2>/dev/null)
 m9=$(cat /etc/s-box/sing_box_gitlab.txt 2>/dev/null)
 m10=$(cat /etc/s-box/clash_meta_gitlab.txt 2>/dev/null)
-m11=$(cat /etc/s-box/jh_sub.txt 2>/dev/null)
+m11=$(cat /etc/s-box/jhsub.txt 2>/dev/null)
 m12=$(cat /etc/s-box/an.txt 2>/dev/null)
 message_text_m1=$(echo "$m1")
 message_text_m2=$(echo "$m2")
@@ -3138,6 +3138,7 @@ kill -15 $(cat /etc/s-box/subcmsbid.log 2>/dev/null) >/dev/null 2>&1
 mkdir -p /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
 ln -sf /etc/s-box/clmi.yaml /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/clmi.yaml
 ln -sf /etc/s-box/sbox.json /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/sbox.json
+ln -sf /etc/s-box/jhsub.txt /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/jhsub.txt
 busybox httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/web > /dev/null 2>&1 &
 echo "$!" > /etc/s-box/subcmsbid.log
 sleep 5
@@ -3215,7 +3216,7 @@ fi
 echo "$token" > /etc/s-box/gitlabtoken.txt
 rm -rf /etc/s-box/.git
 git init >/dev/null 2>&1
-git add sbox.json clmi.yaml jh_sub.txt >/dev/null 2>&1
+git add sbox.json clmi.yaml jhsub.txt >/dev/null 2>&1
 git config --global user.email "${email}" >/dev/null 2>&1
 git config --global user.name "${userid}" >/dev/null 2>&1
 git commit -m "commit_add_$(date +"%F %T")" >/dev/null 2>&1
@@ -3236,7 +3237,7 @@ chmod +x gitpush.sh
 ./gitpush.sh "git push -f origin main${gitlab_ml}" cat /etc/s-box/gitlabtoken.txt >/dev/null 2>&1
 echo "https://gitlab.com/api/v4/projects/${userid}%2F${project}/repository/files/sbox.json/raw?ref=${git_sk}&private_token=${token}" > /etc/s-box/sing_box_gitlab.txt
 echo "https://gitlab.com/api/v4/projects/${userid}%2F${project}/repository/files/clmi.yaml/raw?ref=${git_sk}&private_token=${token}" > /etc/s-box/clash_meta_gitlab.txt
-echo "https://gitlab.com/api/v4/projects/${userid}%2F${project}/repository/files/jh_sub.txt/raw?ref=${git_sk}&private_token=${token}" > /etc/s-box/jh_sub_gitlab.txt
+echo "https://gitlab.com/api/v4/projects/${userid}%2F${project}/repository/files/jhsub.txt/raw?ref=${git_sk}&private_token=${token}" > /etc/s-box/jh_sub_gitlab.txt
 clsbshow
 else
 yellow "设置Gitlab订阅链接失败，请反馈"
@@ -3253,9 +3254,9 @@ if [[ $(ls -a | grep '^\.git$') ]]; then
 if [ -f /etc/s-box/gitlab_ml_ml ]; then
 gitlab_ml=$(cat /etc/s-box/gitlab_ml_ml)
 fi
-git rm --cached sbox.json clmi.yaml jh_sub.txt >/dev/null 2>&1
+git rm --cached sbox.json clmi.yaml jhsub.txt >/dev/null 2>&1
 git commit -m "commit_rm_$(date +"%F %T")" >/dev/null 2>&1
-git add sbox.json clmi.yaml jh_sub.txt >/dev/null 2>&1
+git add sbox.json clmi.yaml jhsub.txt >/dev/null 2>&1
 git commit -m "commit_add_$(date +"%F %T")" >/dev/null 2>&1
 chmod +x gitpush.sh
 ./gitpush.sh "git push -f origin main${gitlab_ml}" cat /etc/s-box/gitlabtoken.txt >/dev/null 2>&1
@@ -3924,7 +3925,7 @@ cat /etc/s-box/hy2.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/tuic5.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 cat /etc/s-box/an.txt 2>/dev/null >> /etc/s-box/jhdy.txt
 v2sub=$(cat /etc/s-box/jhdy.txt 2>/dev/null)
-echo "$v2sub" > /etc/s-box/jh_sub.txt
+echo "$v2sub" > /etc/s-box/jhsub.txt
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 聚合节点 】节点信息如下：" && sleep 2
@@ -4035,6 +4036,7 @@ subip=$(cat /etc/s-box/server_ip.log)
 suburl="$subip:$showsubport/$showsubtoken"
 echo "Clash/Mihomo本地IP订阅地址：http://$suburl/clmi.yaml"
 echo "Sing-box本地IP订阅地址：http://$suburl/sbox.json"
+echo "聚合协议本地IP订阅地址：http://$suburl/jhsub.txt"
 fi
 if [ "$argoym" = "已开启" ]; then
 #echo -e "Vmess-UUID：${yellow}$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')${plain}"
