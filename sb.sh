@@ -3100,7 +3100,7 @@ green "订阅链接路径密码：$(cat /etc/s-box/subtoken.log 2>/dev/null)"
 }
 subportipsub(){
 echo
-readp "输入未被占用的订阅链接端口（回车表示随机端口）：" menu
+readp "输入未被占用且可用的订阅链接端口（回车表示随机端口）：" menu
 if [ -z "$menu" ]; then
 subport=$(shuf -i 10000-65535 -n 1)
 else
@@ -3111,8 +3111,8 @@ green "订阅链接端口：$(cat /etc/s-box/subport.log 2>/dev/null)"
 }
 echo
 yellow "1：重置安装本地IP订阅链接"
-yellow "2：仅重置订阅链接路径密码"
-yellow "3：仅重置订阅链接端口"
+yellow "2：更换订阅链接路径密码"
+yellow "3：更换订阅链接端口"
 yellow "4：卸载本地IP订阅链接"
 yellow "0：返回上层"
 readp "请选择【0-4】：" menu
@@ -3133,6 +3133,7 @@ green "本地IP订阅链接已卸载完成" && sleep 3 && sb
 else
 changeserv
 fi
+echo
 green "请稍后…………"
 kill -15 $(cat /etc/s-box/subcmsbid.log 2>/dev/null) >/dev/null 2>&1
 mkdir -p /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
