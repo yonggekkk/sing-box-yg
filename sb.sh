@@ -2439,6 +2439,7 @@ fi
 echo ${argoym} > /etc/s-box/sbargoym.log
 echo ${argotoken} > /etc/s-box/sbargotoken.log
 argo=$(cat /etc/s-box/sbargoym.log 2>/dev/null)
+sbshare > /dev/null 2>&1
 blue "Argo固定隧道设置完成，固定域名：$argo"
 elif [ "$menu" = "2" ]; then
 if pidof systemd >/dev/null 2>&1; then
@@ -2451,6 +2452,7 @@ rc-update del argo default >/dev/null 2>&1
 rm -rf /etc/init.d/argo
 fi
 rm -rf /etc/s-box/vm_ws_argogd.txt
+sbshare > /dev/null 2>&1
 green "Argo固定隧道已停止"
 else
 cfargo_ym
@@ -2465,9 +2467,6 @@ yellow "0：返回上层"
 readp "请选择【0-2】：" menu
 if [ "$menu" = "1" ]; then
 cloudflaredargo
-i=0
-while [ $i -le 4 ]; do let i++
-yellow "第$i次刷新验证Cloudflared Argo临时隧道域名有效性，请稍等……"
 if [[ -n $(ps -e | grep cloudflared) ]]; then
 kill -15 $(cat /etc/s-box/sbargopid.log 2>/dev/null) >/dev/null 2>&1
 fi
@@ -2476,19 +2475,16 @@ echo "$!" > /etc/s-box/sbargopid.log
 sleep 20
 if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400|503/') ]]; then
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
+sbshare > /dev/null 2>&1
 blue "Argo临时隧道申请成功，域名验证有效：$argo" && sleep 2
-break
-fi
-if [ $i -eq 5 ]; then
-echo
-yellow "Argo临时域名验证暂不可用，稍后可能会自动恢复，或者申请重置" && sleep 3
-fi
-done
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargopid/d' /tmp/crontab.tmp
 echo '@reboot sleep 10 && /bin/bash -c "nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 & pid=\$! && echo \$pid > /etc/s-box/sbargopid.log"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
+else
+yellow "Argo临时域名验证暂不可用，请稍后再试"
+fi
 elif [ "$menu" = "2" ]; then
 kill -15 $(cat /etc/s-box/sbargopid.log 2>/dev/null) >/dev/null 2>&1
 crontab -l 2>/dev/null > /tmp/crontab.tmp
@@ -2496,6 +2492,7 @@ sed -i '/sbargopid/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 rm -rf /etc/s-box/vm_ws_argols.txt
+sbshare > /dev/null 2>&1
 green "Argo临时隧道已停止"
 else
 cfargo_ym
