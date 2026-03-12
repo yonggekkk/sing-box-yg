@@ -2353,8 +2353,8 @@ cfargo_ym(){
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 if [[ "$tls" = "false" ]]; then
 echo
-yellow "1：Argo临时隧道"
-yellow "2：Argo固定隧道"
+yellow "1：添加或者删除Argo临时隧道"
+yellow "2：添加或者删除Argo固定隧道"
 yellow "0：返回上层"
 readp "请选择【0-2】：" menu
 if [ "$menu" = "1" ]; then
