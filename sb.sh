@@ -2558,7 +2558,7 @@ green "2：vmess-ws协议，$vm_na"
 green "3：Hysteria2协议，$hy2_na"
 green "4：Tuic5协议，$tu5_na"
 if [[ "$sbnh" != "1.10" ]]; then
-green "5：Anytls协议，$na_na"
+green "5：Anytls协议，$an_na"
 fi
 else
 red "仅支持选项1 (vless-reality)。因未申请域名证书，vmess-ws、Hysteria-2、Tuic-v5、Anytls的证书切换选项暂不予显示"
