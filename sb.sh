@@ -2573,8 +2573,8 @@ b=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].tls.reality.handsha
 c=$(cat /etc/s-box/vl_reality.txt | cut -d'=' -f5 | cut -d'&' -f1)
 echo $sbfiles | xargs -n1 sed -i "23s/$a/$ym_vl_re/"
 echo $sbfiles | xargs -n1 sed -i "27s/$b/$ym_vl_re/"
-restartsb
-blue "设置完毕，请回到主菜单进入选项9更新节点配置"
+restartsb && sbshare > /dev/null 2>&1
+blue "Vless-reality域名证书更换完毕"
 elif [ "$menu" = "2" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
 a=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
@@ -2594,8 +2594,8 @@ echo $sbfiles | xargs -n1 sed -i "55s#$a#$a_a#"
 echo $sbfiles | xargs -n1 sed -i "56s#$b#$b_b#"
 echo $sbfiles | xargs -n1 sed -i "57s#$c#$c_c#"
 echo $sbfiles | xargs -n1 sed -i "58s#$d#$d_d#"
-restartsb
-blue "设置完毕，请回到主菜单进入选项9更新节点配置"
+restartsb && sbshare > /dev/null 2>&1
+blue "vmess-ws协议域名证书更换完毕"
 echo
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 vm_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')
@@ -2618,8 +2618,8 @@ d_d='/etc/s-box/private.key'
 fi
 echo $sbfiles | xargs -n1 sed -i "79s#$c#$c_c#"
 echo $sbfiles | xargs -n1 sed -i "80s#$d#$d_d#"
-restartsb
-blue "设置完毕，请回到主菜单进入选项9更新节点配置"
+restartsb && sbshare > /dev/null 2>&1
+blue "Hysteria2协议域名证书更换完毕"
 else
 red "当前未申请域名证书，不可切换。主菜单选择12，执行Acme证书申请" && sleep 2 && sb
 fi
@@ -2636,8 +2636,8 @@ d_d='/etc/s-box/private.key'
 fi
 echo $sbfiles | xargs -n1 sed -i "102s#$c#$c_c#"
 echo $sbfiles | xargs -n1 sed -i "103s#$d#$d_d#"
-restartsb
-blue "设置完毕，请回到主菜单进入选项9更新节点配置"
+restartsb && sbshare > /dev/null 2>&1
+blue "Tuic5协议域名证书更换完毕"
 else
 red "当前未申请域名证书，不可切换。主菜单选择12，执行Acme证书申请" && sleep 2 && sb
 fi
@@ -2654,8 +2654,8 @@ d_d='/etc/s-box/private.key'
 fi
 echo $sbfiles | xargs -n1 sed -i "119s#$c#$c_c#"
 echo $sbfiles | xargs -n1 sed -i "120s#$d#$d_d#"
-restartsb
-blue "设置完毕，请回到主菜单进入选项9更新节点配置"
+restartsb && sbshare > /dev/null 2>&1
+blue "Anytls协议域名证书更换完毕"
 else
 red "当前未申请域名证书，不可切换。主菜单选择12，执行Acme证书申请" && sleep 2 && sb
 fi
@@ -2752,25 +2752,25 @@ readp "请选择要变更端口的协议：" menu
 if [ "$menu" = "1" ]; then
 vlport
 echo $sbfiles | xargs -n1 sed -i "14s/$vl_port/$port_vl_re/"
-restartsb
-blue "Vless-reality端口更改完成，可选择9输出配置信息"
+restartsb && sbshare > /dev/null 2>&1
+blue "Vless-reality端口更改完成"
 echo
 elif [ "$menu" = "5" ]; then
 anport
 echo $sbfiles | xargs -n1 sed -i "110s/$an_port/$port_an/"
-restartsb
-blue "Anytls端口更改完成，可选择9输出配置信息"
+restartsb && sbshare > /dev/null 2>&1
+blue "Anytls端口更改完成"
 echo
 elif [ "$menu" = "2" ]; then
 vmport
 echo $sbfiles | xargs -n1 sed -i "41s/$vm_port/$port_vm_ws/"
-restartsb
-blue "Vmess-ws端口更改完成，可选择9输出配置信息"
+restartsb && sbshare > /dev/null 2>&1
+blue "Vmess-ws端口更改完成"
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 if [[ "$tls" = "false" ]]; then
 blue "切记：如果Argo使用中，临时隧道必须重置，固定隧道的CF设置界面端口必须修改为$port_vm_ws"
 else
-blue "当前Argo隧道已不支持开启"
+blue "因TLS已开启，当前Argo隧道已不支持开启"
 fi
 echo
 elif [ "$menu" = "3" ]; then
@@ -2784,31 +2784,29 @@ if [ -n $hy2_ports ]; then
 hy2deports
 hy2port
 echo $sbfiles | xargs -n1 sed -i "67s/$hy2_port/$port_hy2/"
-restartsb
-result_vl_vm_hy_tu && reshy2 && sb_client
+restartsb && sbshare > /dev/null 2>&1
 else
 hy2port
 echo $sbfiles | xargs -n1 sed -i "67s/$hy2_port/$port_hy2/"
-restartsb
-result_vl_vm_hy_tu && reshy2 && sb_client
+restartsb && sbshare > /dev/null 2>&1
 fi
+blue "Hysteria2端口更改完成"
 elif [ "$menu" = "2" ]; then
 green "1：添加Hysteria2范围端口"
 green "2：添加Hysteria2单端口"
 green "0：返回上层"
 readp "请选择【0-2】：" menu
+port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].listen_port')
 if [ "$menu" = "1" ]; then
-port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].listen_port')
-fports && result_vl_vm_hy_tu && sb_client && changeport
+fports && sbshare > /dev/null 2>&1 && changeport
 elif [ "$menu" = "2" ]; then
-port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].listen_port')
-fport && result_vl_vm_hy_tu && sb_client && changeport
+fport && sbshare > /dev/null 2>&1 && changeport
 else
 changeport
 fi
 elif [ "$menu" = "3" ]; then
 if [ -n $hy2_ports ]; then
-hy2deports && result_vl_vm_hy_tu && sb_client && changeport
+hy2deports && sbshare > /dev/null 2>&1 && changeport
 else
 yellow "Hysteria2未设置多端口" && changeport
 fi
@@ -2827,31 +2825,29 @@ if [ -n $tu5_ports ]; then
 tu5deports
 tu5port
 echo $sbfiles | xargs -n1 sed -i "89s/$tu5_port/$port_tu/"
-restartsb
-result_vl_vm_hy_tu && restu5 && sb_client
+restartsb && sbshare > /dev/null 2>&1
 else
 tu5port
 echo $sbfiles | xargs -n1 sed -i "89s/$tu5_port/$port_tu/"
-restartsb
-result_vl_vm_hy_tu && restu5 && sb_client
+restartsb && sbshare > /dev/null 2>&1
 fi
+blue "Tuic5端口更改完成"
 elif [ "$menu" = "2" ]; then
 green "1：添加Tuic5范围端口"
 green "2：添加Tuic5单端口"
 green "0：返回上层"
 readp "请选择【0-2】：" menu
+port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[3].listen_port')
 if [ "$menu" = "1" ]; then
-port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[3].listen_port')
-fports && result_vl_vm_hy_tu && sb_client && changeport
+fports && sbshare > /dev/null 2>&1 && changeport
 elif [ "$menu" = "2" ]; then
-port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[3].listen_port')
-fport && result_vl_vm_hy_tu && sb_client && changeport
+fport && sbshare > /dev/null 2>&1 && changeport
 else
 changeport
 fi
 elif [ "$menu" = "3" ]; then
 if [ -n $tu5_ports ]; then
-tu5deports && result_vl_vm_hy_tu && sb_client && changeport
+tu5deports && sbshare > /dev/null 2>&1 && changeport
 else
 yellow "Tuic5未设置多端口" && changeport
 fi
@@ -2882,7 +2878,7 @@ else
 uuid=$menu
 fi
 echo $sbfiles | xargs -n1 sed -i "s/$olduuid/$uuid/g"
-restartsb
+restartsb && sbshare > /dev/null 2>&1
 blue "已确认uuid (密码)：${uuid}" 
 blue "已确认Vmess的path路径：$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.path')"
 elif [ "$menu" = "2" ]; then
@@ -2892,10 +2888,9 @@ echo
 else
 vmpath=$menu
 echo $sbfiles | xargs -n1 sed -i "50s#$oldvmpath#$vmpath#g"
-restartsb
+restartsb && sbshare > /dev/null 2>&1
 fi
 blue "已确认Vmess的path路径：$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.path')"
-sbshare
 else
 changeserv
 fi
@@ -3147,7 +3142,7 @@ echo '@reboot sleep 10 && /bin/bash -c "busybox httpd -f -p $(cat /etc/s-box/sub
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 sbshare > /dev/null 2>&1
-sleep 1 && green "本地IP订阅链接已设置更新完成" && sleep 3 && sb
+sleep 1 && green "本地IP订阅链接已更新完成" && sleep 3 && sb
 }
 
 vmesscfadd(){
