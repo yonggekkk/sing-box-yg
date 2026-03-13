@@ -3848,7 +3848,7 @@ sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cu
 [[ "$sbnh" == "1.10" ]] && num=10 || num=11
 rm -rf /etc/s-box/sb.json
 cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
-restartsb
+restartsb && sbshare > /dev/null 2>&1
 blue "成功升级/切换 Sing-box 内核版本：$(/etc/s-box/sing-box version | awk '/version/{print $NF}')" && sleep 3 && sb
 else
 red "下载 Sing-box 内核不完整，安装失败，请重试" && upsbcroe
