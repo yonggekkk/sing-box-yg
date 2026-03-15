@@ -3122,7 +3122,7 @@ sed -i '/subcmsbid/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 rm -rf /root/web
-green "本地IP订阅链接已卸载完成" && sleep 3 && sb
+green "本地IP订阅链接已卸载完成" && sleep 3 && exit
 else
 changeserv
 fi
