@@ -3121,7 +3121,7 @@ crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/subcmsbid/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
-rm -rf /root/web
+rm -rf /root/web /etc/s-box/subcmsbid.log
 green "本地IP订阅链接已卸载完成" && sleep 3 && exit
 else
 changeserv
