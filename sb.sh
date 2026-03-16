@@ -929,15 +929,11 @@ yellow "1：刷新本地IP，使用IPV4配置输出 (回车默认) "
 yellow "2：刷新本地IP，使用IPV6配置输出"
 readp "请选择【1-2】：" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ]; then
-sbdnsip='tls://8.8.8.8/dns-query'
-echo "$sbdnsip" > /etc/s-box/sbdnsip.log
 server_ip="$v4"
 echo "$server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$v4"
 echo "$server_ipcl" > /etc/s-box/server_ipcl.log
 else
-sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
-echo "$sbdnsip" > /etc/s-box/sbdnsip.log
 server_ip="[$v6]"
 echo "$server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$v6"
@@ -947,15 +943,11 @@ else
 yellow "VPS并不是双栈VPS，不支持IP配置输出的切换"
 serip=$(curl -s4m5 icanhazip.com -k || curl -s6m5 icanhazip.com -k)
 if [[ "$serip" =~ : ]]; then
-sbdnsip='tls://[2001:4860:4860::8888]/dns-query'
-echo "$sbdnsip" > /etc/s-box/sbdnsip.log
 server_ip="[$serip]"
 echo "$server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$serip"
 echo "$server_ipcl" > /etc/s-box/server_ipcl.log
 else
-sbdnsip='tls://8.8.8.8/dns-query'
-echo "$sbdnsip" > /etc/s-box/sbdnsip.log
 server_ip="$serip"
 echo "$server_ip" > /etc/s-box/server_ip.log
 server_ipcl="$serip"
@@ -988,7 +980,6 @@ ym=`bash ~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}'`
 echo $ym > /root/ygkkkca/ca.log
 fi
 rm -rf /etc/s-box/vm_ws_argo.txt /etc/s-box/vm_ws.txt /etc/s-box/vm_ws_tls.txt
-sbdnsip=$(cat /etc/s-box/sbdnsip.log)
 server_ip=$(cat /etc/s-box/server_ip.log)
 server_ipcl=$(cat /etc/s-box/server_ipcl.log)
 uuid=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')
