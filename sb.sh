@@ -1324,7 +1324,7 @@ cat <<EOF
       }
         ],
         "final": "proxyDns",
-        "strategy": "ipv4_only",
+        "strategy": "prefer_ipv4",
         "independent_cache": true
     },
     "inbounds": [
