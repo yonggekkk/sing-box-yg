@@ -62,7 +62,7 @@ if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
 if [[ x"${release}" == x"alpine" ]]; then
 apk update
-apk add procps libc6-compat jq openssl procps busybox iproute2 iputils coreutils expect git socat iptables grep tar tzdata dcron util-linux
+apk add procps libc6-compat jq openssl procps busybox-extras iproute2 iputils coreutils expect git socat iptables grep tar tzdata dcron util-linux
 apk add virt-what
 else
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
@@ -3124,12 +3124,20 @@ mkdir -p /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
 ln -sf /etc/s-box/clmi.yaml /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/clmi.yaml
 ln -sf /etc/s-box/sbox.json /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/sbox.json
 ln -sf /etc/s-box/jhsub.txt /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/jhsub.txt
+if [[ x"${release}" == x"alpine" ]]; then
+busybox-extras httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/web > /dev/null 2>&1 &
+else
 busybox httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/web > /dev/null 2>&1 &
+fi
 echo "$!" > /etc/s-box/subcmsbid.log
 sleep 5
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/subcmsbid/d' /tmp/crontab.tmp
+if [[ x"${release}" == x"alpine" ]]; then
+echo '@reboot sleep 10 && /bin/bash -c "busybox-extras httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log"' >> /tmp/crontab.tmp
+else
 echo '@reboot sleep 10 && /bin/bash -c "busybox httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log"' >> /tmp/crontab.tmp
+fi
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 sbshare > /dev/null 2>&1
