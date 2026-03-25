@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export LANG=en_US.UTF-8
 red='\033[0;31m'
 green='\033[0;32m'
@@ -3134,9 +3135,9 @@ sleep 5
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/subcmsbid/d' /tmp/crontab.tmp
 if [[ x"${release}" == x"alpine" ]]; then
-echo '@reboot sleep 10 && /bin/bash -c "busybox-extras httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log && sleep 5 && source /usr/bin/sb && sbshare > /dev/null 2>&1"' >> /tmp/crontab.tmp
+echo '@reboot sleep 10 && /bin/bash -c "busybox-extras httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log && sleep 5 && /bin/bash -c '"'"'. /usr/bin/sb && sbshare'"'"' > /dev/null 2>&1"' >> /tmp/crontab.tmp
 else
-echo '@reboot sleep 10 && /bin/bash -c "busybox httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log && sleep 5 && source /usr/bin/sb && sbshare > /dev/null 2>&1"' >> /tmp/crontab.tmp
+echo '@reboot sleep 10 && /bin/bash -c "busybox httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log && sleep 5 && /bin/bash -c '"'"'. /usr/bin/sb && sbshare'"'"' > /dev/null 2>&1"' >> /tmp/crontab.tmp
 fi
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
