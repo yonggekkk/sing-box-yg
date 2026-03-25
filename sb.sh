@@ -2470,11 +2470,27 @@ if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a tryc
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 sbshare > /dev/null 2>&1
 blue "Argo临时隧道申请成功，域名验证有效：$argo" && sleep 2
+
+
+if [[ x"${release}" == x"alpine" ]]; then
+cat > /etc/local.d/alpineyg.start <<'EOF'
+#!/bin/sh
+sleep 10
+nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
+sleep 10
+printf "9\n1\n" | bash /usr/bin/sb > /dev/null 2>&1
+EOF
+chmod +x /etc/local.d/alpineyg.start
+rc-update add local default
+else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargopid/d' /tmp/crontab.tmp
 echo '@reboot sleep 10 && /bin/bash -c "nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 & pid=\$! && echo \$pid > /etc/s-box/sbargopid.log && sleep 5 && printf \"9\n1\n\" | bash /usr/bin/sb > /dev/null 2>&1"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
+fi
+
+
 else
 yellow "Argo临时域名验证暂不可用，请稍后再试"
 fi
