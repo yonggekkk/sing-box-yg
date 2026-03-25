@@ -62,7 +62,7 @@ if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
 if [[ x"${release}" == x"alpine" ]]; then
 apk update
-apk add libc6-compat jq openssl procps busybox iproute2 iputils coreutils expect git socat iptables grep tar tzdata dcron util-linux
+apk add procps libc6-compat jq openssl procps busybox iproute2 iputils coreutils expect git socat iptables grep tar tzdata dcron util-linux
 apk add virt-what
 else
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
