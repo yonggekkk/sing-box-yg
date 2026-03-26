@@ -4034,14 +4034,16 @@ echo -e "🚀【    Tuic-v5    】${yellow}端口:$tu5_port  证书形式:$tu5_z
 if [[ "$sbnh" != "1.10" ]]; then
 echo -e "🚀【    Anytls     】${yellow}端口:$an_port  证书形式:$an_zs${plain}"
 fi
-if ps -ef 2>/dev/null | grep "[h]ttpd -f -p" >/dev/null; then
+if [ -s /etc/s-box/subport.log ]; then
+showsubport=$(cat /etc/s-box/subport.log)
+if ps -ef 2>/dev/null | grep "$showsubport" | grep -v grep >/dev/null; then
 showsubtoken=$(cat /etc/s-box/subtoken.log 2>/dev/null)
-showsubport=$(cat /etc/s-box/subport.log 2>/dev/null)
-subip=$(cat /etc/s-box/server_ip.log)
+subip=$(cat /etc/s-box/server_ip.log 2>/dev/null)
 suburl="$subip:$showsubport/$showsubtoken"
 echo "Clash/Mihomo本地IP订阅地址：http://$suburl/clmi.yaml"
 echo "Sing-box本地IP订阅地址：http://$suburl/sbox.json"
 echo "聚合协议本地IP订阅地址：http://$suburl/jhsub.txt"
+fi
 fi
 if [ "$argoym" = "已开启" ]; then
 #echo -e "Vmess-UUID：${yellow}$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')${plain}"
