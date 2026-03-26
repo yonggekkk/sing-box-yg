@@ -3884,7 +3884,7 @@ systemctl disable "$svc" >/dev/null 2>&1
 done
 rm -rf /etc/systemd/system/{sing-box.service,argo.service}
 fi
-ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
+ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json 2>/dev/null | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
 ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
 ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
 rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geoip.db /root/geosite.db /root/warpapi /root/warpip /root/websbox
