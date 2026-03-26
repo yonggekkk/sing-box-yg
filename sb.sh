@@ -61,7 +61,7 @@ hostname=$(hostname)
 
 if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 apk update
 apk add bash libc6-compat jq openssl procps busybox-extras iproute2 iputils coreutils expect git socat iptables grep tar tzdata util-linux
 apk add virt-what
@@ -880,7 +880,7 @@ cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 }
 
 sbservice(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 echo '#!/sbin/openrc-run
 description="sing-box service"
 command="/etc/s-box/sing-box"
@@ -915,7 +915,7 @@ fi
 }
 
 ipuuid(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 status_cmd="rc-service sing-box status"
 status_pattern="started"
 else
@@ -2470,7 +2470,7 @@ if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a tryc
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 sbshare > /dev/null 2>&1
 blue "Argo临时隧道申请成功，域名验证有效：$argo" && sleep 2
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 cat > /etc/local.d/alpineargo.start <<'EOF'
 #!/bin/bash
 sleep 10
@@ -3139,14 +3139,14 @@ mkdir -p /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
 ln -sf /etc/s-box/clmi.yaml /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/clmi.yaml
 ln -sf /etc/s-box/sbox.json /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/sbox.json
 ln -sf /etc/s-box/jhsub.txt /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/jhsub.txt
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 busybox-extras httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/web > /dev/null 2>&1 &
 else
 busybox httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/web > /dev/null 2>&1 &
 fi
 echo "$!" > /etc/s-box/subcmsbid.log
 sleep 5
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 cat > /etc/local.d/alpinesub.start <<'EOF'
 #!/bin/bash
 sleep 10
@@ -3762,7 +3762,7 @@ fi
 }
 
 restartsb(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 rc-service sing-box restart
 else
 systemctl enable sing-box
@@ -3781,7 +3781,7 @@ restartsb
 sbactive
 green "Sing-box服务已重启\n" && sleep 3 && sb
 elif [ "$menu" = "2" ]; then
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 rc-service sing-box stop
 else
 systemctl stop sing-box
@@ -3882,7 +3882,7 @@ fi
 }
 
 unins(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 for svc in sing-box argo; do
 rc-service "$svc" stop >/dev/null 2>&1
 rc-update del "$svc" default >/dev/null 2>&1
@@ -3911,7 +3911,7 @@ echo
 
 sblog(){
 red "退出日志 Ctrl+c"
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 yellow "暂不支持alpine查看日志"
 else
 #systemctl status sing-box
@@ -4176,7 +4176,7 @@ rm /tmp/crontab.tmp
 rm -rf /etc/local.d/alpinews5.start
 }
 aplws5(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 cat > /etc/local.d/alpinews5.start <<'EOF'
 #!/bin/bash
 sleep 10
@@ -4408,7 +4408,7 @@ v4_6="仅IPV6出站($showv6)"
 fi
 echo -e "代理IP优先级：$blue$v4_6$plain"
 fi
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 status_cmd="rc-service sing-box status"
 status_pattern="started"
 else
