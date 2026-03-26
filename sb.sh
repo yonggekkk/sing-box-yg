@@ -3113,7 +3113,7 @@ subportipsub
 elif [ "$menu" = "4" ];then
 ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/httpd -f -p/d' /tmp/crontab.tmp
+sed -i '/websbox/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 rm -rf /root/websbox
@@ -3145,7 +3145,7 @@ chmod +x /etc/local.d/alpinesub.start
 rc-update add local default >/dev/null 2>&1
 else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/httpd -f -p/d' /tmp/crontab.tmp
+sed -i '/websbox/d' /tmp/crontab.tmp
 echo '@reboot sleep 10 && /bin/bash -c "busybox httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/websbox > /dev/null 2>&1 &"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
@@ -3794,7 +3794,7 @@ crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sing-box/d' /tmp/crontab.tmp
 sed -i '/sbwpph/d' /tmp/crontab.tmp
 sed -i '/url http/d' /tmp/crontab.tmp
-sed -i '/httpd -f -p/d' /tmp/crontab.tmp
+sed -i '/websbox/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 }
