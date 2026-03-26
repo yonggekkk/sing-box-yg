@@ -4034,7 +4034,7 @@ echo -e "🚀【    Tuic-v5    】${yellow}端口:$tu5_port  证书形式:$tu5_z
 if [[ "$sbnh" != "1.10" ]]; then
 echo -e "🚀【    Anytls     】${yellow}端口:$an_port  证书形式:$an_zs${plain}"
 fi
-if [ -n "$(ps -ef 2>/dev/null | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}')" ]; then
+if ps -ef 2>/dev/null | grep "[h]ttpd -f -p" >/dev/null; then
 showsubtoken=$(cat /etc/s-box/subtoken.log 2>/dev/null)
 showsubport=$(cat /etc/s-box/subport.log 2>/dev/null)
 subip=$(cat /etc/s-box/server_ip.log)
