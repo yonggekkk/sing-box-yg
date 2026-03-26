@@ -1,5 +1,4 @@
 #!/bin/bash
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export LANG=en_US.UTF-8
 red='\033[0;31m'
 green='\033[0;32m'
@@ -61,9 +60,9 @@ hostname=$(hostname)
 
 if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 apk update
-apk add libc6-compat jq openssl procps busybox-extras iproute2 iputils coreutils expect git socat iptables grep tar tzdata util-linux
+apk add bash libc6-compat jq openssl procps busybox-extras iproute2 iputils coreutils expect git socat iptables grep tar tzdata util-linux
 apk add virt-what
 else
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
@@ -171,10 +170,6 @@ systemctl restart warp-go >/dev/null 2>&1
 systemctl enable warp-go >/dev/null 2>&1
 systemctl start warp-go >/dev/null 2>&1
 fi
-}
-
-argopid(){
-ls=$(cat /etc/s-box/sbargopid.log 2>/dev/null)
 }
 
 close(){
@@ -880,7 +875,7 @@ cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 }
 
 sbservice(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 echo '#!/sbin/openrc-run
 description="sing-box service"
 command="/etc/s-box/sing-box"
@@ -915,7 +910,7 @@ fi
 }
 
 ipuuid(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 status_cmd="rc-service sing-box status"
 status_pattern="started"
 else
@@ -1102,8 +1097,7 @@ echo
 
 resvmess(){
 if [[ "$tls" = "false" ]]; then
-argopid
-if ps -p "$ls" >/dev/null 2>&1; then
+if ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" >/dev/null 2>&1; then
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 vmess-ws(tls)+Argo 】临时节点信息如下(可选择3-8-3，自定义CDN优选地址)：" && sleep 2
@@ -1597,8 +1591,7 @@ EOF
 }
 
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
-argopid
-if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ps -p "$ls" >/dev/null 2>&1 && [ "$tls" = "false" ]; then
+if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" >/dev/null 2>&1 && [ "$tls" = "false" ]; then
 cat > /etc/s-box/sbox.json <<EOF
 $(sball)
 $(sbany2)
@@ -1877,7 +1870,7 @@ rules:
   - MATCH,🌍选择代理节点
 EOF
 
-elif ! ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ps -p "$ls" >/dev/null 2>&1 && [ "$tls" = "false" ]; then
+elif ! ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" >/dev/null 2>&1 && [ "$tls" = "false" ]; then
 cat > /etc/s-box/sbox.json <<EOF
 $(sball)
 $(sbany2)
@@ -2066,7 +2059,7 @@ rules:
   - MATCH,🌍选择代理节点
 EOF
 
-elif ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ! ps -p "$ls" >/dev/null 2>&1 && [ "$tls" = "false" ]; then
+elif ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ! ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" >/dev/null 2>&1 && [ "$tls" = "false" ]; then
 cat > /etc/s-box/sbox.json <<EOF
 $(sball)
 $(sbany2)
@@ -2460,31 +2453,41 @@ readp "请选择【0-2】：" menu
 if [ "$menu" = "1" ]; then
 green "请稍等……"
 cloudflaredargo
-if [[ -n $(ps -e | grep cloudflared) ]]; then
-kill -15 $(cat /etc/s-box/sbargopid.log 2>/dev/null) >/dev/null 2>&1
-fi
+ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
 nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
-echo "$!" > /etc/s-box/sbargopid.log
 sleep 20
 if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400|503/') ]]; then
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 sbshare > /dev/null 2>&1
 blue "Argo临时隧道申请成功，域名验证有效：$argo" && sleep 2
+if command -v apk >/dev/null 2>&1; then
+cat > /etc/local.d/alpineargo.start <<'EOF'
+#!/bin/bash
+sleep 10
+nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
+sleep 10
+printf "9\n1\n" | bash /usr/bin/sb > /dev/null 2>&1
+EOF
+chmod +x /etc/local.d/alpineargo.start
+rc-update add local default >/dev/null 2>&1
+else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbargopid/d' /tmp/crontab.tmp
-echo '@reboot sleep 10 && /bin/bash -c "nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 & pid=\$! && echo \$pid > /etc/s-box/sbargopid.log && sleep 5 && printf \"9\n1\n\" | bash /usr/bin/sb > /dev/null 2>&1"' >> /tmp/crontab.tmp
+sed -i '/url http/d' /tmp/crontab.tmp
+echo '@reboot sleep 10 && /bin/bash -c "nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 & sleep 10 && printf \"9\n1\n\" | bash /usr/bin/sb > /dev/null 2>&1"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
+fi
 else
 yellow "Argo临时域名验证暂不可用，请稍后再试"
 fi
 elif [ "$menu" = "2" ]; then
-kill -15 $(cat /etc/s-box/sbargopid.log 2>/dev/null) >/dev/null 2>&1
+ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbargopid/d' /tmp/crontab.tmp
+sed -i '/url http/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 rm -rf /etc/s-box/vm_ws_argols.txt
+rm -rf /etc/local.d/alpineargo.start
 sbshare > /dev/null 2>&1
 green "Argo临时隧道已停止"
 else
@@ -3079,7 +3082,7 @@ subtoken="$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uu
 else
 subtoken="$menu"
 fi
-rm -rf /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
+rm -rf /root/websbox/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
 echo $subtoken > /etc/s-box/subtoken.log
 green "订阅链接路径密码：$(cat /etc/s-box/subtoken.log 2>/dev/null)"
 }
@@ -3108,39 +3111,45 @@ subtokenipsub
 elif [ "$menu" = "3" ];then
 subportipsub
 elif [ "$menu" = "4" ];then
-kill -15 $(cat /etc/s-box/subcmsbid.log 2>/dev/null) >/dev/null 2>&1
+ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/subcmsbid/d' /tmp/crontab.tmp
+sed -i '/httpd -f -p/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
-rm -rf /root/web /etc/s-box/subcmsbid.log
+rm -rf /root/websbox
+rm -rf /etc/local.d/alpinesub.start
 green "本地IP订阅链接已卸载完成" && sleep 3 && exit
 else
 changeserv
 fi
 echo
 green "请稍后…………"
-kill -15 $(cat /etc/s-box/subcmsbid.log 2>/dev/null) >/dev/null 2>&1
-mkdir -p /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
-ln -sf /etc/s-box/clmi.yaml /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/clmi.yaml
-ln -sf /etc/s-box/sbox.json /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/sbox.json
-ln -sf /etc/s-box/jhsub.txt /root/web/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/jhsub.txt
-if [[ x"${release}" == x"alpine" ]]; then
-busybox-extras httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/web > /dev/null 2>&1 &
+ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
+mkdir -p /root/websbox/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
+ln -sf /etc/s-box/clmi.yaml /root/websbox/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/clmi.yaml
+ln -sf /etc/s-box/sbox.json /root/websbox/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/sbox.json
+ln -sf /etc/s-box/jhsub.txt /root/websbox/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/jhsub.txt
+if command -v apk >/dev/null 2>&1; then
+busybox-extras httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/websbox > /dev/null 2>&1 &
 else
-busybox httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/web > /dev/null 2>&1 &
+busybox httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/websbox > /dev/null 2>&1 &
 fi
-echo "$!" > /etc/s-box/subcmsbid.log
 sleep 5
-crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/subcmsbid/d' /tmp/crontab.tmp
-if [[ x"${release}" == x"alpine" ]]; then
-echo '@reboot sleep 10 && /bin/bash -c "busybox-extras httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log"' >> /tmp/crontab.tmp
+if command -v apk >/dev/null 2>&1; then
+cat > /etc/local.d/alpinesub.start <<'EOF'
+#!/bin/bash
+sleep 10
+busybox-extras httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/websbox > /dev/null 2>&1 &
+EOF
+chmod +x /etc/local.d/alpinesub.start
+rc-update add local default >/dev/null 2>&1
 else
-echo '@reboot sleep 10 && /bin/bash -c "busybox httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log"' >> /tmp/crontab.tmp
-fi
+crontab -l 2>/dev/null > /tmp/crontab.tmp
+sed -i '/httpd -f -p/d' /tmp/crontab.tmp
+echo '@reboot sleep 10 && /bin/bash -c "busybox httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/websbox > /dev/null 2>&1 &"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
+fi
 sbshare > /dev/null 2>&1
 sleep 1 && green "本地IP订阅链接已更新完成" && sleep 3 && sb
 }
@@ -3742,7 +3751,7 @@ fi
 }
 
 restartsb(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 rc-service sing-box restart
 else
 systemctl enable sing-box
@@ -3761,7 +3770,7 @@ restartsb
 sbactive
 green "Sing-box服务已重启\n" && sleep 3 && sb
 elif [ "$menu" = "2" ]; then
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 rc-service sing-box stop
 else
 systemctl stop sing-box
@@ -3783,9 +3792,9 @@ rm /tmp/crontab.tmp
 uncronsb(){
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sing-box/d' /tmp/crontab.tmp
-sed -i '/sbargopid/d' /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
-sed -i '/subcmsbid/d' /tmp/crontab.tmp
+sed -i '/sbwpph/d' /tmp/crontab.tmp
+sed -i '/url http/d' /tmp/crontab.tmp
+sed -i '/httpd -f -p/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 }
@@ -3862,7 +3871,7 @@ fi
 }
 
 unins(){
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 for svc in sing-box argo; do
 rc-service "$svc" stop >/dev/null 2>&1
 rc-update del "$svc" default >/dev/null 2>&1
@@ -3875,10 +3884,11 @@ systemctl disable "$svc" >/dev/null 2>&1
 done
 rm -rf /etc/systemd/system/{sing-box.service,argo.service}
 fi
-kill -15 $(cat /etc/s-box/sbargopid.log 2>/dev/null) >/dev/null 2>&1
-kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
-kill -15 $(cat /etc/s-box/subcmsbid.log 2>/dev/null) >/dev/null 2>&1
-rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geoip.db /root/geosite.db /root/warpapi /root/warpip /root/web
+ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json 2>/dev/null | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
+ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
+ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
+rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geoip.db /root/geosite.db /root/warpapi /root/warpip /root/websbox
+rm -f /etc/local.d/alpineargo.start /etc/local.d/alpinesub.start /etc/local.d/alpinews5.start
 uncronsb
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 netfilter-persistent save >/dev/null 2>&1
@@ -3890,7 +3900,7 @@ echo
 
 sblog(){
 red "退出日志 Ctrl+c"
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 yellow "暂不支持alpine查看日志"
 else
 #systemctl status sing-box
@@ -3993,8 +4003,7 @@ allports
 sbymfl
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 if [[ "$tls" = "false" ]]; then
-argopid
-if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' || ps -p "$ls" >/dev/null 2>&1; then
+if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' || ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" >/dev/null 2>&1; then
 vm_zs="TLS关闭"
 argoym="已开启"
 else
@@ -4023,19 +4032,21 @@ echo -e "🚀【    Tuic-v5    】${yellow}端口:$tu5_port  证书形式:$tu5_z
 if [[ "$sbnh" != "1.10" ]]; then
 echo -e "🚀【    Anytls     】${yellow}端口:$an_port  证书形式:$an_zs${plain}"
 fi
-if [ -n "$(cat /etc/s-box/subcmsbid.log 2>/dev/null)" ]; then
+if [ -s /etc/s-box/subport.log ]; then
+showsubport=$(cat /etc/s-box/subport.log)
+if ps -ef 2>/dev/null | grep "$showsubport" | grep -v grep >/dev/null; then
 showsubtoken=$(cat /etc/s-box/subtoken.log 2>/dev/null)
-showsubport=$(cat /etc/s-box/subport.log 2>/dev/null)
-subip=$(cat /etc/s-box/server_ip.log)
+subip=$(cat /etc/s-box/server_ip.log 2>/dev/null)
 suburl="$subip:$showsubport/$showsubtoken"
 echo "Clash/Mihomo本地IP订阅地址：http://$suburl/clmi.yaml"
 echo "Sing-box本地IP订阅地址：http://$suburl/sbox.json"
 echo "聚合协议本地IP订阅地址：http://$suburl/jhsub.txt"
 fi
+fi
 if [ "$argoym" = "已开启" ]; then
 #echo -e "Vmess-UUID：${yellow}$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')${plain}"
 #echo -e "Vmess-Path：${yellow}$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.path')${plain}"
-if ps -p "$ls" >/dev/null 2>&1; then
+if ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" >/dev/null 2>&1; then
 echo -e "Argo临时域名：${yellow}$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')${plain}"
 fi
 if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run'; then
@@ -4114,9 +4125,7 @@ esac
 curl -L -o /etc/s-box/sbwpph -# --retry 2 --insecure https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sbwpph_$cpu
 chmod +x /etc/s-box/sbwpph
 fi
-if [[ -n $(ps -e | grep sbwpph) ]]; then
-kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
-fi
+ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
 v4v6
 if [[ -n $v4 ]]; then
 sw46=4
@@ -4146,12 +4155,30 @@ cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 restartsb
 }
 unins(){
-kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
-rm -rf /etc/s-box/sbwpph.log /etc/s-box/sbwpphid.log
+ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
+rm -rf /etc/s-box/sbwpph.log
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
+sed -i '/sbwpph/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
+rm -rf /etc/local.d/alpinews5.start
+}
+aplws5(){
+if command -v apk >/dev/null 2>&1; then
+cat > /etc/local.d/alpinews5.start <<'EOF'
+#!/bin/bash
+sleep 10
+nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null)
+EOF
+chmod +x /etc/local.d/alpinews5.start
+rc-update add local default >/dev/null 2>&1
+else
+crontab -l 2>/dev/null > /tmp/crontab.tmp
+sed -i '/sbwpph/d' /tmp/crontab.tmp
+echo '@reboot sleep 10 && /bin/bash -c "nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null) &"' >> /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
+rm /tmp/crontab.tmp
+fi
 }
 echo
 yellow "1：重置启用WARP-plus-Socks5本地Warp代理模式"
@@ -4161,7 +4188,7 @@ yellow "0：返回上层"
 readp "请选择【0-3】：" menu
 if [ "$menu" = "1" ]; then
 ins
-nohup /etc/s-box/sbwpph -b 127.0.0.1:$port --gool -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 & echo "$!" > /etc/s-box/sbwpphid.log
+nohup /etc/s-box/sbwpph -b 127.0.0.1:$port --gool -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 &
 green "申请IP中……请稍等……" && sleep 20
 resv1=$(curl -sm3 --socks5 localhost:$port icanhazip.com)
 resv2=$(curl -sm3 -x socks5h://localhost:$port icanhazip.com)
@@ -4169,11 +4196,7 @@ if [[ -z $resv1 && -z $resv2 ]]; then
 red "WARP-plus-Socks5的IP获取失败" && unins && exit
 else
 echo "/etc/s-box/sbwpph -b 127.0.0.1:$port --gool -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1" > /etc/s-box/sbwpph.log
-crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
-echo '@reboot sleep 10 && /bin/bash -c "nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null) & pid=\$! && echo \$pid > /etc/s-box/sbwpphid.log"' >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp >/dev/null 2>&1
-rm /tmp/crontab.tmp
+aplws5
 green "WARP-plus-Socks5的IP获取成功，可进行Socks5代理分流"
 fi
 elif [ "$menu" = "2" ]; then
@@ -4213,7 +4236,7 @@ echo '
 美国（US）
 '
 readp "可选择国家地区（输入末尾两个大写字母，如美国，则输入US）：" guojia
-nohup /etc/s-box/sbwpph -b 127.0.0.1:$port --cfon --country $guojia -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 & echo "$!" > /etc/s-box/sbwpphid.log
+nohup /etc/s-box/sbwpph -b 127.0.0.1:$port --cfon --country $guojia -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 &
 green "申请IP中……请稍等……" && sleep 20
 resv1=$(curl -sm3 --socks5 localhost:$port icanhazip.com)
 resv2=$(curl -sm3 -x socks5h://localhost:$port icanhazip.com)
@@ -4221,11 +4244,7 @@ if [[ -z $resv1 && -z $resv2 ]]; then
 red "WARP-plus-Socks5的IP获取失败，尝试换个国家地区吧" && unins && exit
 else
 echo "/etc/s-box/sbwpph -b 127.0.0.1:$port --cfon --country $guojia -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1" > /etc/s-box/sbwpph.log
-crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
-echo '@reboot sleep 10 && /bin/bash -c "nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null) & pid=\$! && echo \$pid > /etc/s-box/sbwpphid.log"' >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp >/dev/null 2>&1
-rm /tmp/crontab.tmp
+aplws5
 green "WARP-plus-Socks5的IP获取成功，可进行Socks5代理分流"
 fi
 elif [ "$menu" = "3" ]; then
@@ -4377,7 +4396,7 @@ v4_6="仅IPV6出站($showv6)"
 fi
 echo -e "代理IP优先级：$blue$v4_6$plain"
 fi
-if [[ x"${release}" == x"alpine" ]]; then
+if command -v apk >/dev/null 2>&1; then
 status_cmd="rc-service sing-box status"
 status_pattern="started"
 else
