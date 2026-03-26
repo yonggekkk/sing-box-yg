@@ -1098,7 +1098,6 @@ echo
 
 resvmess(){
 if [[ "$tls" = "false" ]]; then
-
 if ps -ef 2>/dev/null | grep -q '[c]loudflared.*url'; then
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -2475,6 +2474,7 @@ chmod +x /etc/local.d/alpineargo.start
 rc-update add local default >/dev/null 2>&1
 else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
+sed -i '/url http/d' /tmp/crontab.tmp
 echo '@reboot sleep 10 && /bin/bash -c "nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 & sleep 10 && printf \"9\n1\n\" | bash /usr/bin/sb > /dev/null 2>&1"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
@@ -2484,6 +2484,10 @@ yellow "Argo临时域名验证暂不可用，请稍后再试"
 fi
 elif [ "$menu" = "2" ]; then
 ps -ef | grep '[c]loudflared.*url' | awk '{print $2}' | xargs kill 2>/dev/null
+crontab -l 2>/dev/null > /tmp/crontab.tmp
+sed -i '/url http/d' /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
+rm /tmp/crontab.tmp
 rm -rf /etc/s-box/vm_ws_argols.txt
 rm -rf /etc/local.d/alpineargo.start
 sbshare > /dev/null 2>&1
@@ -3791,6 +3795,7 @@ uncronsb(){
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sing-box/d' /tmp/crontab.tmp
 sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
+sed -i '/url http/d' /tmp/crontab.tmp
 sed -i '/httpd -f -p/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
