@@ -1098,7 +1098,7 @@ echo
 
 resvmess(){
 if [[ "$tls" = "false" ]]; then
-if ps -ef 2>/dev/null | grep -q '[c]loudflared.*url'; then
+if ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')"; then
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 vmess-ws(tls)+Argo 】临时节点信息如下(可选择3-8-3，自定义CDN优选地址)：" && sleep 2
@@ -1592,8 +1592,7 @@ EOF
 }
 
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
-
-if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ps -ef 2>/dev/null | grep -q '[c]loudflared.*url' && [ "$tls" = "false" ]; then
+if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" && [ "$tls" = "false" ]; then
 cat > /etc/s-box/sbox.json <<EOF
 $(sball)
 $(sbany2)
@@ -1872,7 +1871,7 @@ rules:
   - MATCH,🌍选择代理节点
 EOF
 
-elif ! ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ps -ef 2>/dev/null | grep -q '[c]loudflared.*url' && [ "$tls" = "false" ]; then
+elif ! ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" && [ "$tls" = "false" ]; then
 cat > /etc/s-box/sbox.json <<EOF
 $(sball)
 $(sbany2)
@@ -2061,7 +2060,7 @@ rules:
   - MATCH,🌍选择代理节点
 EOF
 
-elif ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ! ps -ef 2>/dev/null | grep -q '[c]loudflared.*url' && [ "$tls" = "false" ]; then
+elif ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' && ! ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" && [ "$tls" = "false" ]; then
 cat > /etc/s-box/sbox.json <<EOF
 $(sball)
 $(sbany2)
@@ -4005,7 +4004,7 @@ allports
 sbymfl
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 if [[ "$tls" = "false" ]]; then
-if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' || ps -ef 2>/dev/null | grep -q '[c]loudflared.*url'; then
+if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run' || ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')"; then
 vm_zs="TLS关闭"
 argoym="已开启"
 else
@@ -4048,7 +4047,7 @@ fi
 if [ "$argoym" = "已开启" ]; then
 #echo -e "Vmess-UUID：${yellow}$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].users[0].uuid')${plain}"
 #echo -e "Vmess-Path：${yellow}$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.path')${plain}"
-if ps -ef 2>/dev/null | grep -q '[c]loudflared.*url'; then
+if ps -ef 2>/dev/null | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')"; then
 echo -e "Argo临时域名：${yellow}$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')${plain}"
 fi
 if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run'; then
