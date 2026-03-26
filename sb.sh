@@ -2479,7 +2479,7 @@ sleep 10
 printf "9\n1\n" | bash /usr/bin/sb > /dev/null 2>&1
 EOF
 chmod +x /etc/local.d/alpineargo.start
-rc-update add local default
+rc-update add local default >/dev/null 2>&1
 else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbargopid/d' /tmp/crontab.tmp
@@ -3153,7 +3153,7 @@ sleep 10
 busybox-extras httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 &
 EOF
 chmod +x /etc/local.d/alpinesub.start
-rc-update add local default
+rc-update add local default >/dev/null 2>&1
 else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/subcmsbid/d' /tmp/crontab.tmp
@@ -4183,7 +4183,7 @@ sleep 10
 nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null)
 EOF
 chmod +x /etc/local.d/alpinews5.start
-rc-update add local default
+rc-update add local default >/dev/null 2>&1
 else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
