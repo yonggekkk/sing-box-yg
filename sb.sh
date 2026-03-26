@@ -33,7 +33,6 @@ release="Centos"
 else 
 red "脚本不支持当前的系统，请选择使用Ubuntu,Debian,Centos系统。" && exit
 fi
-export release 
 export sbfiles="/etc/s-box/sb10.json /etc/s-box/sb11.json /etc/s-box/sb.json"
 export sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2)
 vsid=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
