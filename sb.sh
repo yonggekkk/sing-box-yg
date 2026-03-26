@@ -1,5 +1,4 @@
 #!/bin/bash
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export LANG=en_US.UTF-8
 red='\033[0;31m'
 green='\033[0;32m'
