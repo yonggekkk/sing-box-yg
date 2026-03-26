@@ -2455,7 +2455,7 @@ readp "请选择【0-2】：" menu
 if [ "$menu" = "1" ]; then
 green "请稍等……"
 cloudflaredargo
-ps -ef | grep '[c]loudflared.*url' | awk '{print $2}' | xargs kill 2>/dev/null
+ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
 nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
 sleep 20
 if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400|503/') ]]; then
@@ -2483,7 +2483,7 @@ else
 yellow "Argo临时域名验证暂不可用，请稍后再试"
 fi
 elif [ "$menu" = "2" ]; then
-ps -ef | grep '[c]loudflared.*url' | awk '{print $2}' | xargs kill 2>/dev/null
+ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/url http/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
@@ -3886,7 +3886,7 @@ systemctl disable "$svc" >/dev/null 2>&1
 done
 rm -rf /etc/systemd/system/{sing-box.service,argo.service}
 fi
-ps -ef | grep '[c]loudflared.*url' | awk '{print $2}' | xargs kill 2>/dev/null
+ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
 ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
 ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
 rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geoip.db /root/geosite.db /root/warpapi /root/warpip /root/websbox
