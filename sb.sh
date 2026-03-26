@@ -2497,6 +2497,7 @@ sed -i '/sbargopid/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 rm -rf /etc/s-box/vm_ws_argols.txt
+rm -rf /etc/local.d/alpineargo.start
 sbshare > /dev/null 2>&1
 green "Argo临时隧道已停止"
 else
@@ -3126,6 +3127,7 @@ sed -i '/subcmsbid/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 rm -rf /root/web /etc/s-box/subcmsbid.log
+rm -rf /etc/local.d/alpinesub.start
 green "本地IP订阅链接已卸载完成" && sleep 3 && exit
 else
 changeserv
@@ -3897,6 +3899,7 @@ kill -15 $(cat /etc/s-box/sbargopid.log 2>/dev/null) >/dev/null 2>&1
 kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
 kill -15 $(cat /etc/s-box/subcmsbid.log 2>/dev/null) >/dev/null 2>&1
 rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geoip.db /root/geosite.db /root/warpapi /root/warpip /root/web
+rm -f /etc/local.d/alpineargo.start /etc/local.d/alpinesub.start /etc/local.d/alpinews5.start
 uncronsb
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 netfilter-persistent save >/dev/null 2>&1
@@ -4170,6 +4173,7 @@ crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
+rm -rf /etc/local.d/alpinews5.start
 }
 aplws5(){
 if [[ x"${release}" == x"alpine" ]]; then
