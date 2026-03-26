@@ -63,7 +63,7 @@ if [ ! -f sbyg_update ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
 if [[ x"${release}" == x"alpine" ]]; then
 apk update
-apk add libc6-compat jq openssl procps busybox-extras iproute2 iputils coreutils expect git socat iptables grep tar tzdata util-linux
+apk add bash libc6-compat jq openssl procps busybox-extras iproute2 iputils coreutils expect git socat iptables grep tar tzdata util-linux
 apk add virt-what
 else
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
@@ -2470,17 +2470,15 @@ if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a tryc
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 sbshare > /dev/null 2>&1
 blue "Argo临时隧道申请成功，域名验证有效：$argo" && sleep 2
-
-
 if [[ x"${release}" == x"alpine" ]]; then
-cat > /etc/local.d/alpineyg.start <<'EOF'
-#!/bin/sh
+cat > /etc/local.d/alpineargo.start <<'EOF'
+#!/bin/bash
 sleep 10
 nohup /etc/s-box/cloudflared tunnel --url http://localhost:$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port') --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
 sleep 10
 printf "9\n1\n" | bash /usr/bin/sb > /dev/null 2>&1
 EOF
-chmod +x /etc/local.d/alpineyg.start
+chmod +x /etc/local.d/alpineargo.start
 rc-update add local default
 else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
@@ -2489,8 +2487,6 @@ echo '@reboot sleep 10 && /bin/bash -c "nohup /etc/s-box/cloudflared tunnel --ur
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 fi
-
-
 else
 yellow "Argo临时域名验证暂不可用，请稍后再试"
 fi
@@ -3148,15 +3144,21 @@ busybox httpd -f -p "$(cat /etc/s-box/subport.log 2>/dev/null)" -h /root/web > /
 fi
 echo "$!" > /etc/s-box/subcmsbid.log
 sleep 5
+if [[ x"${release}" == x"alpine" ]]; then
+cat > /etc/local.d/alpinesub.start <<'EOF'
+#!/bin/bash
+sleep 10
+busybox-extras httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 &
+EOF
+chmod +x /etc/local.d/alpinesub.start
+rc-update add local default
+else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/subcmsbid/d' /tmp/crontab.tmp
-if [[ x"${release}" == x"alpine" ]]; then
-echo '@reboot sleep 10 && /bin/bash -c "busybox-extras httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log"' >> /tmp/crontab.tmp
-else
 echo '@reboot sleep 10 && /bin/bash -c "busybox httpd -f -p $(cat /etc/s-box/subport.log 2>/dev/null) -h /root/web > /dev/null 2>&1 & pid=\$! && echo \$pid > /etc/s-box/subcmsbid.log"' >> /tmp/crontab.tmp
-fi
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
+fi
 sbshare > /dev/null 2>&1
 sleep 1 && green "本地IP订阅链接已更新完成" && sleep 3 && sb
 }
@@ -4169,6 +4171,23 @@ sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 }
+aplws5(){
+if [[ x"${release}" == x"alpine" ]]; then
+cat > /etc/local.d/alpinews5.start <<'EOF'
+#!/bin/bash
+sleep 10
+nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null)
+EOF
+chmod +x /etc/local.d/alpinews5.start
+rc-update add local default
+else
+crontab -l 2>/dev/null > /tmp/crontab.tmp
+sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
+echo '@reboot sleep 10 && /bin/bash -c "nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null) & pid=\$! && echo \$pid > /etc/s-box/sbwpphid.log"' >> /tmp/crontab.tmp
+crontab /tmp/crontab.tmp >/dev/null 2>&1
+rm /tmp/crontab.tmp
+fi
+}
 echo
 yellow "1：重置启用WARP-plus-Socks5本地Warp代理模式"
 yellow "2：重置启用WARP-plus-Socks5多地区Psiphon代理模式"
@@ -4185,11 +4204,7 @@ if [[ -z $resv1 && -z $resv2 ]]; then
 red "WARP-plus-Socks5的IP获取失败" && unins && exit
 else
 echo "/etc/s-box/sbwpph -b 127.0.0.1:$port --gool -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1" > /etc/s-box/sbwpph.log
-crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
-echo '@reboot sleep 10 && /bin/bash -c "nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null) & pid=\$! && echo \$pid > /etc/s-box/sbwpphid.log"' >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp >/dev/null 2>&1
-rm /tmp/crontab.tmp
+aplws5
 green "WARP-plus-Socks5的IP获取成功，可进行Socks5代理分流"
 fi
 elif [ "$menu" = "2" ]; then
@@ -4237,11 +4252,7 @@ if [[ -z $resv1 && -z $resv2 ]]; then
 red "WARP-plus-Socks5的IP获取失败，尝试换个国家地区吧" && unins && exit
 else
 echo "/etc/s-box/sbwpph -b 127.0.0.1:$port --cfon --country $guojia -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1" > /etc/s-box/sbwpph.log
-crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
-echo '@reboot sleep 10 && /bin/bash -c "nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null) & pid=\$! && echo \$pid > /etc/s-box/sbwpphid.log"' >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp >/dev/null 2>&1
-rm /tmp/crontab.tmp
+aplws5
 green "WARP-plus-Socks5的IP获取成功，可进行Socks5代理分流"
 fi
 elif [ "$menu" = "3" ]; then
