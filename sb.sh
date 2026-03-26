@@ -3794,7 +3794,7 @@ rm /tmp/crontab.tmp
 uncronsb(){
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/sing-box/d' /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
+sed -i '/sbwpph/d' /tmp/crontab.tmp
 sed -i '/url http/d' /tmp/crontab.tmp
 sed -i '/httpd -f -p/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
@@ -3887,7 +3887,7 @@ done
 rm -rf /etc/systemd/system/{sing-box.service,argo.service}
 fi
 ps -ef | grep '[c]loudflared.*url' | awk '{print $2}' | xargs kill 2>/dev/null
-kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
+ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
 ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
 rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geoip.db /root/geosite.db /root/warpapi /root/warpip /root/web
 rm -f /etc/local.d/alpineargo.start /etc/local.d/alpinesub.start /etc/local.d/alpinews5.start
@@ -4125,9 +4125,7 @@ esac
 curl -L -o /etc/s-box/sbwpph -# --retry 2 --insecure https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sbwpph_$cpu
 chmod +x /etc/s-box/sbwpph
 fi
-if [[ -n $(ps -e | grep sbwpph) ]]; then
-kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
-fi
+ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
 v4v6
 if [[ -n $v4 ]]; then
 sw46=4
@@ -4157,10 +4155,10 @@ cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 restartsb
 }
 unins(){
-kill -15 $(cat /etc/s-box/sbwpphid.log 2>/dev/null) >/dev/null 2>&1
-rm -rf /etc/s-box/sbwpph.log /etc/s-box/sbwpphid.log
+ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
+rm -rf /etc/s-box/sbwpph.log
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
+sed -i '/sbwpph/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 rm -rf /etc/local.d/alpinews5.start
@@ -4176,8 +4174,8 @@ chmod +x /etc/local.d/alpinews5.start
 rc-update add local default >/dev/null 2>&1
 else
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sbwpphid.log/d' /tmp/crontab.tmp
-echo '@reboot sleep 10 && /bin/bash -c "nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null) & pid=\$! && echo \$pid > /etc/s-box/sbwpphid.log"' >> /tmp/crontab.tmp
+sed -i '/sbwpph/d' /tmp/crontab.tmp
+echo '@reboot sleep 10 && /bin/bash -c "nohup $(cat /etc/s-box/sbwpph.log 2>/dev/null) &"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 fi
@@ -4190,7 +4188,7 @@ yellow "0：返回上层"
 readp "请选择【0-3】：" menu
 if [ "$menu" = "1" ]; then
 ins
-nohup /etc/s-box/sbwpph -b 127.0.0.1:$port --gool -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 & echo "$!" > /etc/s-box/sbwpphid.log
+nohup /etc/s-box/sbwpph -b 127.0.0.1:$port --gool -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 &
 green "申请IP中……请稍等……" && sleep 20
 resv1=$(curl -sm3 --socks5 localhost:$port icanhazip.com)
 resv2=$(curl -sm3 -x socks5h://localhost:$port icanhazip.com)
@@ -4238,7 +4236,7 @@ echo '
 美国（US）
 '
 readp "可选择国家地区（输入末尾两个大写字母，如美国，则输入US）：" guojia
-nohup /etc/s-box/sbwpph -b 127.0.0.1:$port --cfon --country $guojia -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 & echo "$!" > /etc/s-box/sbwpphid.log
+nohup /etc/s-box/sbwpph -b 127.0.0.1:$port --cfon --country $guojia -$sw46 --endpoint 162.159.192.1:2408 >/dev/null 2>&1 &
 green "申请IP中……请稍等……" && sleep 20
 resv1=$(curl -sm3 --socks5 localhost:$port icanhazip.com)
 resv2=$(curl -sm3 -x socks5h://localhost:$port icanhazip.com)
