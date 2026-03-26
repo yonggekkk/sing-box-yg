@@ -3111,7 +3111,7 @@ subtokenipsub
 elif [ "$menu" = "3" ];then
 subportipsub
 elif [ "$menu" = "4" ];then
-ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
+kill -15 $(pgrep -f 'websbox' 2>/dev/null) >/dev/null 2>&1
 crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/websbox/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
@@ -3124,7 +3124,7 @@ changeserv
 fi
 echo
 green "请稍后…………"
-ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
+kill -15 $(pgrep -f 'websbox' 2>/dev/null) >/dev/null 2>&1
 mkdir -p /root/websbox/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"
 ln -sf /etc/s-box/clmi.yaml /root/websbox/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/clmi.yaml
 ln -sf /etc/s-box/sbox.json /root/websbox/"$(cat /etc/s-box/subtoken.log 2>/dev/null)"/sbox.json
@@ -3886,7 +3886,7 @@ rm -rf /etc/systemd/system/{sing-box.service,argo.service}
 fi
 ps -ef | grep "localhost:$(sed 's://.*::g' /etc/s-box/sb.json 2>/dev/null | jq -r '.inbounds[1].listen_port')" | awk '{print $2}' | xargs kill 2>/dev/null
 ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
-ps -ef | grep "$(cat /etc/s-box/subport.log 2>/dev/null)" | grep -v grep | awk 'NR==1 {print $2}' | xargs kill 2>/dev/null
+kill -15 $(pgrep -f 'websbox' 2>/dev/null) >/dev/null 2>&1
 rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geoip.db /root/geosite.db /root/warpapi /root/warpip /root/websbox
 rm -f /etc/local.d/alpineargo.start /etc/local.d/alpinesub.start /etc/local.d/alpinews5.start
 uncronsb
