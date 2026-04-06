@@ -3815,8 +3815,15 @@ green "Sing-box-yg安装脚本升级成功" && sleep 5 && sb
 }
 
 lapre(){
-latcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
-precore=$(curl -Ls https://github.com/SagerNet/sing-box/releases | grep -oP '/tag/v\K[0-9.]+-[^"]+' | head -n 1)
+json=$(curl -Ls --max-time 3 https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box)
+if echo "$json"|grep -q '"versions"'; then
+latcore=$(echo "$json"|grep -Eo '"[0-9.]+",'|head -n1|tr -d '",')
+precore=$(echo "$json"|grep -Eo '"[0-9.]*-[^"]*"'|head -n1|tr -d '",')
+else
+page=$(curl -Ls https://github.com/SagerNet/sing-box/releases)
+latcore=$(echo "$page"|grep -oE 'tag/v[0-9.]+'|head -n1|cut -d'v' -f2)
+precore=$(echo "$page"|grep -oE '/tag/v[0-9.]+-[^"]+'|head -n1|cut -d'v' -f2)
+fi
 inscore=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}')
 }
 
