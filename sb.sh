@@ -3820,7 +3820,7 @@ if echo "$json"|grep -q '"versions"'; then
 latcore=$(echo "$json"|grep -Eo '"[0-9.]+",'|head -n1|tr -d '",')
 precore=$(echo "$json"|grep -Eo '"[0-9.]*-[^"]*"'|head -n1|tr -d '",')
 else
-page=$(curl -Ls https://github.com/SagerNet/sing-box/releases)
+page=$(curl -Ls --max-time 3 https://github.com/SagerNet/sing-box/releases)
 latcore=$(echo "$page"|grep -oE 'tag/v[0-9.]+'|head -n1|cut -d'v' -f2)
 precore=$(echo "$page"|grep -oE '/tag/v[0-9.]+-[^"]+'|head -n1|cut -d'v' -f2)
 fi
