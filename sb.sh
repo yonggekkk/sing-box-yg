@@ -34,7 +34,7 @@ else
 red "脚本不支持当前的系统，请选择使用Ubuntu,Debian,Centos系统。" && exit
 fi
 export sbfiles="/etc/s-box/sb10.json /etc/s-box/sb11.json /etc/s-box/sb.json"
-export sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2)
+export sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2 2>/dev/null)
 vsid=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
 op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
 #if [[ $(echo "$op" | grep -i -E "arch|alpine") ]]; then
@@ -227,7 +227,7 @@ if [[ -f '/etc/s-box/sing-box' ]]; then
 chown root:root /etc/s-box/sing-box
 chmod +x /etc/s-box/sing-box
 blue "成功安装 Sing-box 内核版本：$(/etc/s-box/sing-box version | awk '/version/{print $NF}')"
-sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2)
+sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2 2>/dev/null)
 else
 red "下载 Sing-box 内核不完整，安装失败，请再运行安装一次" && exit
 fi
@@ -2931,7 +2931,7 @@ readp "输入Telegram机器人用户ID: " userid
 telegram_id=$userid
 echo '#!/bin/bash
 export LANG=en_US.UTF-8
-sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2)
+sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2 2>/dev/null)
 total_lines=$(wc -l < /etc/s-box/clmi.yaml)
 half=$((total_lines / 2))
 head -n $half /etc/s-box/clmi.yaml > /etc/s-box/clash_meta_client1.txt
@@ -3860,7 +3860,7 @@ rm -rf /etc/s-box/{sing-box.tar.gz,$sbname}
 if [[ -f '/etc/s-box/sing-box' ]]; then
 chown root:root /etc/s-box/sing-box
 chmod +x /etc/s-box/sing-box
-sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2)
+sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' | cut -d '.' -f 1,2 2>/dev/null)
 [[ "$sbnh" == "1.10" ]] && num=10 || num=11
 rm -rf /etc/s-box/sb.json
 cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
