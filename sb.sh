@@ -1025,8 +1025,9 @@ fi
 hy2_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].listen_port')
 hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$hy2_port" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
 if [[ -n $hy2_ports ]]; then
-hy2ports=$(echo $hy2_ports | sed 's/:/-/g')
-hyps=$hy2_port,$hy2ports
+cmhy2pt=$(echo $hy2_ports | tr ':' '-')
+hyps=$cmhy2pt
+sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
 else
 hyps=
 fi
@@ -1151,8 +1152,7 @@ echo
 reshy2(){
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$ins_hy2&mport=$hyps&sni=$hy2_name#hy2-$hostname"
-#hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$ins_hy2&sni=$hy2_name#hy2-$hostname"
+hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$ins_hy2&allowInsecure=$ins_hy2&mport=$hyps&sni=$hy2_name#hy2-$hostname"
 echo "$hy2_link" > /etc/s-box/hy2.txt
 red "🚀【 Hysteria-2 】节点信息如下：" && sleep 2
 echo
@@ -1168,7 +1168,7 @@ echo
 restu5(){
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-tuic5_link="tuic://$uuid:$uuid@$sb_tu5_ip:$tu5_port?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=$tu5_name&allow_insecure=$ins&allowInsecure=$ins#tu5-$hostname"
+tuic5_link="tuic://$uuid:$uuid@$sb_tu5_ip:$tu5_port?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=$tu5_name&insecure=$ins&allowInsecure=$ins#tu5-$hostname"
 echo "$tuic5_link" > /etc/s-box/tuic5.txt
 red "🚀【 Tuic-v5 】节点信息如下：" && sleep 2
 echo
@@ -1184,7 +1184,7 @@ echo
 resan(){
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-an_link="anytls://$uuid@$sb_an_ip:$an_port?&sni=$an_name&allowInsecure=$ins_an#anytls-$hostname"
+an_link="anytls://$uuid@$sb_an_ip:$an_port?&sni=$an_name&allowInsecure=$ins_an&insecure=$ins_an#anytls-$hostname"
 echo "$an_link" > /etc/s-box/an.txt
 red "🚀【 Anytls】节点信息如下：" && sleep 2
 echo
@@ -1198,6 +1198,15 @@ echo
 }
 
 sb_client(){
+
+sbhy2ports(){
+if [[ -n $hy2_ports ]]; then
+    cat <<EOF
+  "server_ports": [ $sbhy2pt ],
+EOF
+fi
+}
+
 sbany1(){
   if [[ "$sbnh" != "1.10" ]]; then
     echo "\"anytls-$hostname\","
@@ -1319,8 +1328,7 @@ cat <<EOF
       }
         ],
         "final": "proxyDns",
-        "strategy": "prefer_ipv4",
-        "independent_cache": true
+        "strategy": "prefer_ipv4"
     },
     "inbounds": [
         {
@@ -1454,6 +1462,7 @@ cat <<EOF
         "tag": "hy2-$hostname",
         "server": "$cl_hy2_ip",
         "server_port": $hy2_port,
+$(sbhy2ports)
         "password": "$uuid",
         "tls": {
             "enabled": true,
@@ -1566,7 +1575,8 @@ proxies:
 - name: hysteria2-$hostname                            
   type: hysteria2                                      
   server: $cl_hy2_ip                               
-  port: $hy2_port                                
+  port: $hy2_port
+  ports: $cmhy2pt
   password: $uuid                          
   alpn:
     - h3
@@ -1713,7 +1723,7 @@ $(sbany2)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-        $(sbany1)
+$(sbany1)
         "vmess-tls-argo固定-$hostname",
         "vmess-argo固定-$hostname",
         "vmess-tls-argo临时-$hostname",
@@ -1728,7 +1738,7 @@ $(sbany2)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-        $(sbany1)
+$(sbany1)
         "vmess-tls-argo固定-$hostname",
         "vmess-argo固定-$hostname",
         "vmess-tls-argo临时-$hostname",
@@ -1938,7 +1948,7 @@ $(sbany2)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-        $(sbany1)
+$(sbany1)
         "vmess-tls-argo临时-$hostname",
         "vmess-argo临时-$hostname"
             ]
@@ -1951,7 +1961,7 @@ $(sbany2)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-        $(sbany1)
+$(sbany1)
         "vmess-tls-argo临时-$hostname",
         "vmess-argo临时-$hostname"
             ],
@@ -2127,7 +2137,7 @@ $(sbany2)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-        $(sbany1)
+$(sbany1)
         "vmess-tls-argo固定-$hostname",
         "vmess-argo固定-$hostname"
             ]
@@ -2140,7 +2150,7 @@ $(sbany2)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname",
-        $(sbany1)
+$(sbany1)
         "vmess-tls-argo固定-$hostname",
         "vmess-argo固定-$hostname"
             ],
@@ -2257,7 +2267,7 @@ $(sbany2)
             "outbounds": [
         "auto",
         "vless-$hostname",
-		$(sbany1)
+$(sbany1)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname"
@@ -2268,7 +2278,7 @@ $(sbany2)
             "type": "urltest",
             "outbounds": [
         "vless-$hostname",
-		$(sbany1)
+$(sbany1)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname"
@@ -2775,7 +2785,7 @@ green "3：重置删除Hysteria2多端口"
 green "0：返回上层"
 readp "请选择【0-3】：" menu
 if [ "$menu" = "1" ]; then
-if [ -n $hy2_ports ]; then
+if [ -n "$hy2_ports" ]; then
 hy2deports
 hy2port
 echo $sbfiles | xargs -n1 sed -i "67s/$hy2_port/$port_hy2/"
@@ -2800,10 +2810,10 @@ else
 changeport
 fi
 elif [ "$menu" = "3" ]; then
-if [ -n $hy2_ports ]; then
+if [ -n "$hy2_ports" ]; then
 hy2deports && sbshare > /dev/null 2>&1 && changeport
 else
-yellow "Hysteria2未设置多端口" && changeport
+sbshare > /dev/null 2>&1 && yellow "Hysteria2未设置多端口" && changeport
 fi
 else
 changeport
@@ -2816,7 +2826,7 @@ green "3：重置删除Tuic5多端口"
 green "0：返回上层"
 readp "请选择【0-3】：" menu
 if [ "$menu" = "1" ]; then
-if [ -n $tu5_ports ]; then
+if [ -n "$tu5_ports" ]; then
 tu5deports
 tu5port
 echo $sbfiles | xargs -n1 sed -i "89s/$tu5_port/$port_tu/"
@@ -2841,10 +2851,10 @@ else
 changeport
 fi
 elif [ "$menu" = "3" ]; then
-if [ -n $tu5_ports ]; then
+if [ -n "$tu5_ports" ]; then
 tu5deports && sbshare > /dev/null 2>&1 && changeport
 else
-yellow "Tuic5未设置多端口" && changeport
+sbshare > /dev/null 2>&1 && yellow "Tuic5未设置多端口" && changeport
 fi
 else
 changeport
