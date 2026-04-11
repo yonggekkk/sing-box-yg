@@ -1198,6 +1198,15 @@ echo
 }
 
 sb_client(){
+
+maxhy2ports(){
+if [[ -n $hy2_ports ]]; then
+    cat <<EOF
+  "server_ports": [ "$hyps" ],
+EOF
+fi
+}
+
 sbany1(){
   if [[ "$sbnh" != "1.10" ]]; then
     echo "\"anytls-$hostname\","
@@ -1454,6 +1463,7 @@ cat <<EOF
         "tag": "hy2-$hostname",
         "server": "$cl_hy2_ip",
         "server_port": $hy2_port,
+		$(maxhy2ports)
         "password": "$uuid",
         "tls": {
             "enabled": true,
