@@ -2267,7 +2267,7 @@ $(sbany2)
             "outbounds": [
         "auto",
         "vless-$hostname",
-		$(sbany1)
+$(sbany1)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname"
@@ -2278,7 +2278,7 @@ $(sbany2)
             "type": "urltest",
             "outbounds": [
         "vless-$hostname",
-		$(sbany1)
+$(sbany1)
         "vmess-$hostname",
         "hy2-$hostname",
         "tuic5-$hostname"
