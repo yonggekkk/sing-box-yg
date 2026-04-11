@@ -1026,7 +1026,8 @@ hy2_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].listen_port'
 hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$hy2_port" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
 if [[ -n $hy2_ports ]]; then
 hy2ports=$(echo $hy2_ports | sed 's/:/-/g')
-hyps=$hy2_port,$hy2ports
+hyps=$hy2ports
+sbhy2pt=(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
 else
 hyps=
 fi
@@ -1199,10 +1200,10 @@ echo
 
 sb_client(){
 
-maxhy2ports(){
+sbhy2ports(){
 if [[ -n $hy2_ports ]]; then
     cat <<EOF
-  "server_ports": [ "$hyps" ],
+  "server_ports": [ $sbhy2pt ],
 EOF
 fi
 }
