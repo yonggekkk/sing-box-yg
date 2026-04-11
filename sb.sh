@@ -2785,7 +2785,7 @@ green "3：重置删除Hysteria2多端口"
 green "0：返回上层"
 readp "请选择【0-3】：" menu
 if [ "$menu" = "1" ]; then
-if [ -n $hy2_ports ]; then
+if [ -n "$hy2_ports" ]; then
 hy2deports
 hy2port
 echo $sbfiles | xargs -n1 sed -i "67s/$hy2_port/$port_hy2/"
@@ -2810,7 +2810,7 @@ else
 changeport
 fi
 elif [ "$menu" = "3" ]; then
-if [ -n $hy2_ports ]; then
+if [ -n "$hy2_ports" ]; then
 hy2deports && sbshare > /dev/null 2>&1 && changeport
 else
 yellow "Hysteria2未设置多端口" && changeport
@@ -2826,7 +2826,7 @@ green "3：重置删除Tuic5多端口"
 green "0：返回上层"
 readp "请选择【0-3】：" menu
 if [ "$menu" = "1" ]; then
-if [ -n $tu5_ports ]; then
+if [ -n "$tu5_ports" ]; then
 tu5deports
 tu5port
 echo $sbfiles | xargs -n1 sed -i "89s/$tu5_port/$port_tu/"
@@ -2851,7 +2851,7 @@ else
 changeport
 fi
 elif [ "$menu" = "3" ]; then
-if [ -n $tu5_ports ]; then
+if [ -n "$tu5_ports" ]; then
 tu5deports && sbshare > /dev/null 2>&1 && changeport
 else
 yellow "Tuic5未设置多端口" && changeport
