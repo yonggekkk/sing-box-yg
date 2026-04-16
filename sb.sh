@@ -1020,7 +1020,7 @@ fi
 if [[ -f /etc/s-box/cfvmadd_argo.txt ]]; then
 vmadd_argo=$(cat /etc/s-box/cfvmadd_argo.txt 2>/dev/null)
 else
-vmadd_argo=www.visa.com.sg
+vmadd_argo=cloudflare-ech.com
 fi
 hy2_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].listen_port')
 hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$hy2_port" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
@@ -3167,10 +3167,11 @@ sleep 1 && green "本地IP订阅链接已更新完成" && sleep 3 && sb
 vmesscfadd(){
 echo
 green "推荐使用稳定的世界大厂或组织的官方CDN域名作为CDN优选地址："
+blue "cloudflare-ech.com"
 blue "www.visa.com.sg"
 blue "www.wto.org"
 blue "www.web.com"
-blue "yg1.ygkkk.dpdns.org (yg1中的1，可换为1-11中任意数字，甬哥维护)"
+blue "yg1.ygkkk.dpdns.org (yg1中的1，可换为1-13中任意数字，甬哥维护)"
 echo
 yellow "1：自定义Vmess-ws(tls)主协议节点的CDN优选地址"
 yellow "2：针对选项1，重置客户端host/sni域名(IP解析到CF上的域名)"
