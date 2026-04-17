@@ -2811,7 +2811,7 @@ changeport
 fi
 elif [ "$menu" = "3" ]; then
 if [ -n "$hy2_ports" ]; then
-hy2deports && sbshare > /dev/null 2>&1 && changeport
+hy2deports && sbshare > /dev/null 2>&1 yellow "Hysteria2多端口已删除" && changeport
 else
 sbshare > /dev/null 2>&1 && yellow "Hysteria2未设置多端口" && changeport
 fi
@@ -2852,7 +2852,7 @@ changeport
 fi
 elif [ "$menu" = "3" ]; then
 if [ -n "$tu5_ports" ]; then
-tu5deports && sbshare > /dev/null 2>&1 && changeport
+tu5deports && sbshare > /dev/null 2>&1 yellow "Tuic5多端口已删除" && changeport
 else
 sbshare > /dev/null 2>&1 && yellow "Tuic5未设置多端口" && changeport
 fi
