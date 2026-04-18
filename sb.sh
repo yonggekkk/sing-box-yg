@@ -3188,13 +3188,16 @@ fi
 echo
 readp "输入自定义的优选IP/域名：" menu
 echo "$menu" > /etc/s-box/cfvmadd_local.txt
+sbshare > /dev/null 2>&1
 green "设置成功，选择主菜单9进行节点配置更新" && sleep 2 && vmesscfadd
 elif  [ "$menu" = "2" ]; then
 rm -rf /etc/s-box/cfymjx.txt
+sbshare > /dev/null 2>&1
 green "重置成功，可选择1重新设置" && sleep 2 && vmesscfadd
 elif  [ "$menu" = "3" ]; then
 readp "输入自定义的优选IP/域名：" menu
 echo "$menu" > /etc/s-box/cfvmadd_argo.txt
+sbshare > /dev/null 2>&1
 green "设置成功，选择主菜单9进行节点配置更新" && sleep 2 && vmesscfadd
 else
 changeserv
