@@ -4126,7 +4126,7 @@ ws4="warp-socks5-ipv4优先分流域名：$sfl4"
 ws6="warp-socks5-ipv6优先分流域名：$sfl6"
 l4="VPS本地ipv4优先分流域名：$adfl4"
 l6="VPS本地ipv6优先分流域名：$adfl6"
-[[ "$sbnh" == "1.10" ]] && ymflzu=("ww4" "ww6" "ws4" "ws6" "l4" "l6") || ymflzu=("ww6" "ws4" "l4" "l6")
+[[ "$sbnh" == "1.10" ]] && ymflzu=("ww4" "ww6" "ws4" "ws6" "l4" "l6") || ymflzu=("ww4" "ws4" "l4" "l6")
 for ymfl in "${ymflzu[@]}"; do
 if [[ ${!ymfl} != *"未"* ]]; then
 echo -e "${!ymfl}"
