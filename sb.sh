@@ -1593,7 +1593,7 @@ proxies:
   uuid: $uuid       
   password: $uuid   
   alpn: [h3]
-  disable-sni: true
+  disable-sni: $tu5_ins
   reduce-rtt: true
   udp-relay-mode: native
   congestion-controller: bbr
