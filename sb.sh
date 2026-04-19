@@ -850,7 +850,7 @@ cat > /etc/s-box/sb11.json <<EOF
 "domain_suffix":[
 "yg_kkk"
 ],
-"strategy": "prefer_ipv4"
+"strategy": "prefer_ipv6"
 },
 {
 "domain_suffix":[
@@ -3545,7 +3545,7 @@ changef(){
 [[ "$sbnh" == "1.10" ]] && num=10 || num=11
 sbymfl
 echo
-[[ "$sbnh" != "1.10" ]] && wfl6='暂不支持' sfl6='暂不支持' adfl4='暂不支持' adfl6='暂不支持'
+[[ "$sbnh" != "1.10" ]] && wfl4='暂不支持' sfl6='暂不支持' adfl4='暂不支持' adfl6='暂不支持'
 green "1：重置warp-wireguard-ipv4优先分流域名 $wfl4"
 green "2：重置warp-wireguard-ipv6优先分流域名 $wfl6"
 green "3：重置warp-socks5-ipv4优先分流域名 $sfl4"
@@ -4126,7 +4126,7 @@ ws4="warp-socks5-ipv4优先分流域名：$sfl4"
 ws6="warp-socks5-ipv6优先分流域名：$sfl6"
 l4="VPS本地ipv4优先分流域名：$adfl4"
 l6="VPS本地ipv6优先分流域名：$adfl6"
-[[ "$sbnh" == "1.10" ]] && ymflzu=("ww4" "ww6" "ws4" "ws6" "l4" "l6") || ymflzu=("ww4" "ws4" "l4" "l6")
+[[ "$sbnh" == "1.10" ]] && ymflzu=("ww4" "ww6" "ws4" "ws6" "l4" "l6") || ymflzu=("ww6" "ws4" "l4" "l6")
 for ymfl in "${ymflzu[@]}"; do
 if [[ ${!ymfl} != *"未"* ]]; then
 echo -e "${!ymfl}"
