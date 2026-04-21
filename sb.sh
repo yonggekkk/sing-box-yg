@@ -850,7 +850,7 @@ cat > /etc/s-box/sb11.json <<EOF
 "domain_suffix":[
 "yg_kkk"
 ],
-"strategy": "prefer_ipv4"
+"strategy": "prefer_ipv6"
 },
 {
 "domain_suffix":[
