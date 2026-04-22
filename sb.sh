@@ -212,7 +212,7 @@ inssb(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green "使用哪个内核版本？"
 yellow "1：使用目前最新正式版内核 (回车默认)"
-yellow "2：使用之前1.10.7正式版内核"
+yellow "2：使用之前1.10.7正式版内核 (支持geosite分流、IP优选级切换)"
 readp "请选择【1-2】：" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
 sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
