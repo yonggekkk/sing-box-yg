@@ -1106,10 +1106,10 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 vmess-ws(tls)+Argo 】临时节点信息如下(可选择3-8-3，自定义CDN优选地址)：" && sleep 2
 echo
 echo "分享链接【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
-echo -e "${yellow}vmess://$(echo '{"add":"'$vmadd_argo'","aid":"0","host":"'$argo'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"8443","ps":"'vm-argo-$hostname'","tls":"tls","sni":"'$argo'","fp":"chrome","type":"none","v":"2"}' | base64 -w 0)${plain}"
+echo -e "${yellow}vmess://$(echo '{"add":"'$vmadd_argo'","aid":"0","host":"'$argo'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"443","ps":"'vm-argo-$hostname'","tls":"tls","sni":"'$argo'","fp":"chrome","type":"none","v":"2"}' | base64 -w 0)${plain}"
 echo
 echo "二维码【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
-echo 'vmess://'$(echo '{"add":"'$vmadd_argo'","aid":"0","host":"'$argo'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"8443","ps":"'vm-argo-$hostname'","tls":"tls","sni":"'$argo'","fp":"chrome","type":"none","v":"2"}' | base64 -w 0) > /etc/s-box/vm_ws_argols.txt
+echo 'vmess://'$(echo '{"add":"'$vmadd_argo'","aid":"0","host":"'$argo'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"443","ps":"'vm-argo-$hostname'","tls":"tls","sni":"'$argo'","fp":"chrome","type":"none","v":"2"}' | base64 -w 0) > /etc/s-box/vm_ws_argols.txt
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/vm_ws_argols.txt)"
 fi
 if ps -ef 2>/dev/null | grep -q '[c]loudflared.*run'; then
@@ -1119,10 +1119,10 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 vmess-ws(tls)+Argo 】固定节点信息如下 (可选择3-8-3，自定义CDN优选地址)：" && sleep 2
 echo
 echo "分享链接【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
-echo -e "${yellow}vmess://$(echo '{"add":"'$vmadd_argo'","aid":"0","host":"'$argogd'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"8443","ps":"'vm-argo-$hostname'","tls":"tls","sni":"'$argogd'","fp":"chrome","type":"none","v":"2"}' | base64 -w 0)${plain}"
+echo -e "${yellow}vmess://$(echo '{"add":"'$vmadd_argo'","aid":"0","host":"'$argogd'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"443","ps":"'vm-argo-$hostname'","tls":"tls","sni":"'$argogd'","fp":"chrome","type":"none","v":"2"}' | base64 -w 0)${plain}"
 echo
 echo "二维码【v2rayn、v2rayng、nekobox、小火箭shadowrocket】"
-echo 'vmess://'$(echo '{"add":"'$vmadd_argo'","aid":"0","host":"'$argogd'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"8443","ps":"'vm-argo-$hostname'","tls":"tls","sni":"'$argogd'","fp":"chrome","type":"none","v":"2"}' | base64 -w 0) > /etc/s-box/vm_ws_argogd.txt
+echo 'vmess://'$(echo '{"add":"'$vmadd_argo'","aid":"0","host":"'$argogd'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"443","ps":"'vm-argo-$hostname'","tls":"tls","sni":"'$argogd'","fp":"chrome","type":"none","v":"2"}' | base64 -w 0) > /etc/s-box/vm_ws_argogd.txt
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/vm_ws_argogd.txt)"
 fi
 echo
@@ -1608,7 +1608,7 @@ $(sball)
 $(sbany2)
 {
             "server": "$vmadd_argo",
-            "server_port": 8443,
+            "server_port": 443,
             "tag": "vmess-tls-argo固定-$hostname",
             "tls": {
                 "enabled": true,
@@ -1662,7 +1662,7 @@ $(sbany2)
         },
 {
             "server": "$vmadd_argo",
-            "server_port": 8443,
+            "server_port": 443,
             "tag": "vmess-tls-argo临时-$hostname",
             "tls": {
                 "enabled": true,
@@ -1765,7 +1765,7 @@ $(clany2)
 - name: vmess-tls-argo固定-$hostname                         
   type: vmess
   server: $vmadd_argo                        
-  port: 8443                                     
+  port: 443                                     
   uuid: $uuid       
   alterId: 0
   cipher: auto
@@ -1798,7 +1798,7 @@ $(clany2)
 - name: vmess-tls-argo临时-$hostname                         
   type: vmess
   server: $vmadd_argo                        
-  port: 8443                                     
+  port: 443                                     
   uuid: $uuid       
   alterId: 0
   cipher: auto
@@ -1887,7 +1887,7 @@ $(sball)
 $(sbany2)
 {
             "server": "$vmadd_argo",
-            "server_port": 8443,
+            "server_port": 443,
             "tag": "vmess-tls-argo临时-$hostname",
             "tls": {
                 "enabled": true,
@@ -1993,7 +1993,7 @@ $(clany2)
 - name: vmess-tls-argo临时-$hostname                         
   type: vmess
   server: $vmadd_argo                        
-  port: 8443                                     
+  port: 443                                     
   uuid: $uuid       
   alterId: 0
   cipher: auto
@@ -2076,7 +2076,7 @@ $(sball)
 $(sbany2)
 {
             "server": "$vmadd_argo",
-            "server_port": 8443,
+            "server_port": 443,
             "tag": "vmess-tls-argo固定-$hostname",
             "tls": {
                 "enabled": true,
@@ -2180,7 +2180,7 @@ $(clany2)
 - name: vmess-tls-argo固定-$hostname                         
   type: vmess
   server: $vmadd_argo                        
-  port: 8443                                     
+  port: 443                                     
   uuid: $uuid       
   alterId: 0
   cipher: auto
