@@ -280,8 +280,6 @@ openssl req -new -x509 -days 36500 -key /etc/s-box/private.key -out /etc/s-box/c
 echo
 if [[ -f /etc/s-box/cert.pem ]]; then
 blue "生成bing自签证书成功"
-SHA256=$(openssl x509 -fingerprint -noout -sha256 -in /etc/s-box/cert.pem 2>/dev/null | awk -F= '{print $NF}' | sed 's/:/%3A/g')
-echo "$SHA256" > /etc/s-box/SHA256.txt
 else
 red "生成bing自签证书失败" && exit
 fi
@@ -992,6 +990,8 @@ ws_path=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.pat
 vm_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 vm_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.server_name')
+SHA256=$(openssl x509 -fingerprint -noout -sha256 -in /etc/s-box/cert.pem 2>/dev/null | awk -F= '{print $NF}' | sed 's/:/%3A/g')
+echo "$SHA256" > /etc/s-box/SHA256.txt
 SHA256=$(cat /etc/s-box/SHA256.txt)
 if [[ "$tls" = "false" ]]; then
 if [[ -f /etc/s-box/cfymjx.txt ]]; then
