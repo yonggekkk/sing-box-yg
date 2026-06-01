@@ -280,6 +280,8 @@ openssl req -new -x509 -days 36500 -key /etc/s-box/private.key -out /etc/s-box/c
 echo
 if [[ -f /etc/s-box/cert.pem ]]; then
 blue "生成bing自签证书成功"
+SHA256=$(openssl x509 -fingerprint -noout -sha256 -in /etc/s-box/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+echo "$SHA256" > /etc/s-box/SHA256.txt
 else
 red "生成bing自签证书失败" && exit
 fi
@@ -990,6 +992,7 @@ ws_path=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.pat
 vm_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 vm_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.server_name')
+SHA256=$(cat /etc/s-box/SHA256.txt)
 if [[ "$tls" = "false" ]]; then
 if [[ -f /etc/s-box/cfymjx.txt ]]; then
 vm_name=$(cat /etc/s-box/cfymjx.txt 2>/dev/null)
@@ -1154,7 +1157,7 @@ echo
 reshy2(){
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$ins_hy2&allowInsecure=$ins_hy2$hyps&sni=$hy2_name#hy2-$hostname"
+hy2_link="hysteria2://$uuid@$sb_hy2_ip:$hy2_port?security=tls&alpn=h3&insecure=$ins_hy2&allowInsecure=$ins_hy2$hyps&sni=$hy2_name&hpkp=$SHA256#hy2-$hostname"
 echo "$hy2_link" > /etc/s-box/hy2.txt
 red "🚀【 Hysteria-2 】节点信息如下：" && sleep 2
 echo
