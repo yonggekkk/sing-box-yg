@@ -1540,10 +1540,6 @@ dns:
   proxy-server-nameserver:
     - "https://223.5.5.5/dns-query"
     - "https://doh.pub/dns-query"
-nameserver-policy:
-  "geosite:cn":
-     - "https://223.5.5.5/dns-query"
-     - "https://doh.pub/dns-query"
 
 proxies:
 - name: vless-reality-vision-$hostname               
