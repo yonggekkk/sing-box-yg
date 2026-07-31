@@ -59,16 +59,17 @@ bbr="Openvz/Lxc"
 fi
 hostname=$(hostname)
 
-if [ ! -f sbyg_update ]; then
+dependency_marker=/etc/s-box/.sbyg-dependencies
+if [ ! -f "$dependency_marker" ]; then
 green "首次安装Sing-box-yg脚本必要的依赖……"
 if command -v apk >/dev/null 2>&1; then
 apk update
-apk add bash libc6-compat jq openssl procps busybox-extras iproute2 iputils coreutils expect git socat iptables grep tar tzdata util-linux
+apk add bash libc6-compat jq openssl procps busybox-extras iproute2 iputils coreutils expect git socat iptables grep tar tzdata util-linux wget xxd python3 qrencode
 apk add virt-what
 else
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
 cd /etc/yum.repos.d/ && mkdir backup && mv *repo backup/ 
-curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo
+curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-8.repo
 sed -i -e "s|mirrors.cloud.aliyuncs.com|mirrors.aliyun.com|g " /etc/yum.repos.d/CentOS-*
 sed -i -e "s|releasever|releasever-stream|g" /etc/yum.repos.d/CentOS-*
 yum clean all && yum makecache
@@ -94,7 +95,15 @@ systemctl enable iptables >/dev/null 2>&1
 systemctl start iptables >/dev/null 2>&1
 fi
 if [[ -z $vi ]]; then
+if [ -x "$(command -v apt-get)" ]; then
 apt install iputils-ping iproute2 systemctl -y
+elif [ -x "$(command -v apk)" ]; then
+apk add iputils iproute2
+elif [ -x "$(command -v yum)" ]; then
+yum install -y iputils iproute
+elif [ -x "$(command -v dnf)" ]; then
+dnf install -y iputils iproute
+fi
 fi
 
 packages=("curl" "openssl" "iptables" "tar" "expect" "wget" "xxd" "python3" "qrencode" "git")
@@ -109,11 +118,14 @@ elif [ -x "$(command -v yum)" ]; then
 yum install -y "$inspackage"
 elif [ -x "$(command -v dnf)" ]; then
 dnf install -y "$inspackage"
+elif [ -x "$(command -v apk)" ]; then
+apk add "$inspackage"
 fi
 fi
 done
 fi
-touch sbyg_update
+mkdir -p /etc/s-box
+touch "$dependency_marker"
 fi
 
 if [[ $vi = openvz ]]; then
@@ -193,19 +205,163 @@ service apache2 stop >/dev/null 2>&1
 systemctl disable apache2 >/dev/null 2>&1
 fi
 sleep 1
-green "执行开放端口，关闭防火墙完毕"
+green "兼容模式已关闭系统防火墙，请自行确认 VPS 后台安全组和端口暴露"
 }
 
 openyn(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-readp "是否开放端口，关闭防火墙？\n1、是，执行 (回车默认)\n2、否，跳过！自行处理\n请选择【1-2】：" action
+readp "防火墙处理：\n1、保留现有防火墙并显示端口提示 (回车默认)\n2、兼容模式：关闭系统防火墙 (不推荐)\n请选择【1-2】：" action
 if [[ -z $action ]] || [[ "$action" = "1" ]]; then
-close
+green "已保留现有系统防火墙"
 elif [[ "$action" = "2" ]]; then
-echo
+close
 else
 red "输入错误,请重新选择" && openyn
 fi
+}
+
+firewall_hint(){
+yellow "脚本默认保留现有系统防火墙。请在 VPS 后台安全组与系统防火墙放行以下端口："
+yellow "TCP：$port_vl_re $port_vm_ws${port_an:+ $port_an}"
+yellow "UDP：$port_hy2 $port_tu"
+}
+
+download_to_temp(){
+local url=$1 destination=$2 tmp
+tmp=$(mktemp "${destination}.tmp.XXXXXX") || return 1
+curl --fail --location --retry 2 --connect-timeout 10 --max-time 300 --proto '=https' -o "$tmp" "$url" || { rm -f "$tmp"; return 1; }
+test -s "$tmp" || { rm -f "$tmp"; return 1; }
+printf '%s\n' "$tmp"
+}
+
+atomic_install(){
+local source=$1 destination=$2 mode=${3:-755}
+test -s "$source" || return 1
+install -m "$mode" "$source" "${destination}.new" || return 1
+mv -f "${destination}.new" "$destination"
+}
+
+install_geo_databases(){
+local database_dir=${GEO_DATABASE_DIR:-/root} asset tmp
+for asset in geoip geosite; do
+tmp=$(download_to_temp "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/${asset}.db" "$database_dir/${asset}.db") || return 1
+atomic_install "$tmp" "$database_dir/${asset}.db" 644 || { rm -f "$tmp"; return 1; }
+rm -f "$tmp"
+done
+}
+
+update_sbyg_version(){
+local destination=${SBYG_VERSION_FILE:-/etc/s-box/v} tmp version version_file
+tmp=$(download_to_temp https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/version "$destination") || return 1
+version=$(awk -F "更新内容" 'NR == 1 {print $1}' "$tmp" | sed 's/[[:space:]]*$//')
+rm -f "$tmp"
+test -n "$version" || return 1
+version_file=$(mktemp "${destination}.tmp.XXXXXX") || return 1
+printf '%s\n' "$version" > "$version_file" || { rm -f "$version_file"; return 1; }
+atomic_install "$version_file" "$destination" 644 || { rm -f "$version_file"; return 1; }
+rm -f "$version_file"
+}
+
+update_inbound_port(){
+local tag=$1 port=$2 file tmp updated=0
+[[ "$port" =~ ^[0-9]+$ ]] && (( port >= 1 && port <= 65535 )) || return 1
+for file in $sbfiles; do
+[ -f "$file" ] || continue
+jq -e --arg tag "$tag" '.inbounds | any(.tag == $tag)' "$file" >/dev/null 2>&1 || continue
+tmp=$(mktemp "${file}.tmp.XXXXXX") || return 1
+if ! jq --arg tag "$tag" --argjson port "$port" '(.inbounds[] | select(.tag == $tag) | .listen_port) = $port' "$file" > "$tmp"; then
+rm -f "$tmp"
+return 1
+fi
+chmod --reference="$file" "$tmp" || { rm -f "$tmp"; return 1; }
+mv -f "$tmp" "$file" || { rm -f "$tmp"; return 1; }
+updated=1
+done
+[ "$updated" -eq 1 ]
+}
+
+update_vless_reality_server_name(){
+local server_name=$1 file tmp updated=0
+for file in $sbfiles; do
+[ -f "$file" ] || continue
+jq -e '.inbounds | any(.tag == "vless-sb")' "$file" >/dev/null 2>&1 || continue
+tmp=$(mktemp "${file}.tmp.XXXXXX") || return 1
+if ! jq --arg server_name "$server_name" '(.inbounds[] | select(.tag == "vless-sb") | .tls) |= (.server_name = $server_name | .reality.handshake.server = $server_name)' "$file" > "$tmp"; then
+rm -f "$tmp"
+return 1
+fi
+chmod --reference="$file" "$tmp" || { rm -f "$tmp"; return 1; }
+mv -f "$tmp" "$file" || { rm -f "$tmp"; return 1; }
+updated=1
+done
+[ "$updated" -eq 1 ]
+}
+
+update_inbound_tls(){
+local tag=$1 enabled=$2 server_name=$3 certificate_path=$4 key_path=$5 file tmp updated=0
+for file in $sbfiles; do
+[ -f "$file" ] || continue
+jq -e --arg tag "$tag" '.inbounds | any(.tag == $tag)' "$file" >/dev/null 2>&1 || continue
+tmp=$(mktemp "${file}.tmp.XXXXXX") || return 1
+if ! jq --arg tag "$tag" --arg enabled "$enabled" --arg server_name "$server_name" --arg certificate_path "$certificate_path" --arg key_path "$key_path" '(.inbounds[] | select(.tag == $tag) | .tls) |= (if $enabled == "" then . else .enabled = ($enabled == "true") end | if $server_name == "" then . else .server_name = $server_name end | if $certificate_path == "" then . else .certificate_path = $certificate_path end | if $key_path == "" then . else .key_path = $key_path end)' "$file" > "$tmp"; then
+rm -f "$tmp"
+return 1
+fi
+chmod --reference="$file" "$tmp" || { rm -f "$tmp"; return 1; }
+mv -f "$tmp" "$file" || { rm -f "$tmp"; return 1; }
+updated=1
+done
+[ "$updated" -eq 1 ]
+}
+
+update_vmess_path(){
+local path=$1 file tmp updated=0
+for file in $sbfiles; do
+[ -f "$file" ] || continue
+jq -e '.inbounds | any(.tag == "vmess-sb")' "$file" >/dev/null 2>&1 || continue
+tmp=$(mktemp "${file}.tmp.XXXXXX") || return 1
+if ! jq --arg path "$path" '(.inbounds[] | select(.tag == "vmess-sb") | .transport.path) = $path' "$file" > "$tmp"; then
+rm -f "$tmp"
+return 1
+fi
+chmod --reference="$file" "$tmp" || { rm -f "$tmp"; return 1; }
+mv -f "$tmp" "$file" || { rm -f "$tmp"; return 1; }
+updated=1
+done
+[ "$updated" -eq 1 ]
+}
+
+update_inbound_credentials(){
+local credential=$1 file tmp updated=0
+for file in $sbfiles; do
+[ -f "$file" ] || continue
+tmp=$(mktemp "${file}.tmp.XXXXXX") || return 1
+if ! jq --arg credential "$credential" '(.inbounds[]?.users[]?) |= (if has("uuid") then .uuid = $credential elif has("password") then .password = $credential else . end)' "$file" > "$tmp"; then
+rm -f "$tmp"
+return 1
+fi
+chmod --reference="$file" "$tmp" || { rm -f "$tmp"; return 1; }
+mv -f "$tmp" "$file" || { rm -f "$tmp"; return 1; }
+updated=1
+done
+[ "$updated" -eq 1 ]
+}
+
+install_sing_box_core(){
+local version=$1 directory=${SING_BOX_DIR:-/etc/s-box} api_base=${SING_BOX_RELEASE_API:-https://api.github.com/repos/SagerNet/sing-box/releases/tags} download_base=${SING_BOX_DOWNLOAD_BASE:-https://github.com/SagerNet/sing-box/releases/download} asset="sing-box-$1-linux-$cpu.tar.gz" api archive workdir expected actual candidate
+api=$(mktemp) || return 1
+curl --fail --location --retry 2 --connect-timeout 10 --max-time 30 --proto '=https' -o "$api" "$api_base/v$version" || { rm -f "$api"; return 1; }
+expected=$(jq -r --arg name "$asset" '.assets[] | select(.name == $name) | .digest // empty' "$api")
+rm -f "$api"
+test -n "$expected" && test "${expected#sha256:}" != "$expected" || return 1
+archive=$(download_to_temp "$download_base/v$version/$asset" "$directory/sing-box.tar.gz") || return 1
+actual=$(sha256sum "$archive" | awk '{print $1}')
+test "$actual" = "${expected#sha256:}" || { rm -f "$archive"; return 1; }
+workdir=$(mktemp -d) || { rm -f "$archive"; return 1; }
+tar xzf "$archive" -C "$workdir" && candidate="$workdir/sing-box-$version-linux-$cpu/sing-box" && test -x "$candidate" && "$candidate" version >/dev/null 2>&1 && atomic_install "$candidate" "$directory/sing-box" 755
+local status=$?
+rm -rf "$workdir" "$archive"
+return $status
 }
 
 inssb(){
@@ -220,21 +376,11 @@ else
 sbcore='1.10.7'
 fi
 sbname="sing-box-$sbcore-linux-$cpu"
-curl -L -o /etc/s-box/sing-box.tar.gz  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/$sbname.tar.gz
-if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
-tar xzf /etc/s-box/sing-box.tar.gz -C /etc/s-box
-mv /etc/s-box/$sbname/sing-box /etc/s-box
-rm -rf /etc/s-box/{sing-box.tar.gz,$sbname}
-if [[ -f '/etc/s-box/sing-box' ]]; then
-chown root:root /etc/s-box/sing-box
-chmod +x /etc/s-box/sing-box
+if install_sing_box_core "$sbcore"; then
 blue "成功安装 Sing-box 内核版本：$(/etc/s-box/sing-box version | awk '/version/{print $NF}')"
 sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' 2>/dev/null | cut -d '.' -f 1,2)
 else
-red "下载 Sing-box 内核不完整，安装失败，请再运行安装一次" && exit
-fi
-else
-red "下载 Sing-box 内核失败，请再运行安装一次，并检测VPS的网络是否可以访问Github" && exit
+red "核心下载、校验或安装失败，未写入新二进制" && exit
 fi
 }
 
@@ -412,6 +558,7 @@ blue "Tuic-v5端口：$port_tu"
 if [[ "$sbnh" != "1.10" ]]; then
 blue "Anytls端口：$port_an"
 fi
+firewall_hint
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green "四、自动生成各个协议统一的uuid (密码)"
 uuid=$(/etc/s-box/sing-box generate uuid)
@@ -2379,9 +2526,9 @@ case $(uname -m) in
 aarch64) cpu=arm64;;
 x86_64) cpu=amd64;;
 esac
-curl -L -o /etc/s-box/cloudflared -# --retry 2 https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$cpu
-#curl -L -o /etc/s-box/cloudflared -# --retry 2 https://gitlab.com/rwkgyg/sing-box-yg/-/raw/main/$cpu
-chmod +x /etc/s-box/cloudflared
+tmp=$(download_to_temp https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$cpu /etc/s-box/cloudflared) || { red "cloudflared下载失败"; return 1; }
+atomic_install "$tmp" /etc/s-box/cloudflared 755 || { rm -f "$tmp"; red "cloudflared安装失败"; return 1; }
+rm -f "$tmp"
 fi
 }
 
@@ -2536,8 +2683,9 @@ private_key=$(echo "$key_pair" | awk '/PrivateKey/ {print $2}' | tr -d '"')
 public_key=$(echo "$key_pair" | awk '/PublicKey/ {print $2}' | tr -d '"')
 echo "$public_key" > /etc/s-box/public.key
 short_id=$(/etc/s-box/sing-box generate rand --hex 4)
-wget -q -O /root/geoip.db https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db
-wget -q -O /root/geosite.db https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db
+if ! install_geo_databases; then
+red "GeoIP/GeoSite 下载或安装失败，已保留现有数据库" && return 1
+fi
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green "五、自动生成warp-wireguard出站账户" && sleep 2
 warpwg
@@ -2545,7 +2693,7 @@ inssbjsonser
 sbservice
 sbactive
 #curl -sL https://gitlab.com/rwkgyg/sing-box-yg/-/raw/main/version/version | awk -F "更新内容" '{print $1}' | head -n 1 > /etc/s-box/v
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/version | awk -F "更新内容" '{print $1}' | head -n 1 > /etc/s-box/v
+update_sbyg_version || yellow "脚本版本标记更新失败，不影响已安装服务"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 lnsb && blue "Sing-box-yg脚本安装成功，脚本快捷方式：sb" && cronsb
 echo
@@ -2589,10 +2737,12 @@ ym_vl_re=${menu:-apple.com}
 a=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].tls.server_name')
 b=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[0].tls.reality.handshake.server')
 c=$(cat /etc/s-box/vl_reality.txt | cut -d'=' -f5 | cut -d'&' -f1)
-echo $sbfiles | xargs -n1 sed -i "23s/$a/$ym_vl_re/"
-echo $sbfiles | xargs -n1 sed -i "27s/$b/$ym_vl_re/"
-restartsb && sbshare > /dev/null 2>&1
+if update_vless_reality_server_name "$ym_vl_re" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Vless-reality域名证书更换完毕"
+else
+red "Vless-reality域名证书更换失败，未生成新的分享链接"
+fi
 elif [ "$menu" = "2" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
 a=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
@@ -2608,12 +2758,12 @@ else
 c_c='/etc/s-box/cert.pem'
 d_d='/etc/s-box/private.key'
 fi
-echo $sbfiles | xargs -n1 sed -i "55s#$a#$a_a#"
-echo $sbfiles | xargs -n1 sed -i "56s#$b#$b_b#"
-echo $sbfiles | xargs -n1 sed -i "57s#$c#$c_c#"
-echo $sbfiles | xargs -n1 sed -i "58s#$d#$d_d#"
-restartsb && sbshare > /dev/null 2>&1
+if update_inbound_tls "vmess-sb" "$a_a" "$b_b" "$c_c" "$d_d" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "vmess-ws协议域名证书更换完毕"
+else
+red "vmess-ws协议域名证书更换失败，未生成新的分享链接"
+fi
 echo
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 vm_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')
@@ -2634,10 +2784,12 @@ else
 c_c='/etc/s-box/cert.pem'
 d_d='/etc/s-box/private.key'
 fi
-echo $sbfiles | xargs -n1 sed -i "79s#$c#$c_c#"
-echo $sbfiles | xargs -n1 sed -i "80s#$d#$d_d#"
-restartsb && sbshare > /dev/null 2>&1
+if update_inbound_tls "hy2-sb" "" "" "$c_c" "$d_d" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Hysteria2协议域名证书更换完毕"
+else
+red "Hysteria2协议域名证书更换失败，未生成新的分享链接"
+fi
 else
 red "当前未申请域名证书，不可切换。主菜单选择12，执行Acme证书申请" && sleep 2 && sb
 fi
@@ -2652,10 +2804,12 @@ else
 c_c='/etc/s-box/cert.pem'
 d_d='/etc/s-box/private.key'
 fi
-echo $sbfiles | xargs -n1 sed -i "102s#$c#$c_c#"
-echo $sbfiles | xargs -n1 sed -i "103s#$d#$d_d#"
-restartsb && sbshare > /dev/null 2>&1
+if update_inbound_tls "tuic5-sb" "" "" "$c_c" "$d_d" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Tuic5协议域名证书更换完毕"
+else
+red "Tuic5协议域名证书更换失败，未生成新的分享链接"
+fi
 else
 red "当前未申请域名证书，不可切换。主菜单选择12，执行Acme证书申请" && sleep 2 && sb
 fi
@@ -2670,10 +2824,12 @@ else
 c_c='/etc/s-box/cert.pem'
 d_d='/etc/s-box/private.key'
 fi
-echo $sbfiles | xargs -n1 sed -i "119s#$c#$c_c#"
-echo $sbfiles | xargs -n1 sed -i "120s#$d#$d_d#"
-restartsb && sbshare > /dev/null 2>&1
+if update_inbound_tls "anytls-sb" "" "" "$c_c" "$d_d" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Anytls协议域名证书更换完毕"
+else
+red "Anytls协议域名证书更换失败，未生成新的分享链接"
+fi
 else
 red "当前未申请域名证书，不可切换。主菜单选择12，执行Acme证书申请" && sleep 2 && sb
 fi
@@ -2769,21 +2925,30 @@ green "0：返回上层"
 readp "请选择要变更端口的协议：" menu
 if [ "$menu" = "1" ]; then
 vlport
-echo $sbfiles | xargs -n1 sed -i "14s/$vl_port/$port_vl_re/"
-restartsb && sbshare > /dev/null 2>&1
+if update_inbound_port "vless-sb" "$port_vl_re" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Vless-reality端口更改完成"
+else
+red "Vless-reality端口更改失败，未生成新的分享链接"
+fi
 echo
 elif [ "$menu" = "5" ]; then
 anport
-echo $sbfiles | xargs -n1 sed -i "110s/$an_port/$port_an/"
-restartsb && sbshare > /dev/null 2>&1
+if update_inbound_port "anytls-sb" "$port_an" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Anytls端口更改完成"
+else
+red "Anytls端口更改失败，未生成新的分享链接"
+fi
 echo
 elif [ "$menu" = "2" ]; then
 vmport
-echo $sbfiles | xargs -n1 sed -i "41s/$vm_port/$port_vm_ws/"
-restartsb && sbshare > /dev/null 2>&1
+if update_inbound_port "vmess-sb" "$port_vm_ws" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Vmess-ws端口更改完成"
+else
+red "Vmess-ws端口更改失败，未生成新的分享链接"
+fi
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
 if [[ "$tls" = "false" ]]; then
 blue "切记：如果Argo使用中，临时隧道必须重置，固定隧道的CF设置界面端口必须修改为$port_vm_ws"
@@ -2801,14 +2966,15 @@ if [ "$menu" = "1" ]; then
 if [ -n "$hy2_ports" ]; then
 hy2deports
 hy2port
-echo $sbfiles | xargs -n1 sed -i "67s/$hy2_port/$port_hy2/"
-restartsb && sbshare > /dev/null 2>&1
 else
 hy2port
-echo $sbfiles | xargs -n1 sed -i "67s/$hy2_port/$port_hy2/"
-restartsb && sbshare > /dev/null 2>&1
 fi
+if update_inbound_port "hy2-sb" "$port_hy2" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Hysteria2端口更改完成"
+else
+red "Hysteria2端口更改失败，未生成新的分享链接"
+fi
 elif [ "$menu" = "2" ]; then
 green "1：添加Hysteria2范围端口"
 green "2：添加Hysteria2单端口"
@@ -2842,14 +3008,15 @@ if [ "$menu" = "1" ]; then
 if [ -n "$tu5_ports" ]; then
 tu5deports
 tu5port
-echo $sbfiles | xargs -n1 sed -i "89s/$tu5_port/$port_tu/"
-restartsb && sbshare > /dev/null 2>&1
 else
 tu5port
-echo $sbfiles | xargs -n1 sed -i "89s/$tu5_port/$port_tu/"
-restartsb && sbshare > /dev/null 2>&1
 fi
+if update_inbound_port "tuic5-sb" "$port_tu" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "Tuic5端口更改完成"
+else
+red "Tuic5端口更改失败，未生成新的分享链接"
+fi
 elif [ "$menu" = "2" ]; then
 green "1：添加Tuic5范围端口"
 green "2：添加Tuic5单端口"
@@ -2895,9 +3062,12 @@ uuid=$(/etc/s-box/sing-box generate uuid)
 else
 uuid=$menu
 fi
-echo $sbfiles | xargs -n1 sed -i "s/$olduuid/$uuid/g"
-restartsb && sbshare > /dev/null 2>&1
+if update_inbound_credentials "$uuid" && restartsb; then
+sbshare > /dev/null 2>&1
 blue "已确认uuid (密码)：${uuid}" 
+else
+red "uuid (密码) 更改失败，未生成新的分享链接"
+fi
 blue "已确认Vmess的path路径：$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.path')"
 elif [ "$menu" = "2" ]; then
 readp "输入Vmess的path路径，回车表示不变：" menu
@@ -2905,8 +3075,11 @@ if [ -z "$menu" ]; then
 echo
 else
 vmpath=$menu
-echo $sbfiles | xargs -n1 sed -i "50s#$oldvmpath#$vmpath#g"
-restartsb && sbshare > /dev/null 2>&1
+if update_vmess_path "$vmpath" && restartsb; then
+sbshare > /dev/null 2>&1
+else
+red "Vmess路径更改失败，未生成新的分享链接"
+fi
 fi
 blue "已确认Vmess的path路径：$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.path')"
 else
@@ -3416,8 +3589,7 @@ menu=0,0,0
 fi
 sed -i "165s/$wgres/$menu/g" /etc/s-box/sb10.json
 sed -i "142s/$wgres/$menu/g" /etc/s-box/sb11.json
-rm -rf /etc/s-box/sb.json
-cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
+install -m 600 /etc/s-box/sb${num}.json /etc/s-box/sb.json.new && mv -f /etc/s-box/sb.json.new /etc/s-box/sb.json
 restartsb
 green "设置结束"
 else
@@ -3777,14 +3949,44 @@ sb
 fi
 }
 
+checksb(){
+${SING_BOX_BIN:-/etc/s-box/sing-box} check -c /etc/s-box/sb.json || { red "配置校验失败，未重启服务"; return 1; }
+}
+
+config_state_dir=/etc/s-box/.last-known-good
+snapshot_config(){
+install -d -m 700 "$config_state_dir" || return 1
+for file in $sbfiles; do
+test -f "$file" && install -m 600 "$file" "$config_state_dir/$(basename "$file")"
+done
+}
+
+restore_config(){
+local restored=false file snapshot
+for file in $sbfiles; do
+snapshot="$config_state_dir/$(basename "$file")"
+if test -f "$snapshot"; then
+install -m 600 "$snapshot" "$file"
+restored=true
+fi
+done
+$restored
+}
+
 restartsb(){
+if ! checksb; then
+restore_config && red "已恢复最后一次可用配置"
+return 1
+fi
 if command -v apk >/dev/null 2>&1; then
 rc-service sing-box restart
+rc-service sing-box status >/dev/null 2>&1
 else
 systemctl enable sing-box
-systemctl start sing-box
 systemctl restart sing-box
+systemctl is-active --quiet sing-box
 fi
+snapshot_config
 }
 
 stclre(){
@@ -3812,7 +4014,11 @@ fi
 cronsb(){
 uncronsb
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-echo "0 1 * * * systemctl restart sing-box;rc-service sing-box restart" >> /tmp/crontab.tmp
+if command -v apk >/dev/null 2>&1; then
+echo "0 1 * * * rc-service sing-box restart" >> /tmp/crontab.tmp
+else
+echo "0 1 * * * systemctl try-restart sing-box" >> /tmp/crontab.tmp
+fi
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
 }
@@ -3827,9 +4033,15 @@ rm /tmp/crontab.tmp
 }
 
 lnsb(){
-rm -rf /usr/bin/sb
-curl -L -o /usr/bin/sb -# --retry 2 --insecure https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh
-chmod +x /usr/bin/sb
+local tmp
+tmp=$(download_to_temp https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sb.sh /usr/bin/sb) || { red "脚本下载失败，已保留当前版本"; return 1; }
+if ! bash -n "$tmp"; then
+rm -f "$tmp"
+red "脚本校验失败，已保留当前版本"
+return 1
+fi
+atomic_install "$tmp" /usr/bin/sb 755 || { rm -f "$tmp"; red "脚本更新失败，已保留当前版本"; return 1; }
+rm -f "$tmp"
 }
 
 upsbyg(){
@@ -3837,7 +4049,10 @@ if [[ ! -f '/usr/bin/sb' ]]; then
 red "未正常安装Sing-box-yg" && exit
 fi
 lnsb
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/version | awk -F "更新内容" '{print $1}' | head -n 1 > /etc/s-box/v
+if ! lnsb; then
+red "Sing-box-yg安装脚本升级失败，已保留当前版本" && return 1
+fi
+update_sbyg_version || yellow "脚本已更新，但版本标记刷新失败"
 green "Sing-box-yg安装脚本升级成功" && sleep 5 && sb
 }
 
@@ -3878,15 +4093,7 @@ sb
 fi
 if [[ -n $upcore ]]; then
 green "开始下载并更新Sing-box内核……请稍等"
-sbname="sing-box-$upcore-linux-$cpu"
-curl -L -o /etc/s-box/sing-box.tar.gz  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
-if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
-tar xzf /etc/s-box/sing-box.tar.gz -C /etc/s-box
-mv /etc/s-box/$sbname/sing-box /etc/s-box
-rm -rf /etc/s-box/{sing-box.tar.gz,$sbname}
-if [[ -f '/etc/s-box/sing-box' ]]; then
-chown root:root /etc/s-box/sing-box
-chmod +x /etc/s-box/sing-box
+if install_sing_box_core "$upcore"; then
 sbnh=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}' 2>/dev/null | cut -d '.' -f 1,2)
 [[ "$sbnh" == "1.10" ]] && num=10 || num=11
 rm -rf /etc/s-box/sb.json
@@ -3894,10 +4101,7 @@ cp /etc/s-box/sb${num}.json /etc/s-box/sb.json
 restartsb && sbshare > /dev/null 2>&1
 blue "成功升级/切换 Sing-box 内核版本：$(/etc/s-box/sing-box version | awk '/version/{print $NF}')" && sleep 3 && sb
 else
-red "下载 Sing-box 内核不完整，安装失败，请重试" && upsbcroe
-fi
-else
-red "下载 Sing-box 内核失败或不存在，请重试" && upsbcroe
+red "核心下载、校验或安装失败，已保留当前版本" && upsbcroe
 fi
 else
 red "版本号检测出错，请重试" && upsbcroe
@@ -4156,8 +4360,9 @@ case $(uname -m) in
 aarch64) cpu=arm64;;
 x86_64) cpu=amd64;;
 esac
-curl -L -o /etc/s-box/sbwpph -# --retry 2 --insecure https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sbwpph_$cpu
-chmod +x /etc/s-box/sbwpph
+tmp=$(download_to_temp https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/sbwpph_$cpu /etc/s-box/sbwpph) || { red "WARP-plus下载失败"; return 1; }
+atomic_install "$tmp" /etc/s-box/sbwpph 755 || { rm -f "$tmp"; red "WARP-plus安装失败"; return 1; }
+rm -f "$tmp"
 fi
 ps -ef | grep '[s]bwpph' | awk '{print $2}' | xargs kill 2>/dev/null
 v4v6
