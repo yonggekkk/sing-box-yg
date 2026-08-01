@@ -973,6 +973,11 @@ fi
 }
 
 result_vl_vm_hy_tu(){
+shamiyao(){
+SHA256=$(openssl x509 -in /etc/s-box/cert.pem -outform DER | sha256sum | awk '{print $1}')
+echo "$SHA256" > /etc/s-box/SHA256.txt
+SHA256=$(cat /etc/s-box/SHA256.txt)
+}
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 ym=`bash ~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}'`
 echo $ym > /root/ygkkkca/ca.log
@@ -1036,9 +1041,7 @@ fi
 ym=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 hy2_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].tls.key_path')
 if [[ "$hy2_sniname" = '/etc/s-box/private.key' ]]; then
-SHA256=$(openssl x509 -in /etc/s-box/cert.pem -outform DER | sha256sum | awk '{print $1}')
-echo "$SHA256" > /etc/s-box/SHA256.txt
-SHA256=$(cat /etc/s-box/SHA256.txt)
+shamiyao
 hy2_name=www.bing.com
 sb_hy2_ip=$server_ip
 cl_hy2_ip=$server_ipcl
@@ -1055,6 +1058,7 @@ tu5_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[3].listen_port'
 ym=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 tu5_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[3].tls.key_path')
 if [[ "$tu5_sniname" = '/etc/s-box/private.key' ]]; then
+shamiyao
 tu5_name=www.bing.com
 sb_tu5_ip=$server_ip
 cl_tu5_ip=$server_ipcl
@@ -1071,6 +1075,7 @@ an_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[4].listen_port')
 ym=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 an_sniname=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[4].tls.key_path')
 if [[ "$an_sniname" = '/etc/s-box/private.key' ]]; then
+shamiyao
 an_name=www.bing.com
 sb_an_ip=$server_ip
 cl_an_ip=$server_ipcl
@@ -1174,7 +1179,7 @@ echo
 restu5(){
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-tuic5_link="tuic://$uuid:$uuid@$sb_tu5_ip:$tu5_port?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=$tu5_name&insecure=$ins&allowInsecure=$ins&allow_insecure=$ins#tu5-$hostname"
+tuic5_link="tuic://$uuid:$uuid@$sb_tu5_ip:$tu5_port?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=$tu5_name&insecure=0&allowInsecure=0&allow_insecure=0&pinSHA256=$SHA256#tu5-$hostname"
 echo "$tuic5_link" > /etc/s-box/tuic5.txt
 red "🚀【 Tuic-v5 】节点信息如下：" && sleep 2
 echo
@@ -1190,7 +1195,7 @@ echo
 resan(){
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-an_link="anytls://$uuid@$sb_an_ip:$an_port?&sni=$an_name&allowInsecure=$ins_an&insecure=$ins_an#anytls-$hostname"
+an_link="anytls://$uuid@$sb_an_ip:$an_port?&sni=$an_name&allowInsecure=0&insecure=0&pinSHA256=$SHA256#anytls-$hostname"
 echo "$an_link" > /etc/s-box/an.txt
 red "🚀【 Anytls】节点信息如下：" && sleep 2
 echo
