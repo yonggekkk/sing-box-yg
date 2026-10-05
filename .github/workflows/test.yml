@@ -1,0 +1,14 @@
+name: Shell checks
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n sb.sh
+      - run: bash tests/run.sh
+      - run: git diff --check

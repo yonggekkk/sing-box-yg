@@ -1,0 +1,10 @@
+[Unit]
+Description=Hourly sing-box-yg health sample
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+Unit=sing-box-yg-health.service
+
+[Install]
+WantedBy=timers.target
