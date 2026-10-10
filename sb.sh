@@ -990,12 +990,12 @@ argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR
 ws_path=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].transport.path')
 vm_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].listen_port')
 tls=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.enabled')
-vm_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.server_name')
+vm_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.server_name // empty')
 if [[ "$tls" = "false" ]]; then
-if [[ -f /etc/s-box/cfymjx.txt ]]; then
-vm_name=$(cat /etc/s-box/cfymjx.txt 2>/dev/null)
-else
-vm_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.server_name')
+# 空的自定义配置不能覆盖默认域名和服务器地址。
+vm_name_custom=$(cat "/etc/s-box/cfymjx.txt" 2>/dev/null)
+if [[ -n ${vm_name_custom//[[:space:]]/} ]]; then
+vm_name=$vm_name_custom
 fi
 vmadd_local=$server_ipcl
 vmadd_are_local=$server_ip
@@ -1003,26 +1003,17 @@ else
 vmadd_local=$vm_name
 vmadd_are_local=$vm_name
 fi
-if [[ -f /etc/s-box/cfvmadd_local.txt ]]; then
-vmadd_local=$(cat /etc/s-box/cfvmadd_local.txt 2>/dev/null)
-vmadd_are_local=$(cat /etc/s-box/cfvmadd_local.txt 2>/dev/null)
-else
-if [[ "$tls" = "false" ]]; then
-if [[ -f /etc/s-box/cfymjx.txt ]]; then
-vm_name=$(cat /etc/s-box/cfymjx.txt 2>/dev/null)
-else
-vm_name=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[1].tls.server_name')
+vmadd_custom=$(cat "/etc/s-box/cfvmadd_local.txt" 2>/dev/null)
+if [[ -n ${vmadd_custom//[[:space:]]/} ]]; then
+vmadd_local=$vmadd_custom
+vmadd_are_local=$vmadd_custom
 fi
-vmadd_local=$server_ipcl
-vmadd_are_local=$server_ip
-else
-vmadd_local=$vm_name
-vmadd_are_local=$vm_name
+# 未配置 TLS 域名时，使用节点地址作为 WebSocket Host。
+if [[ -z ${vm_name//[[:space:]]/} ]]; then
+vm_name=$vmadd_local
 fi
-fi
-if [[ -f /etc/s-box/cfvmadd_argo.txt ]]; then
-vmadd_argo=$(cat /etc/s-box/cfvmadd_argo.txt 2>/dev/null)
-else
+vmadd_argo=$(cat "/etc/s-box/cfvmadd_argo.txt" 2>/dev/null)
+if [[ -z ${vmadd_argo//[[:space:]]/} ]]; then
 vmadd_argo=cloudflare-ech.com
 fi
 hy2_port=$(sed 's://.*::g' /etc/s-box/sb.json | jq -r '.inbounds[2].listen_port')
