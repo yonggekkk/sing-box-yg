@@ -1,0 +1,6 @@
+[Unit]
+Description=Sing-box-yg health sample
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/sing-box-yg/monitor-health.sh
