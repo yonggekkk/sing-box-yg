@@ -2376,6 +2376,7 @@ curl -L -o /etc/s-box/cloudflared -# --retry 2 https://github.com/cloudflare/clo
 #curl -L -o /etc/s-box/cloudflared -# --retry 2 https://gitlab.com/rwkgyg/sing-box-yg/-/raw/main/$cpu
 chmod +x /etc/s-box/cloudflared
 fi
+green "Argo版本：V$(/etc/s-box/cloudflared version 2>/dev/null | awk '{print $3}')"
 }
 
 cfargoym(){
@@ -2452,7 +2453,7 @@ rc-service argo stop >/dev/null 2>&1
 rc-update del argo default >/dev/null 2>&1
 rm -rf /etc/init.d/argo
 fi
-rm -rf /etc/s-box/vm_ws_argogd.txt
+rm -rf /etc/s-box/vm_ws_argogd.txt /etc/s-box/cloudflared
 sbshare > /dev/null 2>&1
 green "Argo固定隧道已停止"
 else
@@ -2502,7 +2503,7 @@ crontab -l 2>/dev/null > /tmp/crontab.tmp
 sed -i '/url http/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
-rm -rf /etc/s-box/vm_ws_argols.txt
+rm -rf /etc/s-box/vm_ws_argols.txt /etc/s-box/cloudflared
 rm -rf /etc/local.d/alpineargo.start
 sbshare > /dev/null 2>&1
 green "Argo临时隧道已停止"
