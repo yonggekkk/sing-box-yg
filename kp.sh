@@ -107,13 +107,8 @@ run_remote_command() {
 install_missing_deps || exit 1
 
 echo "*****************************************************"
-echo "*****************************************************"
-echo "甬哥Github项目  ：github.com/yonggekkk"
-echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
-echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
 echo "自动远程部署Serv00三合一协议脚本【VPS+软路由】"
 echo "版本：V25.3.26"
-echo "*****************************************************"
 echo "*****************************************************"
 
 if ! echo "${ACCOUNTS}" | jq -e 'type == "array"' >/dev/null 2>&1; then
