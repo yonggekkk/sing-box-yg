@@ -1,40 +1,82 @@
 name: Parallel URL Fetch
 
 on:
- # schedule:
-#  - cron: '*/10 * * * *' # 每10分钟执行一次（公开库每月2000分钟运行时长，每天64分钟）
-  workflow_dispatch: 
+  # schedule:
+  #   - cron: '*/10 * * * *' # 每10分钟执行一次（公开库每月2000分钟运行时长，每天64分钟）
+  workflow_dispatch:
 
 jobs:
   fetch-urls:
     runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
 
-    - name: Fetch URLs in parallel
-      # secrets设置，变量名称：http
-      # 变量值要求：每个保活/up网页或每个重启/re网页之间用空格或者，或者,间隔开，网页前带http://
-      # 变量值填写示例：http://保活或重启网页1 http://保活或重启网页2 http://保活或重启网页3 ………
-      run: |
-        IFS=$',， ' read -r -a http <<< "${{ secrets.http }}"
-         echo "*****************************************************"
-         echo "甬哥Github项目  ：github.com/yonggekkk"
-         echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
-         echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
-         echo "🎉Github定时运行serv00保活网页🎉"
-         echo "请先确认已成功安装甬哥的serv00的SSH脚本或者Github/VPS/软路由脚本"
-         echo "脚本地址：https://github.com/yonggekkk/sing-box-yg"
-         echo "*****************************************************"
-        for url in "${http[@]}"; do
-          response=$(curl -sk "$url" || true)
-          if [[ "$response" == *"网页保活启动"* ]]; then
-          echo "🎉恭喜！$url ✅运行正常，成功拉起一次保活"
-          elif [[ "$response" == *"主程序重启成功"* ]]; then
-          echo "🎉恭喜！$url ✅运行正常，成功重启一次主程序"
-          else
-         echo "💥杯具！$url ❌运行失败，⚠️网页变量是否填写正确？或者Serv00炸了"
-         fi
-        done
-        wait
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch URLs in parallel
+        # secrets设置，变量名称：http
+        # 变量值要求：每个保活/up网页或每个重启/re网页之间用空格或者，或者,间隔开，网页前带http://或https://
+        # 变量值填写示例：http://保活或重启网页1 http://保活或重启网页2 http://保活或重启网页3
+        env:
+          HTTP_URLS: ${{ secrets.http }}
+        run: |
+          if [ -z "${HTTP_URLS}" ]; then
+            echo "❌ 未配置 secrets.http，请在仓库 Secrets 中添加后再运行。"
+            exit 1
+          fi
+
+          normalized_urls="${HTTP_URLS//，/ }"
+          normalized_urls="${normalized_urls//,/ }"
+          read -r -a http <<< "$normalized_urls"
+
+          echo "*****************************************************"
+          echo "甬哥Github项目  ：github.com/yonggekkk"
+          echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
+          echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
+          echo "🎉Github定时运行serv00保活网页🎉"
+          echo "请先确认已成功安装甬哥的serv00的SSH脚本或者Github/VPS/软路由脚本"
+          echo "脚本地址：https://github.com/yonggekkk/sing-box-yg"
+          echo "*****************************************************"
+
+          check_url() {
+            local url="$1"
+            local tmp_body http_code rc=0
+            tmp_body=$(mktemp)
+            http_code=$(curl -sS --max-time 15 -o "$tmp_body" -w '%{http_code}' "$url") || rc=$?
+            local response
+            response=$(cat "$tmp_body")
+            rm -f "$tmp_body"
+
+            if [ "$rc" -ne 0 ] || [ "$http_code" -lt 200 ] || [ "$http_code" -ge 400 ]; then
+              echo "💥杯具！$url ❌运行失败 (curl=$rc, HTTP=$http_code)"
+              return 1
+            fi
+
+            if [[ "$response" == *"网页保活启动"* ]]; then
+              echo "🎉恭喜！$url ✅运行正常，成功拉起一次保活 (HTTP $http_code)"
+            elif [[ "$response" == *"主程序重启成功"* ]]; then
+              echo "🎉恭喜！$url ✅运行正常，成功重启一次主程序 (HTTP $http_code)"
+            else
+              echo "💥杯具！$url ❌运行失败 (HTTP $http_code)，⚠️网页变量是否填写正确？或者Serv00响应异常"
+              return 1
+            fi
+          }
+
+          pids=()
+          for url in "${http[@]}"; do
+            [ -z "$url" ] && continue
+            check_url "$url" &
+            pids+=("$!")
+          done
+
+          failures=0
+          for pid in "${pids[@]}"; do
+            if ! wait "$pid"; then
+              failures=$((failures + 1))
+            fi
+          done
+
+          if [ "$failures" -gt 0 ]; then
+            echo "⚠️ 共有 ${failures} 个请求失败"
+            exit 1
+          fi

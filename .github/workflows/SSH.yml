@@ -1,0 +1,73 @@
+name: Keep Servers serv00
+on:
+  # 如需启用定时任务，请取消下面两行的注释（需先在 Secrets 中配置 ACCOUNTS）
+  # schedule:
+  #   - cron: '0 15 */8 * *'
+  workflow_dispatch:
+
+jobs:
+  keep_servers_alive:
+    runs-on: ubuntu-latest
+    env:
+      # 请在 GitHub Repository Secrets 中配置名为 ACCOUNTS 的 JSON 数组：
+      # [{"SSH_USER":"user", "SSH_PASS":"pass", "HOST":"s1.serv00.com"}]
+      ACCOUNTS: ${{ secrets.ACCOUNTS }}
+      SSH_STRICT_HOST_KEY_CHECKING: ${{ vars.SSH_STRICT_HOST_KEY_CHECKING || 'accept-new' }}
+      SSH_CONNECT_TIMEOUT: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass jq
+
+      - name: Process each account
+        run: |
+          if [ -z "${ACCOUNTS}" ]; then
+            echo "❌ 未配置 secrets.ACCOUNTS，请在仓库 Secrets 中添加后再运行。"
+            exit 1
+          fi
+
+          if ! echo "${ACCOUNTS}" | jq -e 'type == "array"' >/dev/null 2>&1; then
+            echo "❌ secrets.ACCOUNTS 格式无效，必须是 JSON 数组。"
+            exit 1
+          fi
+
+          echo "*****************************************************"
+          echo "*****************************************************"
+          echo "甬哥Github项目  ：github.com/yonggekkk"
+          echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
+          echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
+          echo "vps服务器远程登录一次SSH脚本【Github】"
+          echo "*****************************************************"
+          echo "*****************************************************"
+
+          count=0
+          while IFS= read -r account; do
+            [ -z "$account" ] && continue
+            count=$((count + 1))
+            SSH_USER=$(echo "$account" | jq -r '.SSH_USER // ""')
+            SSH_PASS=$(echo "$account" | jq -r '.SSH_PASS // ""')
+            HOST=$(echo "$account" | jq -r '.HOST // ""')
+
+            if [ -z "$SSH_USER" ] || [ -z "$SSH_PASS" ] || [ -z "$HOST" ]; then
+              echo "⚠️ 第【$count】台服务器配置缺少 SSH_USER/SSH_PASS/HOST，跳过。"
+              continue
+            fi
+
+            if SSHPASS="$SSH_PASS" sshpass -e ssh -n \
+              -o "StrictHostKeyChecking=${SSH_STRICT_HOST_KEY_CHECKING}" \
+              -o "ConnectTimeout=${SSH_CONNECT_TIMEOUT}" \
+              -o BatchMode=no \
+              "$SSH_USER@$HOST" -q exit; then
+              echo "🎉恭喜！✅第【$count】台服务器连接成功！🚀服务器地址：$HOST ，账户名：$SSH_USER"
+            else
+              echo "===================================================="
+              echo "💥杯具！❌第【$count】台服务器连接失败！🚀服务器地址：$HOST ，账户名：$SSH_USER"
+              echo "⚠️可能账号名、密码、服务器名称输入错误，或者当前服务器在维护中"
+              echo "===================================================="
+            fi
+            sleep 10
+          done < <(echo "${ACCOUNTS}" | jq -c '.[]')

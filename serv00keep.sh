@@ -1,5 +1,6 @@
 #!/bin/bash
 # 定义颜色
+REPO_RAW_URL="${REPO_RAW_URL:-https://raw.githubusercontent.com/ArthurSawyer/sing-box-yg/fix/verified-improvements}"
 re="\033[0m"
 red="\033[1;91m"
 green="\e[1;32m"
@@ -10,6 +11,48 @@ green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
 reading() { read -p "$(red "$1")" "$2"; }
+
+is_elf_binary() {
+    local file="$1"
+    [ -s "$file" ] || return 1
+    local magic
+    magic=$(head -c 4 "$file" 2>/dev/null | od -An -tx1 2>/dev/null | tr -d ' \n')
+    [ "$magic" = "7f454c46" ]
+}
+
+resolve_listen_ip() {
+    local host="$1"
+    local ip
+    ip=$(dig @8.8.8.8 +time=5 +short "$host" 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | sort -u | head -n 1)
+    if [ -z "$ip" ]; then
+        ip=$(dig +time=5 +short "$host" 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | sort -u | head -n 1)
+    fi
+    echo "$ip"
+}
+
+update_keep_var() {
+    local file="$1"
+    local var="$2"
+    local val="$3"
+    [ -f "$file" ] || return 0
+    local escaped_val
+    escaped_val=$(printf '%s' "$val" | sed -e 's/[\\&|]/\\&/g' -e "s/'/'\\\\''/g")
+    sed -i '' -E "s|^export ${var}=.*$|export ${var}=\${${var}:-'${escaped_val}'}|" "$file"
+}
+
+patch_app_js() {
+    local app_file="$1"
+    local site_domain="$2"
+    local uuid_val="$3"
+    local serv_name="$4"
+    [ -f "$app_file" ] || return 1
+    sed -i '' "s|__SERV00_NAME__|${serv_name}|g" "$app_file"
+    if [ -n "$uuid_val" ]; then
+        sed -i '' "s|__UUID__|${uuid_val}|g" "$app_file"
+    fi
+    sed -i '' "s|__SITE_DOMAIN__|${site_domain}|g" "$app_file"
+}
+
 export LC_ALL=C
 export UUID=${UUID:-''}  
 export ARGO_DOMAIN=${ARGO_DOMAIN:-''}   
@@ -26,27 +69,36 @@ USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
 HOSTNAME=$(hostname)
 snb=$(hostname | cut -d. -f1)
 nb=$(hostname | cut -d '.' -f 1 | tr -d 's')
+hona=$(hostname | cut -d. -f2)
+if [ "$hona" = "serv00" ]; then
+address="serv00.net"
+else
+address="useruno.com"
+fi
 if [[ "$reset" =~ ^[Yy]$ ]]; then
 bash -c 'ps aux | grep $(whoami) | grep -v "sshd\|bash\|grep" | awk "{print \$2}" | xargs -r kill -9 >/dev/null 2>&1' >/dev/null 2>&1
 devil www list | awk 'NR > 1 && NF {print $1}' | xargs -I {} devil www del {} > /dev/null 2>&1
-sed -i '/export PATH="\$HOME\/bin:\$PATH"/d' "${HOME}/.bashrc" >/dev/null 2>&1
+sed -i '' '/export PATH="[$]HOME\/bin:[$]PATH"/d' "${HOME}/.bashrc" >/dev/null 2>&1
 source "${HOME}/.bashrc" >/dev/null 2>&1
-find ~ -type f -exec chmod 644 {} \; 2>/dev/null
-find ~ -type d -exec chmod 755 {} \; 2>/dev/null
-find ~ -type f -exec rm -f {} \; 2>/dev/null
-find ~ -type d -empty -exec rmdir {} \; 2>/dev/null
-find ~ -exec rm -rf {} \; 2>/dev/null
+WORKDIR_TEMP="${HOME}/domains/${USERNAME}.${address}/logs"
+if [ -d "$WORKDIR_TEMP" ]; then
+    find "$WORKDIR_TEMP" -mindepth 1 -exec rm -rf {} + 2>/dev/null
+fi
+rm -rf "$HOME/bin/sb" "$HOME/serv00keep.sh" "$HOME/webport.sh"
 echo "重置系统完成"
 fi
-devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
-FILE_PATH="${HOME}/domains/${USERNAME}.serv00.net/public_html"
-WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
+devil www add ${USERNAME}.${address} php > /dev/null 2>&1
+FILE_PATH="${HOME}/domains/${USERNAME}.${address}/public_html"
+WORKDIR="${HOME}/domains/${USERNAME}.${address}/logs"
 [ -d "$FILE_PATH" ] || mkdir -p "$FILE_PATH"
-[ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
-keep_path="${HOME}/domains/${snb}.${USERNAME}.serv00.net/public_nodejs"
+[ -d "$WORKDIR" ] || mkdir -p "$WORKDIR"
+chmod 700 "$WORKDIR"
+keep_path="${HOME}/domains/${snb}.${USERNAME}.${address}/public_nodejs"
 [ -d "$keep_path" ] || mkdir -p "$keep_path"
 
-if [[ -z "$ARGO_AUTH" ]] && [[ -f "$WORKDIR/ARGO_AUTH.log" ]]; then
+if [[ -n "$ARGO_AUTH" ]] && [[ -f "$WORKDIR/ARGO_AUTH.log" ]]; then
+ARGO_AUTH=$(cat "$WORKDIR/ARGO_AUTH.log" 2>/dev/null)
+elif [[ -z "$ARGO_AUTH" ]] && [[ -f "$WORKDIR/ARGO_AUTH.log" ]]; then
 ARGO_AUTH=$(cat "$WORKDIR/ARGO_AUTH.log" 2>/dev/null)
 elif [[ -z "$ARGO_AUTH" ]] && [[ ! -f "$WORKDIR/ARGO_AUTH.log" ]]; then
 echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.log
@@ -54,7 +106,9 @@ else
 echo "$ARGO_AUTH" > $WORKDIR/ARGO_AUTH.log
 ARGO_AUTH=$(cat "$WORKDIR/ARGO_AUTH.log" 2>/dev/null)
 fi
-if [[ -z "$ARGO_DOMAIN" ]] && [[ -f "$WORKDIR/ARGO_DOMAIN.log" ]]; then
+if [[ -n "$ARGO_DOMAIN" ]] && [[ -f "$WORKDIR/ARGO_DOMAIN.log" ]]; then
+ARGO_DOMAIN=$(cat "$WORKDIR/ARGO_DOMAIN.log" 2>/dev/null)
+elif [[ -z "$ARGO_DOMAIN" ]] && [[ -f "$WORKDIR/ARGO_DOMAIN.log" ]]; then
 ARGO_DOMAIN=$(cat "$WORKDIR/ARGO_DOMAIN.log" 2>/dev/null)
 elif [[ -z "$ARGO_DOMAIN" ]] && [[ ! -f "$WORKDIR/ARGO_DOMAIN.log" ]]; then
 echo "$ARGO_DOMAIN" > $WORKDIR/ARGO_DOMAIN.log
@@ -72,15 +126,17 @@ else
 echo "$UUID" > $WORKDIR/UUID.txt
 UUID=$(cat "$WORKDIR/UUID.txt" 2>/dev/null)
 fi
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/app.js -o "$keep_path"/app.js
-sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
-sed -i '' "59s/key/$UUID/g" "$keep_path"/app.js
-sed -i '' "90s/name/$USERNAME/g" "$keep_path"/app.js
-sed -i '' "90s/where/$snb/g" "$keep_path"/app.js
+if curl -fsSL --max-time 15 "${REPO_RAW_URL}/app.js" -o "${keep_path}/app.js.tmp" && [ -s "${keep_path}/app.js.tmp" ]; then
+    mv "${keep_path}/app.js.tmp" "${keep_path}/app.js"
+    patch_app_js "${keep_path}/app.js" "${snb}.${USERNAME}.${address}" "$UUID" "$snb"
+else
+    rm -f "${keep_path}/app.js.tmp"
+    red "下载 app.js 失败"
+fi
 if [[ -z "$reym" ]] && [[ -f "$WORKDIR/reym.txt" ]]; then
 reym=$(cat "$WORKDIR/reym.txt" 2>/dev/null)
 elif [[ -z "$reym" ]] && [[ ! -f "$WORKDIR/reym.txt" ]]; then
-reym=$USERNAME.serv00.net
+reym=$USERNAME.${address}
 echo "$reym" > $WORKDIR/reym.txt
 else
 echo "$reym" > $WORKDIR/reym.txt
@@ -100,20 +156,30 @@ devil port del "$port_type" "$port"
 done <<< "$portlist"
 fi
 check_port
-hyp=$(jq -r '.inbounds[0].listen_port' $WORKDIR/config.json)
-vlp=$(jq -r '.inbounds[3].listen_port' $WORKDIR/config.json)
-vmp=$(jq -r '.inbounds[4].listen_port' $WORKDIR/config.json)
-sed -i '' "12s/$hyp/$hy2_port/g" $WORKDIR/config.json
-sed -i '' "33s/$hyp/$hy2_port/g" $WORKDIR/config.json
-sed -i '' "54s/$hyp/$hy2_port/g" $WORKDIR/config.json
-sed -i '' "75s/$vlp/$vless_port/g" $WORKDIR/config.json
-sed -i '' "102s/$vmp/$vmess_port/g" $WORKDIR/config.json
-sed -i '' -e "17s|'$vlp'|'$vless_port'|" serv00keep.sh
-sed -i '' -e "18s|'$vmp'|'$vmess_port'|" serv00keep.sh
-sed -i '' -e "19s|'$hyp'|'$hy2_port'|" serv00keep.sh
-ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
-sleep 1
-curl -sk "http://${snb}.${USERNAME}.serv00.net/up" > /dev/null 2>&1
+# Replace ports in config.json using jq (portable, no line-number sed)
+if [[ -e $WORKDIR/config.json ]]; then
+jq --argjson hyp "$hy2_port" --argjson vlp "$vless_port" --argjson vmp "$vmess_port" '
+  .inbounds |= map(
+    if .type == "hysteria2" then .listen_port = $hyp
+    elif .type == "vless" then .listen_port = $vlp
+    elif .type == "vmess" then .listen_port = $vmp
+    else . end
+  )
+' "$WORKDIR/config.json" > "$WORKDIR/config.json.tmp" && mv "$WORKDIR/config.json.tmp" "$WORKDIR/config.json"
+update_keep_var "$HOME/serv00keep.sh" "vless_port" "$vless_port"
+update_keep_var "$HOME/serv00keep.sh" "vmess_port" "$vmess_port"
+update_keep_var "$HOME/serv00keep.sh" "hy2_port" "$hy2_port"
+# Restart sing-box after port change
+sbb=$(cat "$WORKDIR/sb.txt" 2>/dev/null)
+if [ -n "$sbb" ]; then
+    ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+    sleep 1
+    nohup ./"$sbb" run -c "$WORKDIR/config.json" >/dev/null 2>&1 &
+    sleep 3
+    pgrep -x "$sbb" >/dev/null && green "$sbb 主进程以新端口已重启" || yellow "$sbb 主进程重启失败"
+fi
+fi
+curl -sk --max-time 5 -H "x-auth-token: ${UUID}" "http://${snb}.${USERNAME}.${address}/up" > /dev/null 2>&1
 sleep 5
 }
 
@@ -244,24 +310,30 @@ get_argodomain() {
 }
 
 if [ ! -f serv00keep.sh ]; then
-curl -sSL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/serv00keep.sh -o serv00keep.sh && chmod +x serv00keep.sh
+curl -fsSL --max-time 30 "${REPO_RAW_URL}/serv00keep.sh" -o serv00keep.sh && chmod +x serv00keep.sh
 echo '#!/bin/bash
 red() { echo -e "\e[1;91m$1\033[0m"; }
 green() { echo -e "\e[1;32m$1\033[0m"; }
 yellow() { echo -e "\e[1;33m$1\033[0m"; }
 purple() { echo -e "\e[1;35m$1\033[0m"; }
 USERNAME=$(whoami | tr '\''[:upper:]'\'' '\''[:lower:]'\'')
-WORKDIR="${HOME}/domains/${USERNAME}.serv00.net/logs"
 snb=$(hostname | cut -d. -f1)
+hona=$(hostname | cut -d. -f2)
+if [ "$hona" = "serv00" ]; then
+address="serv00.net"
+else
+address="useruno.com"
+fi
+WORKDIR="${HOME}/domains/${USERNAME}.${address}/logs"
 ' > webport.sh
 declare -f resallport >> webport.sh
 declare -f check_port >> webport.sh
 echo 'resallport' >> webport.sh
 chmod +x webport.sh
 green "开始安装多功能主页，请稍等……"
-devil www del ${snb}.${USERNAME}.serv00.net > /dev/null 2>&1
-devil www add ${USERNAME}.serv00.net php > /dev/null 2>&1
-devil www add ${snb}.${USERNAME}.serv00.net nodejs /usr/local/bin/node18 > /dev/null 2>&1
+devil www del ${snb}.${USERNAME}.${address} > /dev/null 2>&1
+devil www add ${USERNAME}.${address} php > /dev/null 2>&1
+devil www add ${snb}.${USERNAME}.${address} nodejs /usr/local/bin/node18 > /dev/null 2>&1
 ln -fs /usr/local/bin/node18 ~/bin/node > /dev/null 2>&1
 ln -fs /usr/local/bin/npm18 ~/bin/npm > /dev/null 2>&1
 mkdir -p ~/.npm-global
@@ -270,9 +342,9 @@ echo 'export PATH=~/.npm-global/bin:~/bin:$PATH' >> $HOME/.bash_profile && sourc
 rm -rf $HOME/.npmrc > /dev/null 2>&1
 cd "$keep_path"
 npm install basic-auth express dotenv axios --silent > /dev/null 2>&1
-rm $HOME/domains/${snb}.${USERNAME}.serv00.net/public_nodejs/public/index.html > /dev/null 2>&1
-devil www restart ${snb}.${USERNAME}.serv00.net
-green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.serv00.net"
+rm $HOME/domains/${snb}.${USERNAME}.${address}/public_nodejs/public/index.html > /dev/null 2>&1
+devil www restart ${snb}.${USERNAME}.${address}
+green "安装完毕，多功能主页地址：http://${snb}.${USERNAME}.${address}"
 fi
 
 if [[ "$resport" =~ ^[Yy]$ ]]; then
@@ -288,37 +360,34 @@ devil port del "$port_type" "$port"
 done <<< "$portlist"
 fi
 check_port
+# After port reset, restart sing-box with new ports
+sbb=$(cat "$WORKDIR/sb.txt" 2>/dev/null)
+if [ -n "$sbb" ]; then
+    ps aux | grep '[r]un -c con' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+    sleep 1
+    nohup ./"$sbb" run -c "$WORKDIR/config.json" >/dev/null 2>&1 &
+    sleep 3
+    pgrep -x "$sbb" >/dev/null && green "$sbb 主进程以新端口已重启" || yellow "$sbb 主进程重启失败"
 fi
-rm -rf $HOME/domains/${snb}.${USERNAME}.serv00.net/logs/*
+fi
+rm -rf $HOME/domains/${snb}.${USERNAME}.${address}/logs/*
 
 cd $WORKDIR
-ym=("$HOSTNAME" "cache$nb.serv00.com" "web$nb.serv00.com")
+ym=("$HOSTNAME" "cache$nb.${hona}.com" "web$nb.${hona}.com")
 rm -rf ip.txt
 for host in "${ym[@]}"; do
-response=$(curl -sL --connect-timeout 5 --max-time 7 "https://ss.fkj.pp.ua/api/getip?host=$host")
-if [[ "$response" =~ (unknown|not|error) ]]; then
-dig @8.8.8.8 +time=5 +short $host | sort -u >> ip.txt
-sleep 1  
-else
-while IFS='|' read -r ip status; do
-if [[ $status == "Accessible" ]]; then
-echo "$ip: 可用" >> ip.txt
-else
-echo "$ip: 被墙 (Argo与CDN回源节点、proxyip依旧有效)" >> ip.txt
-fi	
-done <<< "$response"
-fi
+    resolved_ip=$(resolve_listen_ip "$host")
+    if [ -n "$resolved_ip" ]; then
+        echo "$resolved_ip" >> ip.txt
+    fi
 done
-if [[ ! "$response" =~ (unknown|not|error) ]]; then
-grep ':' $WORKDIR/ip.txt | sort -u -o $WORKDIR/ip.txt
+if [ -s ip.txt ]; then
+    sort -u -o ip.txt ip.txt
 fi
 if [[ -z "$IP" ]]; then
-IP=$(grep -m 1 "可用" ip.txt | awk -F ':' '{print $1}')
-if [ -z "$IP" ]; then
 IP=$(okip)
 if [ -z "$IP" ]; then
 IP=$(head -n 1 ip.txt | awk -F ':' '{print $1}')
-fi
 fi
 fi
 
@@ -344,10 +413,10 @@ download_with_fallback() {
 
     curl -L -sS --max-time 2 -o "$NEW_FILENAME" "$URL" &
     CURL_PID=$!
-    CURL_START_SIZE=$(stat -c%s "$NEW_FILENAME" 2>/dev/null || echo 0)
+    CURL_START_SIZE=$(stat -f%z "$NEW_FILENAME" 2>/dev/null || stat -c%s "$NEW_FILENAME" 2>/dev/null || echo 0)
     
     sleep 1
-    CURL_CURRENT_SIZE=$(stat -c%s "$NEW_FILENAME" 2>/dev/null || echo 0)
+    CURL_CURRENT_SIZE=$(stat -f%z "$NEW_FILENAME" 2>/dev/null || stat -c%s "$NEW_FILENAME" 2>/dev/null || echo 0)
     
     if [ "$CURL_CURRENT_SIZE" -le "$CURL_START_SIZE" ]; then
         kill $CURL_PID 2>/dev/null
@@ -387,7 +456,7 @@ fi
 private_key=$(<private_key.txt)
 public_key=$(<public_key.txt)
 openssl ecparam -genkey -name prime256v1 -out "private.key"
-openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.serv00.net"
+openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=$USERNAME.${address}"
   cat > config.json << EOF
 {
   "log": {
@@ -504,23 +573,38 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
     }
  ],
      "outbounds": [
+EOF
+[ -f "$WORKDIR/warp.conf" ] && source "$WORKDIR/warp.conf"
+warp_enabled=0
+if [ -n "${WARP_PRIVATE_KEY:-}" ] && { [ -n "${WARP_LOCAL_V4:-}" ] || [ -n "${WARP_LOCAL_V6:-}" ]; }; then
+    warp_addrs=""
+    [ -n "${WARP_LOCAL_V4:-}" ] && warp_addrs="\"${WARP_LOCAL_V4}\""
+    if [ -n "${WARP_LOCAL_V6:-}" ]; then
+        [ -n "$warp_addrs" ] && warp_addrs="${warp_addrs}, "
+        warp_addrs="${warp_addrs}\"${WARP_LOCAL_V6}\""
+    fi
+    warp_reserved_block=""
+    if [ -n "${WARP_RESERVED:-}" ]; then
+        warp_reserved_clean=$(echo "$WARP_RESERVED" | tr -d '[] ')
+        warp_reserved_block=",
+        \"reserved\": [${warp_reserved_clean}]"
+    fi
+    cat >> config.json <<EOF
      {
         "type": "wireguard",
         "tag": "wg",
-        "server": "162.159.192.200",
-        "server_port": 4500,
-        "local_address": [
-                "172.16.0.2/32",
-                "2606:4700:110:8f77:1ca9:f086:846c:5f9e/128"
-        ],
-        "private_key": "wIxszdR2nMdA7a2Ul3XQcniSfSZqdqjPb6w6opvf5AU=",
-        "peer_public_key": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
-        "reserved": [
-            126,
-            246,
-            173
-        ]
+        "server": "${WARP_SERVER:-162.159.192.200}",
+        "server_port": ${WARP_SERVER_PORT:-4500},
+        "local_address": [${warp_addrs}],
+        "private_key": "${WARP_PRIVATE_KEY}",
+        "peer_public_key": "${WARP_PEER_PUBLIC_KEY:-bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=}"${warp_reserved_block}
     },
+EOF
+    warp_enabled=1
+elif [[ "$nb" =~ 14|15 ]]; then
+    yellow "未配置个人WARP凭据 (WARP_PRIVATE_KEY 及 WARP_LOCAL_V4/WARP_LOCAL_V6)，已禁用wg出站以避免共享密钥风险"
+fi
+cat >> config.json <<EOF
     {
       "type": "direct",
       "tag": "direct"
@@ -537,7 +621,7 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
       }
     ],
 EOF
-if [[ "$nb" =~ 14|15 ]]; then
+if [[ "$nb" =~ 14|15 ]] && [ "$warp_enabled" -eq 1 ]; then
 cat >> config.json <<EOF 
     "rules": [
     {
@@ -602,61 +686,62 @@ cfgo() {
 rm -rf boot.log
 if [ -e "$(basename "${FILE_MAP[bot]}")" ]; then
    echo "$(basename "${FILE_MAP[bot]}")" > ag.txt
-   agg=$(cat ag.txt)
-    if [[ $ARGO_AUTH =~ ^[A-Z0-9a-z=]{120,250}$ ]]; then
-      #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}"
-      args="tunnel --no-autoupdate run --token ${ARGO_AUTH}"
-    else
-     #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
-     args="tunnel --url http://localhost:$vmess_port --no-autoupdate --logfile boot.log --loglevel info"
-    fi
-    nohup ./"$agg" $args >/dev/null 2>&1 &
-    sleep 10
-if pgrep -x "$agg" > /dev/null; then
-    green "$agg Arog进程已启动"
-else
-    red "$agg Argo进程未启动, 重启中..."
-    pkill -x "$agg"
-    nohup ./"$agg" "${args}" >/dev/null 2>&1 &
-    sleep 5
-    purple "$agg Argo进程已重启"
 fi
-else
-   agg=$(cat ag.txt)
-    if [[ $ARGO_AUTH =~ ^[A-Z0-9a-z=]{120,250}$ ]]; then
-      #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}"
-      args="tunnel --no-autoupdate run --token ${ARGO_AUTH}"
-    else
-     #args="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile boot.log --loglevel info --url http://localhost:$vmess_port"
-     args="tunnel --url http://localhost:$vmess_port --no-autoupdate --logfile boot.log --loglevel info"
-    fi
-    pkill -x "$agg"
-    nohup ./"$agg" $args >/dev/null 2>&1 &
-    sleep 10
-if pgrep -x "$agg" > /dev/null; then
-    green "$agg Arog进程已启动"
-else
-    red "$agg Argo进程未启动, 重启中..."
-    pkill -x "$agg"
-    nohup ./"$agg" "${args}" >/dev/null 2>&1 &
-    sleep 5
-    purple "$agg Argo进程已重启"
+agg=$(cat ag.txt 2>/dev/null)
+if [ -z "$agg" ]; then
+    red "Argo二进制名缺失"
+    return 1
 fi
+pkill -x "$agg" 2>/dev/null
+if [[ $ARGO_AUTH =~ ^[A-Za-z0-9+/=_-]{100,}$ ]]; then
+    args_arr=(tunnel --no-autoupdate run)
+    TUNNEL_TOKEN="$ARGO_AUTH" nohup ./"$agg" "${args_arr[@]}" >/dev/null 2>&1 &
+    sleep 10
+    if pgrep -x "$agg" > /dev/null; then
+        green "$agg Argo进程已启动"
+    else
+        red "$agg Argo进程未启动, 重启中..."
+        pkill -x "$agg" 2>/dev/null
+        TUNNEL_TOKEN="$ARGO_AUTH" nohup ./"$agg" "${args_arr[@]}" >/dev/null 2>&1 &
+        sleep 5
+        purple "$agg Argo进程已重启"
+    fi
+else
+    args_arr=(tunnel --url "http://localhost:$vmess_port" --no-autoupdate --logfile boot.log --loglevel info)
+    nohup ./"$agg" "${args_arr[@]}" >/dev/null 2>&1 &
+    sleep 10
+    if pgrep -x "$agg" > /dev/null; then
+        green "$agg Argo进程已启动"
+    else
+        red "$agg Argo进程未启动, 重启中..."
+        pkill -x "$agg" 2>/dev/null
+        nohup ./"$agg" "${args_arr[@]}" >/dev/null 2>&1 &
+        sleep 5
+        purple "$agg Argo进程已重启"
+    fi
 fi
 }
 
-if [ -f "$WORKDIR/boot.log" ]; then
-argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
-checkhttp=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
-fi
-if ([ -z "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --u' > /dev/null) || [[ "$checkhttp" != 404 ]]; then
-ps aux | grep '[t]unnel --u' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
-cfgo
-elif [ -n "$ARGO_DOMAIN" ] && ! ps aux | grep '[t]unnel --n' > /dev/null; then
-ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
-cfgo
+if [ -z "$ARGO_DOMAIN" ]; then
+    argosl=""
+    checkhttp=""
+    if [ -f "$WORKDIR/boot.log" ]; then
+        argosl=$(grep -aoE 'https://[a-zA-Z0-9.-]+\.trycloudflare\.com' "$WORKDIR/boot.log" 2>/dev/null | head -n 1 | sed 's|https://||')
+        [ -n "$argosl" ] && checkhttp=$(curl --max-time 5 -o /dev/null -s -w "%{http_code}" "https://$argosl")
+    fi
+    if ! ps aux | grep -q '[t]unnel --u' || [ "$checkhttp" != "404" ]; then
+        ps aux | grep '[t]unnel --u' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+        cfgo
+    else
+        green "Argo进程已启动"
+    fi
 else
-green "Arog进程已启动"
+    if ! ps aux | grep -q '[t]unnel --n'; then
+        ps aux | grep '[t]unnel --n' | awk '{print $2}' | xargs -r kill -9 > /dev/null 2>&1
+        cfgo
+    else
+        green "Argo进程已启动"
+    fi
 fi
 sleep 2
 if ! pgrep -x "$(cat sb.txt)" > /dev/null; then
@@ -685,58 +770,60 @@ red "执行出错，请卸载脚本再重装一次"
 fi
 vl_link="vless://$UUID@$IP:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME"
 echo "$vl_link" > jh.txt
-vmws_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME\", \"add\": \"$IP\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmws_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME\", \"add\": \"$IP\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmws_link" >> jh.txt
-vmatls_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME\", \"add\": \"www.visa.com.hk\", \"port\": \"8443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmatls_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME\", \"add\": \"www.visa.com.hk\", \"port\": \"8443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmatls_link" >> jh.txt
-vma_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME\", \"add\": \"www.visa.com.hk\", \"port\": \"8880\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME\", \"add\": \"www.visa.com.hk\", \"port\": \"8880\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 | tr -d '\n')"
 echo "$vma_link" >> jh.txt
 hy2_link="hysteria2://$UUID@$IP:$hy2_port?security=tls&sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2-$USERNAME"
 echo "$hy2_link" >> jh.txt
 vl_link1="vless://$UUID@$CIP1:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME-$CIP1"
 echo "$vl_link1" >> jh.txt
-vmws_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME-$CIP1\", \"add\": \"$CIP1\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmws_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME-$CIP1\", \"add\": \"$CIP1\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmws_link1" >> jh.txt
 hy2_link1="hysteria2://$UUID@$CIP1:$hy2_port?security=tls&sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2-$USERNAME-$CIP1"
 echo "$hy2_link1" >> jh.txt
 vl_link2="vless://$UUID@$CIP2:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$reym&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$snb-reality-$USERNAME-$CIP2"
 echo "$vl_link2" >> jh.txt
-vmws_link2="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME-$CIP2\", \"add\": \"$CIP2\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmws_link2="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-$USERNAME-$CIP2\", \"add\": \"$CIP2\", \"port\": \"$vmess_port\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmws_link2" >> jh.txt
 hy2_link2="hysteria2://$UUID@$CIP2:$hy2_port?security=tls&sni=www.bing.com&alpn=h3&insecure=1#$snb-hy2-$USERNAME-$CIP2"
 echo "$hy2_link2" >> jh.txt
 
 argosl=$(cat "$WORKDIR/boot.log" 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
-checkhttp1=$(curl -o /dev/null -s -w "%{http_code}\n" "https://$argosl")
-argogd=$(cat $WORKDIR/ARGO_DOMAIN.log 2>/dev/null)
-checkhttp2=$(curl --max-time 2 -o /dev/null -s -w "%{http_code}\n" "https://$argogd")
+checkhttp1=""
+[ -n "$argosl" ] && checkhttp1=$(curl --max-time 5 -o /dev/null -s -w "%{http_code}" "https://$argosl")
+argogd=$(cat "$WORKDIR/ARGO_DOMAIN.log" 2>/dev/null)
+checkhttp2=""
+[ -n "$argogd" ] && checkhttp2=$(curl --max-time 5 -o /dev/null -s -w "%{http_code}" "https://$argogd")
 if [[ "$checkhttp1" == 404 ]] || [[ "$checkhttp2" == 404 ]]; then
-vmatls_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-443\", \"add\": \"104.16.0.0\", \"port\": \"443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmatls_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-443\", \"add\": \"104.16.0.0\", \"port\": \"443\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmatls_link1" >> jh.txt
-vmatls_link2="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2053\", \"add\": \"104.17.0.0\", \"port\": \"2053\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmatls_link2="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2053\", \"add\": \"104.17.0.0\", \"port\": \"2053\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmatls_link2" >> jh.txt
-vmatls_link3="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2083\", \"add\": \"104.18.0.0\", \"port\": \"2083\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmatls_link3="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2083\", \"add\": \"104.18.0.0\", \"port\": \"2083\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmatls_link3" >> jh.txt
-vmatls_link4="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2087\", \"add\": \"104.19.0.0\", \"port\": \"2087\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmatls_link4="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2087\", \"add\": \"104.19.0.0\", \"port\": \"2087\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmatls_link4" >> jh.txt
-vmatls_link5="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2096\", \"add\": \"104.20.0.0\", \"port\": \"2096\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)"
+vmatls_link5="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-tls-argo-$USERNAME-2096\", \"add\": \"104.20.0.0\", \"port\": \"2096\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 | tr -d '\n')"
 echo "$vmatls_link5" >> jh.txt
-vma_link6="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-80\", \"add\": \"104.21.0.0\", \"port\": \"80\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link6="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-80\", \"add\": \"104.21.0.0\", \"port\": \"80\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 | tr -d '\n')"
 echo "$vma_link6" >> jh.txt
-vma_link7="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-8080\", \"add\": \"104.22.0.0\", \"port\": \"8080\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link7="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-8080\", \"add\": \"104.22.0.0\", \"port\": \"8080\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 | tr -d '\n')"
 echo "$vma_link7" >> jh.txt
-vma_link8="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2052\", \"add\": \"104.24.0.0\", \"port\": \"2052\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link8="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2052\", \"add\": \"104.24.0.0\", \"port\": \"2052\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 | tr -d '\n')"
 echo "$vma_link8" >> jh.txt
-vma_link9="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2082\", \"add\": \"104.25.0.0\", \"port\": \"2082\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link9="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2082\", \"add\": \"104.25.0.0\", \"port\": \"2082\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 | tr -d '\n')"
 echo "$vma_link9" >> jh.txt
-vma_link10="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2086\", \"add\": \"104.26.0.0\", \"port\": \"2086\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link10="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2086\", \"add\": \"104.26.0.0\", \"port\": \"2086\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 | tr -d '\n')"
 echo "$vma_link10" >> jh.txt
-vma_link11="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2095\", \"add\": \"104.27.0.0\", \"port\": \"2095\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 -w0)"
+vma_link11="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$snb-vmess-ws-argo-$USERNAME-2095\", \"add\": \"104.27.0.0\", \"port\": \"2095\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$UUID-vm?ed=2048\", \"tls\": \"\"}" | base64 | tr -d '\n')"
 echo "$vma_link11" >> jh.txt
 fi
 v2sub=$(cat jh.txt)
 echo "$v2sub" > ${FILE_PATH}/${UUID}_v2sub.txt
-baseurl=$(base64 -w 0 < jh.txt)
+baseurl=$(base64 < jh.txt | tr -d '\n')
 
 cat > sing_box.json <<EOF
 {
@@ -1210,9 +1297,9 @@ EOF
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
 curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
-V2rayN_LINK="https://${USERNAME}.serv00.net/${UUID}_v2sub.txt"
-Clashmeta_LINK="https://${USERNAME}.serv00.net/${UUID}_clashmeta.txt"
-Singbox_LINK="https://${USERNAME}.serv00.net/${UUID}_singbox.txt"
+V2rayN_LINK="https://${USERNAME}.${address}/${UUID}_v2sub.txt"
+Clashmeta_LINK="https://${USERNAME}.${address}/${UUID}_clashmeta.txt"
+Singbox_LINK="https://${USERNAME}.${address}/${UUID}_singbox.txt"
 hyp=$(jq -r '.inbounds[0].listen_port' config.json)
 vlp=$(jq -r '.inbounds[3].listen_port' config.json)
 vmp=$(jq -r '.inbounds[4].listen_port' config.json)
@@ -1300,7 +1387,7 @@ Sing-box订阅分享链接：
 $Singbox_LINK
 -------------------------------------------------------------------------------------------------
 
-多功能主页地址：http://${snb}.${USERNAME}.serv00.net
+多功能主页地址：http://${snb}.${USERNAME}.${address}
 
 =================================================================================================
 
