@@ -3807,14 +3807,14 @@ fi
 
 cronsb(){
 uncronsb
-crontab -l 2>/dev/null > /tmp/crontab.tmp
-echo "0 1 * * * systemctl restart sing-box;rc-service sing-box restart" >> /tmp/crontab.tmp
-crontab /tmp/crontab.tmp >/dev/null 2>&1
-rm /tmp/crontab.tmp
+#crontab -l 2>/dev/null > /tmp/crontab.tmp
+#echo "0 1 * * * systemctl restart sing-box;rc-service sing-box restart" >> /tmp/crontab.tmp
+#crontab /tmp/crontab.tmp >/dev/null 2>&1
+#rm /tmp/crontab.tmp
 }
 uncronsb(){
 crontab -l 2>/dev/null > /tmp/crontab.tmp
-sed -i '/sing-box/d' /tmp/crontab.tmp
+#sed -i '/sing-box/d' /tmp/crontab.tmp
 sed -i '/sbwpph/d' /tmp/crontab.tmp
 sed -i '/url http/d' /tmp/crontab.tmp
 sed -i '/websbox/d' /tmp/crontab.tmp
