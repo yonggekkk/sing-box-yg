@@ -7,5 +7,3 @@ v26.4.11更新内容：
 2、支持Anytls协议，自签证书或域名证书都可应用到Anytls
 3、加入订阅类配置的端口跳跃支持（clash/mihomo支持区间与单端口混合跳跃，singbox支持区间端口跳跃）
 4、相关配置变更、argo固定临时隧道变更都可自动更新到订阅分享链接
-
-详见：https://ygkkk.blogspot.com/2023/10/sing-box-yg.html

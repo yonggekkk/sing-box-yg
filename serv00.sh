@@ -132,7 +132,7 @@ done <<< "$portlist"
 fi
 check_port
 if [[ -e $WORKDIR/config.json ]]; then
-purple "检测到Serv00/Hostuno-sb-yg脚本已安装，执行端口替换，请稍等……"
+purple "检测到Serv00/Hostuno-sb脚本已安装，执行端口替换，请稍等……"
 jq --argjson hyp "$hy2_port" --argjson vlp "$vless_port" --argjson vmp "$vmess_port" '
   .inbounds |= map(
     if .type == "hysteria2" then .listen_port = $hyp
@@ -272,7 +272,7 @@ sleep 2
         get_links
 	cd
         purple "************************************************************"
-        purple "Serv00/Hostuno-sb-yg脚本安装结束"
+        purple "Serv00/Hostuno-sb脚本安装结束"
 	purple "退出SSH"
 	purple "请再次连接SSH，查看主菜单，请输入快捷方式：sb"
 	purple "************************************************************"
@@ -307,7 +307,7 @@ uninstall_singbox() {
        [Yy])
           cleanup_managed_files
           purple "************************************************************"
-          purple "Serv00/Hostuno-sb-yg卸载完成！"
+          purple "Serv00/Hostuno-sb卸载完成！"
           purple "欢迎继续使用脚本：bash <(curl -Ls ${REPO_RAW_URL}/serv00.sh)"
           purple "************************************************************"
           ;;
@@ -322,7 +322,7 @@ reading "\n注意！！！将停止本脚本相关进程并清理脚本安装文
     [Yy])
     cleanup_managed_files
     purple "************************************************************"
-    purple "Serv00/Hostuno-sb-yg清理重置完成！"
+    purple "Serv00/Hostuno-sb清理重置完成！"
     purple "欢迎继续使用脚本：bash <(curl -Ls ${REPO_RAW_URL}/serv00.sh)"
     purple "************************************************************"
     ;;
@@ -1308,7 +1308,6 @@ Argo域名：${argodomain}
 $vl_link
 
 注意：如果之前输入的reality域名为CF域名，将激活以下功能：
-可应用在 https://github.com/yonggekkk/Cloudflare_vless_trojan 项目中创建CF vless/trojan 节点
 1、Proxyip(带端口)信息如下：
 方式一全局应用：设置变量名：proxyip    设置变量值：$IP:$vless_port  
 方式二单节点应用：path路径改为：/pyip=$IP:$vless_port
@@ -1651,9 +1650,9 @@ menu() {
    green "Serv00/Hostuno三协议共存脚本：vless-reality/Vmess-ws(Argo)/Hy2"
    green "脚本快捷方式：sb"
    echo   "============================================================"
-   green  "1. 一键安装 Serv00/Hostuno-sb-yg"
+   green  "1. 一键安装 Serv00/Hostuno-sb"
    echo   "------------------------------------------------------------"
-   yellow "2. 卸载删除 Serv00/Hostuno-sb-yg"
+   yellow "2. 卸载删除 Serv00/Hostuno-sb"
    echo   "------------------------------------------------------------"
    green  "3. 重启主进程 (修复主节点)"
    echo   "------------------------------------------------------------"
@@ -1702,10 +1701,10 @@ insV=$(cat $WORKDIR/v 2>/dev/null)
 latestV=$(curl -fsSL --max-time 10 "${REPO_RAW_URL}/sversion" 2>/dev/null | awk -F "更新内容" '{print $1}' | head -n 1)
 if [ -f $WORKDIR/v ]; then
 if [ "$insV" = "$latestV" ]; then
-echo -e "当前 Serv00/Hostuno-sb-yg 脚本最新版：${purple}${insV}${re} (已安装)"
+echo -e "当前 Serv00/Hostuno-sb 脚本最新版：${purple}${insV}${re} (已安装)"
 else
-echo -e "当前 Serv00/Hostuno-sb-yg 脚本版本号：${purple}${insV}${re}"
-echo -e "检测到最新 Serv00/Hostuno-sb-yg 脚本版本号：${yellow}${latestV}${re} (可选择5进行更新)"
+echo -e "当前 Serv00/Hostuno-sb 脚本版本号：${purple}${insV}${re}"
+echo -e "检测到最新 Serv00/Hostuno-sb 脚本版本号：${yellow}${latestV}${re} (可选择5进行更新)"
 echo -e "${yellow}$(curl -fsSL --max-time 10 "${REPO_RAW_URL}/sversion" 2>/dev/null)${re}"
 fi
 echo -e "========================================================="
@@ -1739,8 +1738,8 @@ green "多功能主页如下 (支持保活、重启、重置端口、进程查�
 purple "http://${snb}.${USERNAME}.${address}"
 fi
 else
-echo -e "当前 Serv00/Hostuno-sb-yg 脚本版本号：${purple}${latestV}${re}"
-yellow "未安装 Serv00/Hostuno-sb-yg 脚本！请选择 1 安装"
+echo -e "当前 Serv00/Hostuno-sb 脚本版本号：${purple}${latestV}${re}"
+yellow "未安装 Serv00/Hostuno-sb 脚本！请选择 1 安装"
 fi
    echo -e "========================================================="
    reading "请输入选择【0-9】: " choice

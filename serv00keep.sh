@@ -1296,7 +1296,7 @@ EOF
 
 cat clash_meta.yaml > ${FILE_PATH}/${UUID}_clashmeta.txt
 cat sing_box.json > ${FILE_PATH}/${UUID}_singbox.txt
-curl -sL https://raw.githubusercontent.com/yonggekkk/sing-box-yg/main/index.html -o "$FILE_PATH"/index.html
+curl -fsSL "${REPO_RAW_URL}/index.html" -o "$FILE_PATH"/index.html
 V2rayN_LINK="https://${USERNAME}.${address}/${UUID}_v2sub.txt"
 Clashmeta_LINK="https://${USERNAME}.${address}/${UUID}_clashmeta.txt"
 Singbox_LINK="https://${USERNAME}.${address}/${UUID}_singbox.txt"
@@ -1328,7 +1328,6 @@ Argo域名：${argodomain}
 $vl_link
 
 注意：如果之前输入的reality域名为CF域名，将激活以下功能：
-可应用在 https://github.com/yonggekkk/Cloudflare_vless_trojan 项目中创建CF vless/trojan 节点
 1、Proxyip(带端口)信息如下：
 方式一全局应用：设置变量名：proxyip    设置变量值：$IP:$vless_port  
 方式二单节点应用：path路径改为：/pyip=$IP:$vless_port
