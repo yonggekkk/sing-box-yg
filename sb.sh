@@ -4462,7 +4462,7 @@ case "$Input" in
 12 ) acme;;
 13 ) cfwarp;;
 14 ) inssbwpph;;
-15 ) wgcfgo && sbshare;;
+15 ) rm -rf /etc/s-box/cfvmadd_local.txt && wgcfgo && sbshare;;
 16 ) sbsm;;
  * ) exit 
 esac
